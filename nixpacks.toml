@@ -1,6 +1,6 @@
 [phases.setup]
 nixPkgs = ["...", "python311Packages.supervisor"]
-aptPkgs = ["php-redis"]
+aptPkgs = ["php-redis","php-memcached","php-pear", "php-dev","php-mongodb", "php-curl", "php-zip", "php-xml", "php-mbstring", "php-bcmath", "php-gd", "php-intl", "php-imagick", "nginx", "git"]
 
 [phases.build]
 cmds = [
