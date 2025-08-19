@@ -1,6 +1,6 @@
 [phases.setup]
-nixPkgs = ["...", "python311Packages.supervisor"]
-aptPkgs = ["php-redis","php-memcached","php-pear", "php-dev","php-mongodb", "php-curl", "php-zip", "php-xml", "php-mbstring", "php-bcmath", "php-gd", "php-intl", "php-imagick", "nginx", "git"]
+nixPkgs = ["...", "python311Packages.supervisor","php84Extensions.mongodb"]
+aptPkgs = ["php-redis"]
 
 [phases.build]
 cmds = [
@@ -8,7 +8,7 @@ cmds = [
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
     "cp /assets/supervisord.conf /etc/supervisord.conf",
     "chmod +x /assets/start.sh",
-    "pecl install mongodb",
+    "...",
 ]
 
 [start]
