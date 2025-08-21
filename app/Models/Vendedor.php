@@ -24,4 +24,9 @@ class Vendedor extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class, 'vendedor_id');
+    }
 }

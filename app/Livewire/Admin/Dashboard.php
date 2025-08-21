@@ -12,7 +12,6 @@ class Dashboard extends Component
 {
     public function mount()
     {
-        sleep(5);
     }
 
     #[Layout('components.layouts.admin')]
@@ -33,6 +32,5 @@ class Dashboard extends Component
                 </div>
             </div>
         HTML;
-
     }
 }

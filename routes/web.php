@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\Admin\Dashboard;
-use App\Livewire\Welcome;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,9 +11,14 @@ Route::get('/logout', function () {
 })->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
-    Route::prefix('app')->name('app.')->group(function () {
-        Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
+    //Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
+    Route::prefix('/')->name('app.')->group(function () {
+        Route::get('', \App\Livewire\App\Dashboard::class)->name('dashboard');
+        Route::get('filiais', \App\Livewire\App\Filiais\Main::class)->name('filiais');
+        Route::get('filiais/{id}', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
+        Route::get('vendedores', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
+        Route::get('vendedores/{id}', \App\Livewire\App\Vendedores\Show::class)->name('vendedores.show');
+        
     });
 
     Route::prefix('admin')->name('admin.')->group(function () {

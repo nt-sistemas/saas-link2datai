@@ -30,9 +30,8 @@ class MigrateDataToMongoCommand extends Command
     {
         DB::connection('pgsql')->table('datasys')->orderBy('Data_x0020_pedido')->chunk(100, function (Collection $data) {
             // Process the records...
-            ds('Starting data migration from Postgres to MongoDB...');
             foreach ($data as $row) {
-           
+
                 $mongoImport = [
                     'tenant_id' => '07636f9a-d75e-466a-a15a-13bba3311c85',
                     'data_pedido' => $row->Data_x0020_pedido,

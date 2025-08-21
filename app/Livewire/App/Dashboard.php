@@ -17,6 +17,8 @@ class Dashboard extends Component
     public $lastUpdated = null;
     public $daysOfData = null;
 
+    public $selectedTab = 'chart-tab';
+
 
     public function mount()
     {

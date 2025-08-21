@@ -2,16 +2,13 @@
 
 namespace App\Livewire\Auth;
 
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Rule;
 use Livewire\Component;
 
 class Login extends Component
 {
-
     public ?string $email = '';
 
 
@@ -30,6 +27,5 @@ class Login extends Component
         }
 
         redirect()->route('app.dashboard');
-
     }
 }

@@ -44,13 +44,11 @@ class ProcessGroupsCommand extends Command
 
             foreach ($groups as $group) {
                 $this->info("Processing group: {$group->name}");
-                ds($group);
+
                 $grupo_estoque_ids = $group->grupo_estoque()->get()->pluck('id')->toArray();
                 $plano_habilitados = $group->plano_habilitados()->get()->pluck('id')->toArray();
                 $modalidade_venda_ids = $group->modalidade_venda()->get()->pluck('id')->toArray();
-                ds($plano_habilitados);
-                ds($modalidade_venda_ids);
-                ds($grupo_estoque_ids);
+
 
                 $vendas = \App\Models\Venda::query()
                     ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
