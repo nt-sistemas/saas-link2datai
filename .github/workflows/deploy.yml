@@ -22,4 +22,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /var/www/saas-link2datai && chmod +x .scripts/deploy.sh && ./scripts/deploy.sh"
+          script: "cd /var/www/saas-link2datai && chmod +x .scripts/deploy.sh && ./.scripts/deploy.sh"
