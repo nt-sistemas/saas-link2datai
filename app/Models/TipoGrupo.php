@@ -26,4 +26,9 @@ class TipoGrupo extends Model
     {
         return $this->hasMany(Grupo::class);
     }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class,'tipo_grupo_id','id');
+    }
 }

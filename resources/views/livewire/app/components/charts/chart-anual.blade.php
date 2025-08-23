@@ -1,73 +1,79 @@
-<div
-    class="w-full ">
+<div class="w-full ">
 
     <span class="text-xl font-bold">Anual</span>
     <div id="chart"></div>
 </div>
 @script
-<script>
-    console.log('Chart Anual', @json($data));
-    var data = @json($data);
-    var seriesData = @json($data['series']);
-    var categories = @json($data['categories']);
-    var options = {
-        series: seriesData,
+    <script>
+        console.log('Chart Anual', @json($data));
+        var data = @json($data);
+        var seriesData = @json($data['series']);
+        var categories = @json($data['categories']);
+        var options = {
+            series: seriesData,
 
-        chart: {
-            type: 'bar',
-            height: 430
-        },
-        plotOptions: {
-            bar: {
+            chart: {
+                type: 'bar',
+                height: 250
+            },
+            plotOptions: {
+                bar: {
 
-                dataLabels: {
-                    position: 'top',
+                    dataLabels: {
+                        position: 'top',
+                    },
+
+                }
+            },
+            dataLabels: {
+                enabled: false,
+                offsetX: -6,
+                style: {
+                    fontSize: '12px',
+                    colors: ['#fff']
                 },
+                formatter: function(val) {
 
-            }
-        },
-        dataLabels: {
-            enabled: false,
-            offsetX: -6,
-            style: {
-                fontSize: '12px',
+                    return val.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    });
+                },
+            },
+            stroke: {
+                show: true,
+                width: 1,
                 colors: ['#fff']
             },
-            formatter: function (val) {
-
-                return val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function(val) {
+                        return val.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        });
+                    }
+                }
             },
-        },
-        stroke: {
-            show: true,
-            width: 1,
-            colors: ['#fff']
-        },
-        tooltip: {
-            shared: true,
-            intersect: false,
-            y: {
-                formatter: function (val) {
-                    return val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            xaxis: {
+                categories: categories,
+            },
+            yaxis: {
+                labels: {
+                    formatter: function(val) {
+                        return val.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        });
+                    }
                 }
-            }
-        },
-        xaxis: {
-            categories: categories,
-        },
-        yaxis: {
-            labels: {
-                formatter: function (val) {
-                    return val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                }
-            }
-        },
+            },
 
-    };
+        };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-</script>
-
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
 @endscript
-

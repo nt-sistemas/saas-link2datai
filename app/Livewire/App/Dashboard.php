@@ -16,6 +16,8 @@ class Dashboard extends Component
 {
     public $lastUpdated = null;
     public $daysOfData = null;
+    public $date_ini;
+    public $date_fim;
 
     public $selectedTab = 'chart-tab';
 
@@ -29,6 +31,8 @@ class Dashboard extends Component
 
         $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
 
+        $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
+        $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
 
     }
 

@@ -75,5 +75,9 @@ class Venda extends Model
         return $this->belongsTo(Grupo::class);
     }
 
+    public function tipo_grupo()
+    {
+        return $this->belongsTo(TipoGrupo::class,'tipo_grupo_id');
+    }
 
 }

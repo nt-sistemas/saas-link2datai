@@ -18,7 +18,8 @@ Route::middleware('auth')->group(function () {
         Route::get('filiais/{id}', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
         Route::get('vendedores', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
         Route::get('vendedores/{id}', \App\Livewire\App\Vendedores\Show::class)->name('vendedores.show');
-        
+        Route::get('movimentacao/{id}', \App\Livewire\App\Movimentacao\Main::class)->name('movimentacao');
+        Route::get('grupo-estoque/{id}', \App\Livewire\App\GrupoEstoque\Main::class)->name('grupo-estoque');
     });
 
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -68,5 +69,3 @@ Route::middleware('auth')->group(function () {
 
     });
 });
-
-
