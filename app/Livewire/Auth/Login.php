@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -22,8 +23,16 @@ class Login extends Component
 
     public function login(): void
     {
+
+        if (RateLimiter::tooManyAttempts($this->email, 5)) {
+            $this->addError('rateLimiter', trans('auth.throttle', ['seconds' => RateLimiter::availableIn($this->email)]));
+            return;
+        }
+
         if (!Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
-            $this->addError('email', __('auth.failed'));
+            RateLimiter::hit($this->email);
+            $this->addError('invalidCredentials', trans('auth.failed'));
+            return;
         }
 
         redirect()->route('app.dashboard');

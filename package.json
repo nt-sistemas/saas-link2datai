@@ -20,6 +20,7 @@
         "vite": "^7.0.4"
     },
     "dependencies": {
+        "alpinejs": "^3.14.9",
         "apexcharts": "^5.3.3"
     }
 }

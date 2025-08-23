@@ -24,5 +24,10 @@ class GrupoEstoque extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class, 'grupo_estoque_id');
+    }
+
 
 }

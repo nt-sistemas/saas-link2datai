@@ -7,28 +7,28 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-
-    @stack('js')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 
 </head>
 
 <body class="min-h-screen font-sans antialiased bg-base-200">
-<div class="h-96 w-96 text-3xl" wire:loading>
-    <x-loading class="loading-bars bg-primary w-96 "/>
-</div>
-{{-- MAIN --}}
-<x-main>
-    <x-slot:content>
-        {{ $slot }}
-    </x-slot:content>
-</x-main>
+    <div class="h-96 w-96 text-3xl" wire:loading>
+        <x-loading class="loading-bars bg-primary w-96 " />
+    </div>
+    {{-- MAIN --}}
+    <x-main>
+        <x-slot:content>
+            {{ $slot }}
+        </x-slot:content>
+    </x-main>
 
-{{--  TOAST area --}}
-<x-toast/>
+    {{--  TOAST area --}}
+    <x-toast />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    @livewireScripts
 </body>
 
 </html>
