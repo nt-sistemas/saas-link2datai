@@ -3,7 +3,8 @@
 #Entrar no modo Manutenção
 (php artisan down) || true
 
-
+#reset
+    git reset --hard HEAD
 #Atualizando Branch
 git pull origin main
 
