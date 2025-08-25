@@ -4,7 +4,7 @@
 (php artisan down) || true
 
 #reset
-    git reset --hard HEAD
+git reset HEAD --hard
 #Atualizando Branch
 git pull origin main
 
