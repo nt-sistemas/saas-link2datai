@@ -29,5 +29,10 @@ class GrupoEstoque extends Model
         return $this->hasMany(Venda::class, 'grupo_estoque_id');
     }
 
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo_grupo_estoque', 'grupo_estoque_id', 'group_id');
+    }
+
 
 }

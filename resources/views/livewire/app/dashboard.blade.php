@@ -1,6 +1,8 @@
 <div>
     <x-header title="Dashboard" subtitle="Gerencie seus dados e visualizações" separator>
         <x-slot:actions>
+            <x-button label="Painel" class="btn-secondary text-primary" link="/admin" />
+
             <x-button label="Filiais" class="btn-primary" link="{{ route('app.filiais') }}" />
             <x-button label="Vendedores" class="btn-primary" link="{{ route('app.vendedores') }}" />
 

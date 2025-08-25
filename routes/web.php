@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
         Route::get('grupo-estoque/{id}', \App\Livewire\App\GrupoEstoque\Main::class)->name('grupo-estoque');
     });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('backoffice')->name('admin.')->group(function () {
         Route::get('/', Dashboard::class)->name('dashboard');
 
         Route::prefix('tenants')->group(function () {
