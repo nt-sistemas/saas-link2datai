@@ -1,0 +1,10 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/*
+colors
+#0d659d
+#7b2cbf
+*/

@@ -42,7 +42,7 @@ class Create extends Component
             'name' => 'Valor Franquia'
         ],
         [
-            'id' => 'valor_caixa',
+            'id' => 'valor_total',
             'name' => 'Valor Caixa'
         ],
     ];

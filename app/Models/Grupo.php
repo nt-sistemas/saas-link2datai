@@ -49,7 +49,7 @@ class Grupo extends Model
         return $this->belongsToMany(ModalidadeVenda::class, 'grupo_modalidade_vendas', 'group_id', 'modalidade_venda_id');
     }
 
-    public function category()
+    public function categoria()
     {
         return $this->belongsTo(Categoria::class);
     }
