@@ -16,7 +16,6 @@ use Filament\Panel;
 use Filament\Models\Contracts\FilamentUser;
 
 
-
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -81,6 +80,11 @@ class User extends Authenticatable implements FilamentUser
         /**@var Collection $permissions */
         $permissions = Cache::get("user::{$this->id}::permissions", $this->permissions());
         return $permissions->where('key', $key)->isNotEmpty();
+    }
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class);
     }
 
     public function canAccessPanel(Panel $panel): bool

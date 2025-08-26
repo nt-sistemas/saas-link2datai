@@ -22,4 +22,19 @@ class Filial extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class);
+    }
+
+    public function metas()
+    {
+        return $this->hasMany(MetaFilial::class);
+    }
+
+    public function metas_grupo()
+    {
+        return $this->belongsToMany(MetaGrupo::class, 'meta_filial_grupo', 'filial_id', 'meta_grupo_id')->withPivot('month', 'year', 'quant', 'valor');
+    }
 }
