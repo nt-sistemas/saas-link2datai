@@ -3,7 +3,9 @@
 namespace App\Livewire\App\Vendedores;
 
 use App\Models\Venda;
+use App\Models\Vendedor;
 use Carbon\Carbon;
+use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
@@ -14,7 +16,7 @@ class Main extends Component
     public $vendedores = [];
     public $lastMonthUpdate;
 
-    public function mount()
+    public function mount(): void
     {
         $this->vendedores = $this->getVendedores();
         $this->rankVendedoresAsc();
@@ -28,12 +30,12 @@ class Main extends Component
 
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.app.components.vendedores.main');
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
         return <<<'HTML'
                 <div class="flex items-center justify-center h-screen">
@@ -48,14 +50,14 @@ class Main extends Component
 
     }
 
-    public function getVendedores()
+    public function getVendedores(): \Illuminate\Database\Eloquent\Collection
     {
-        return \App\Models\Vendedor::query()
+        return Vendedor::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->get();
     }
 
-    public function rankVendedoresAsc()
+    public function rankVendedoresAsc(): void
     {
         $vendedores = \App\Models\Vendedor::query()
             ->where('tenant_id', auth()->user()->tenant_id)

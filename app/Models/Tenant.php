@@ -62,4 +62,14 @@ class Tenant extends Model
     {
         return $this->hasMany(TipoGrupo::class);
     }
+
+    public function filials()
+    {
+        return $this->hasMany(Filial::class);
+    }
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class);
+    }
 }

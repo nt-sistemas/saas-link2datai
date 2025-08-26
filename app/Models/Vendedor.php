@@ -29,4 +29,14 @@ class Vendedor extends Model
     {
         return $this->hasMany(Venda::class, 'vendedor_id');
     }
+
+    public function metas()
+    {
+        return $this->hasMany(MetaVendedor::class, 'vendedor_id');
+    }
+
+    public function metas_grupo()
+    {
+        return $this->belongsToMany(MetaGrupo::class, 'meta_vendedor_grupo', 'vendedor_id', 'meta_grupo_id')->withPivot('month', 'year', 'quant', 'valor');
+    }
 }
