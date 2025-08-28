@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\MetaFilials\Tables;
+namespace App\Filament\Resources\MetaVendedors\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,7 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class MetaFilialsTable
+class MetaVendedorsTable
 {
     public static function configure(Table $table): Table
     {
@@ -24,8 +24,8 @@ class MetaFilialsTable
                 TextColumn::make('year')
                     ->label('Ano')
                     ->searchable(),
-                TextColumn::make('filial.name')
-                    ->label('Filial')
+                TextColumn::make('vendedor.name')
+                    ->label('Vendedor')
                     ->searchable(),
                 TextColumn::make('meta')
                     ->label('Meta')

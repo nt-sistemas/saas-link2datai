@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\MetaFilials\Schemas;
+namespace App\Filament\Resources\MetaVendedors\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class MetaFilialForm
+class MetaVendedorForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -29,10 +29,12 @@ class MetaFilialForm
                         '11' => 'Novembro',
                         '12' => 'Dezembro',
                     ])->required(),
-                Select::make('filial_id')
-                    ->label('Filial')
-                    ->relationship('filial', 'name')
-                    ->placeholder('Selecione a Filial')
+                Select::make('vendedor_id')
+                    ->label('Vendedor')
+                    ->preload()
+                    ->searchable()
+                    ->relationship('vendedor', 'name')
+                    ->placeholder('Selecione a Vendedor')
                     ->required(),
                 Select::make('grupo_id')
                     ->label('Grupo')

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\App\Components;
+namespace App\Livewire\App\Charts;
 
 use App\Models\Grupo;
 use App\Models\Venda;
@@ -12,6 +12,7 @@ use Livewire\Attributes\Lazy;
 #[Lazy]
 class Totalizador extends Component
 {
+
     public $grupo_id;
     public $dt_inicio;
     public $dt_fim;
@@ -19,8 +20,11 @@ class Totalizador extends Component
     public $total = 0;
 
     public $lastUpdated = null;
+
+    public $myChart = [];
     public $filial_id = null;
     public $vendedor_id = null;
+
 
     public function mount()
     {
@@ -67,10 +71,25 @@ class Totalizador extends Component
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->sum($grupo->campo_valor_id);
 
-        $this->total = $vendas;
+        $metas = 0;
 
 
-        return view('livewire.app.components.totalizador');
+        $this->myChart = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => ['Total', 'Meta'],
+                'datasets' => [
+                    [
+                        'label' => 'Vendas',
+                        'data' => [$vendas, $metas],
+                        'backgroundColor' => ['#002855', '#F9C408'],
+
+                        'borderWidth' => 1
+                    ]
+                ]
+            ]
+        ];
+        return view('livewire.app.charts.totalizador');
     }
 
     public function placeholder()

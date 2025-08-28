@@ -14,10 +14,10 @@ Route::middleware('auth')->group(function () {
     //Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
     Route::prefix('/')->name('app.')->group(function () {
         Route::get('', \App\Livewire\App\Dashboard::class)->name('dashboard');
-        Route::get('filiais', \App\Livewire\App\Filiais\Main::class)->name('filiais');
-        Route::get('filiais/{id}', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
-        Route::get('vendedores', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
-        Route::get('vendedores/{id}', \App\Livewire\App\Vendedores\Show::class)->name('vendedores.show');
+        Route::get('filiais/{id}', \App\Livewire\App\Filiais\Main::class)->name('filiais');
+        Route::get('filiais', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
+        Route::get('vendedores/{id}', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
+        Route::get('vendedores', \App\Livewire\App\Vendedores\Show::class)->name('vendedores.show');
         Route::get('movimentacao/{id}', \App\Livewire\App\Movimentacao\Main::class)->name('movimentacao');
         Route::get('grupo-estoque/{id}', \App\Livewire\App\GrupoEstoque\Main::class)->name('grupo-estoque');
     });

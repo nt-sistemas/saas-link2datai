@@ -6,7 +6,7 @@
                 'link' => '/',
             ],
             [
-                'label' => 'Filiais',
+                'label' => $filial->name,
                 'link' => '#default',
                 'icon' => 's-building-office-2',
             ],
@@ -14,27 +14,86 @@
     @endphp
 
     <x-breadcrumbs :items="$breadcrumbs" separator="o-slash" class="mb-4"/>
-    <x-header title="Filiais" subtitle="Gerencie suas Filiais" separator>
+    <x-header title="{{$filial->name}}" subtitle="Gerencie Filial {{$filial->name}}" separator>
         <x-slot:actions>
-            <x-button label="Home" class="btn-primary" link="{{route('app.dashboard')}}"/>
-            <x-button label="Vendedores" class="btn-primary" wire:click="irParaVendedores"/>
+
         </x-slot:actions>
     </x-header>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        @foreach($filiais as $filial)
-            <div
-                class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col justify-between">
-                <div>
-                    <h2 class="text-primary text-xl font-bold mb-2">{{  $filial->name }}</h2>
-
-                </div>
-                <div class="mt-auto">
-                    <x-button label="Ver Detalhes" class="btn-primary w-full"
-                              link="{{route('app.filiais.show',$filial->id)}}"/>
-                </div>
-            </div>
+    <div class="flex flex-wrap gap-2 mb-4">
+        @foreach($this->getVendedores() as $filial)
+            <a href="{{route('app.vendedores',$filial->vendedor->id)}}" class="">
+                <x-badge value="{{$filial->vendedor->name}}"
+                         class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary"/>
+            </a>
         @endforeach
+    </div>
+    <x-toggle label="Gráficos" wire:model="item1" wire:click="changeView" class="my-4"/>
+
+
+    <div wire:show="!item1" class="mb-4">
+        <div class="flex flex-col gap-4">
+            @foreach ($this->categories as $category)
+                <div wire:key="category-{{ $category->id }}"
+                     class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-primary text-lg font-bold">.:: {{ $category->name }} ::. </h2>
+
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2"
+                         wire:sortable-group.options="{ animation: 100 }">
+                        @foreach ($category->groups()->orderBy('order')->get() as $group)
+                            <div wire:key="group-{{ $group->id }}"
+                                 class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow ">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
+
+                                </div>
+                                <livewire:app.components.totalizador wire:key="{{ $group->id }}"
+                                                                     :grupo_id="$group->id"
+                                                                     filial_id="{{$filial->id}}"/>
+
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <div wire:show="item1" class="mb-4">
+        <div class="flex flex-col gap-4">
+            @foreach ($this->categories as $category)
+                <div wire:key="category-{{ $category->id }}"
+                     class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-primary text-lg font-bold">.:: {{ $category->name }} ::. </h2>
+
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+                        @foreach ($category->groups()->orderBy('order')->get() as $group)
+                            <div wire:key="group-{{ $group->id }}"
+                                 class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow ">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
+
+                                </div>
+                                <div>
+                                    <livewire:app.charts.totalizador
+                                        wire:key="{{ $group->id }}"
+                                        :grupo_id="$group->id"
+                                        filial_id="{{$filial->id}}"/>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+        <livewire:app.components.panel-pedidos date_ini="{{ $date_ini }}" date_fim="{{ $date_fim }}"/>
+        <livewire:app.components.panel-estoque date_ini="{{ $date_ini }}" date_fim="{{ $date_fim }}"/>
 
     </div>
+
 </div>

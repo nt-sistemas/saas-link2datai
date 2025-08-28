@@ -9,5 +9,10 @@ class CreateFilial extends CreateRecord
 {
     protected static string $resource = FilialResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
 
 }

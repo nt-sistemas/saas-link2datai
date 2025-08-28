@@ -2,10 +2,13 @@
 
 namespace App\Livewire\App\Vendedores;
 
+use App\Models\Filial;
 use App\Models\Venda;
 use App\Models\Vendedor;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
@@ -13,22 +16,37 @@ use Livewire\Component;
 #[Lazy]
 class Main extends Component
 {
-    public $vendedores = [];
-    public $lastMonthUpdate;
+    public $lastUpdated = null;
+    public $daysOfData = null;
+    public $date_ini;
+    public $date_fim;
+    public $item1;
 
-    public function mount(): void
+
+    public $vendedor_id;
+
+    public $vendedor;
+
+
+    public function mount($id)
     {
-        $this->vendedores = $this->getVendedores();
-        $this->rankVendedoresAsc();
-
-        $vendas = Venda::query()
+        $this->vendedor_id = $id;
+        $this->vendedor = Vendedor::find($id);
+        $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
             ->first();
 
-        $this->lastMonthUpdate = Carbon::parse($vendas->data_pedido)->format('m');
+
+        $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
+
+        $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
+        $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
+        $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+
 
     }
+
 
     public function render(): View
     {
@@ -50,33 +68,23 @@ class Main extends Component
 
     }
 
-    public function getVendedores(): \Illuminate\Database\Eloquent\Collection
+    #[Computed]
+    public function categories()
     {
-        return Vendedor::query()
-            ->where('tenant_id', auth()->user()->tenant_id)
+        return \App\Models\Categoria::query()
+            ->where('active', true)
+            ->orderBy('order', 'asc')
             ->get();
     }
 
-    public function rankVendedoresAsc(): void
+    public function changeView()
     {
-        $vendedores = \App\Models\Vendedor::query()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->get();
+        //ds($this->item1);
+        //$this->item1 = !$this->item1;
+        Redis::set(auth()->user()->id . $this->vendedor_id . '_dashboard_view', $this->item1 === true ? 'true' : 'false');
+        $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+        $this->mount($this->vendedor_id);
 
-        $resp = [];
-
-        foreach ($vendedores as $vendedor) {
-            $resp[] = [
-                'name' => $vendedor->name,
-                'total_vendas' => $vendedor->vendas()->whereMonth('data_pedido', $this->lastMonthUpdate)->sum('valor_total'),
-            ];
-
-        }
-
-        $sorted = collect($resp)->sortBy('total_vendas')->values()->slice(0, 10)->toArray();
-
-        ds($sorted);
-
-
+        //ds($this->item1);
     }
 }

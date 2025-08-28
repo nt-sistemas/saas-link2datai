@@ -4,76 +4,45 @@
     <div id="chart"></div>
 </div>
 @script
-    <script>
-        console.log('Chart Anual', @json($data));
-        var data = @json($data);
-        var seriesData = @json($data['series']);
-        var categories = @json($data['categories']);
-        var options = {
-            series: seriesData,
-
+<script>
+    (function () {
+        //console.log('Chart Anual', @json($data));
+        //var data = @json($data);
+        //var seriesData = @json($data['series']);
+        //var categories = @json($data['categories']);
+        let options = {
+            series: [{
+                name: 'Total',
+                data: [31, 40, 28, 51, 42, 109, 100, 31, 40, 28, 51, 42]
+            }, {
+                name: 'Metas',
+                data: [11, 32, 45, 32, 34, 52, 41, 0, 0, 0, 0, 0]
+            }],
+            colors: ['#002855', '#F9C408'],
             chart: {
-                type: 'bar',
-                height: 250
+                height: 350,
+                type: 'bar'
             },
-            plotOptions: {
-                bar: {
 
-                    dataLabels: {
-                        position: 'top',
-                    },
-
-                }
-            },
             dataLabels: {
-                enabled: false,
-                offsetX: -6,
-                style: {
-                    fontSize: '12px',
-                    colors: ['#fff']
-                },
-                formatter: function(val) {
-
-                    return val.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    });
-                },
+                enabled: false
             },
             stroke: {
-                show: true,
-                width: 1,
-                colors: ['#fff']
-            },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                y: {
-                    formatter: function(val) {
-                        return val.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                        });
-                    }
-                }
+                curve: 'smooth'
             },
             xaxis: {
-                categories: categories,
+                categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
             },
-            yaxis: {
-                labels: {
-                    formatter: function(val) {
-                        return val.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                        });
-                    }
-                }
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                },
             },
-
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        let chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
-    </script>
+    })();
+
+</script>
 @endscript

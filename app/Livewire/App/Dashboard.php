@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Grupo;
 use App\Models\Venda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
@@ -18,6 +19,7 @@ class Dashboard extends Component
     public $daysOfData = null;
     public $date_ini;
     public $date_fim;
+    public $item1;
 
     public $selectedTab = 'chart-tab';
 
@@ -29,10 +31,13 @@ class Dashboard extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
 
+
         $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
 
         $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
         $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
+        $this->item1 = filter_var(Redis::get(auth()->user()->id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+
 
     }
 
@@ -93,6 +98,7 @@ class Dashboard extends Component
 
     public function reorderGroups($data)
     {
+
         foreach ($data as $row) {
             $groupsId = [];
             $categoryId = $row['value'];
@@ -115,5 +121,26 @@ class Dashboard extends Component
             }
         }
 
+
+    }
+
+    public function changeView()
+    {
+        //ds($this->item1);
+        //$this->item1 = !$this->item1;
+        Redis::set(auth()->user()->id . '_dashboard_view', $this->item1 === true ? 'true' : 'false');
+        $this->item1 = filter_var(Redis::get(auth()->user()->id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+        $this->mount();
+
+        //ds($this->item1);
+    }
+
+    #[Computed]
+    public function getFiliais()
+    {
+        return \App\Models\Filial::query()
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->orderBy('code', 'asc')
+            ->get();
     }
 }
