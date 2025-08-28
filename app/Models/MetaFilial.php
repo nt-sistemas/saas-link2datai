@@ -19,6 +19,7 @@ class MetaFilial extends Model
         'month',
         'meta',
         'quant',
+        'grupo_id',
     ];
 
     public function tenant()
@@ -29,6 +30,11 @@ class MetaFilial extends Model
     public function filial()
     {
         return $this->belongsTo(Filial::class);
+    }
+
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class, 'grupo_id');
     }
 
 

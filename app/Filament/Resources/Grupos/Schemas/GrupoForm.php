@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Grupos\Schemas;
 
 use App\Models\Categoria;
+use App\Models\Grupo;
 use App\Models\TipoGrupo;
 use App\Models\GrupoEstoque;
 use Filament\Schemas\Schema;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Builder;
 
 class GrupoForm
 {
@@ -19,18 +21,17 @@ class GrupoForm
     {
         return $schema
             ->components([
-
                 Select::make('tipo_grupo_id')
-                ->label('Tipo de Pedidos')
-                ->options(TipoGrupo::query()->where('tenant_id', auth()->user()->tenant_id)->pluck('name', 'id'))
+                    ->label('Tipo de Pedidos')
+                    ->options(TipoGrupo::query()->where('tenant_id', auth()->user()->tenant_id)->pluck('name', 'id'))
                     ->required(),
                 TextInput::make('name')
-                ->label('Nome do Grupo')
+                    ->label('Nome do Grupo')
                     ->required(),
                 TextInput::make('description')
-                ->label('Descrição'),
+                    ->label('Descrição'),
                 TextInput::make('order')
-                ->label('Ordem')
+                    ->label('Ordem')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -61,7 +62,7 @@ class GrupoForm
                     ]) // Adicione as opções apropriadas aqui
                     ->required(),
                 Select::make('categoria_id')
-                ->label('Categoria')
+                    ->label('Categoria')
                     ->relationship('categoria', 'name')
                     ->required(),
                 Toggle::make('active')

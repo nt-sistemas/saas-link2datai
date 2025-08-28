@@ -58,4 +58,14 @@ class Grupo extends Model
     {
         return $this->hasMany(Venda::class);
     }
+
+    public function metas_filiais()
+    {
+        return $this->hasMany(MetaFilial::class, 'grupo_id');
+    }
+
+    public function metas_vendedores()
+    {
+        return $this->belongsTo(MetaVendedor::class);
+    }
 }

@@ -23,6 +23,11 @@ class MetaFilialResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|\UnitEnum|null $navigationGroup = 'Ajustes de Metas';
 
+    protected static ?string $recordTitleAttribute = 'Metas Filiais';
+    protected static ?string $modelLabel = 'Meta Filial';
+    protected static ?string $pluralModelLabel = 'Metas Filiais';
+    protected static ?string $navigationLabel = 'Metas Filiais';
+
     public static function form(Schema $schema): Schema
     {
         return MetaFilialForm::configure($schema);
