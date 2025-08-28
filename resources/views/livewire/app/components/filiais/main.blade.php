@@ -50,7 +50,7 @@
                                 </div>
                                 <livewire:app.components.totalizador wire:key="{{ $group->id }}"
                                                                      :grupo_id="$group->id"
-                                                                     filial_id="{{$filial->id}}"/>
+                                                                     filial_id="{{$filial_id}}"/>
 
                             </div>
                         @endforeach
@@ -80,7 +80,7 @@
                                     <livewire:app.charts.totalizador
                                         wire:key="{{ $group->id }}"
                                         :grupo_id="$group->id"
-                                        filial_id="{{$filial->id}}"/>
+                                        filial_id="{{$filial_id}}"/>
                                 </div>
                             </div>
                         @endforeach

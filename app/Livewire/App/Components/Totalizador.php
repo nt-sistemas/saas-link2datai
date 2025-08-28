@@ -44,12 +44,13 @@ class Totalizador extends Component
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+
         $vendas = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
-            ->when($this->filial_id, function ($query, $filial_id) {
+            ->when($this->filial_id, function ($query) {
                 $query->where('filial_id', $this->filial_id);
             })
-            ->when($this->vendedor_id, function ($query, $vendedor_id) {
+            ->when($this->vendedor_id, function ($query) {
                 $query->where('vendedor_id', $this->vendedor_id);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
