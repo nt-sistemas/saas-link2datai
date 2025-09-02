@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\UploadStatusEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,7 @@ class Upload extends Model
         'status',
         'message',
     ];
+
 
     public function tenant()
     {

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\MetaVendedors\Tables;
+namespace App\Filament\Resources\Metas\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class MetaVendedorsTable
+class MetasTable
 {
     public static function configure(Table $table): Table
     {
@@ -17,33 +16,34 @@ class MetaVendedorsTable
             ->columns([
                 TextColumn::make('grupo.name')
                     ->label('Grupo')
+                    ->sortable()
                     ->searchable(),
-                TextColumn::make('month')
-                    ->label('Mes')
-                    ->searchable(),
-                TextColumn::make('year')
-                    ->label('Ano')
+                TextColumn::make('filial.name')
+                    ->label('Filial')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('vendedor.name')
                     ->label('Vendedor')
-                    ->searchable(),
-                TextColumn::make('meta')
-                    ->label('Meta')
-                    ->money("BRL", true)
-                    ->searchable(),
-                TextColumn::make('quant')
-                    ->label('Quantidade')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable(),
+                TextColumn::make('mes')
+                    ->sortable(),
+                TextColumn::make('ano')
+                    ->sortable(),
+                TextColumn::make('valor_meta')
+                    ->label('Valor')
+                    ->money('BRL')
+                    ->sortable(),
+                TextColumn::make('quantidade')
+                    ->label('Quantidade')
+                    ->numeric()
+                    ->sortable(),
+
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

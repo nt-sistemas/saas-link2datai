@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -71,9 +72,19 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                 TextColumn::make('filename')
                     ->label('Nome do Arquivo')
                     ->limit(50),
-                TextColumn::make('status')
-                    ->label('Status'),
-
+                IconColumn::make('status')
+                    ->icon(fn(string $state): Heroicon => match ($state) {
+                        'pending' => Heroicon::Clock,
+                        'processing' => Heroicon::OutlinedClock,
+                        'pocessed' => Heroicon::OutlinedCheckCircle,
+                        'failed' => Heroicon::OutlinedXCircle,
+                    })
+                    ->color(fn(string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'processing' => 'blue',
+                        'processed' => 'success',
+                        'failed' => 'danger',
+                    }),
                 TextColumn::make('rows')
                     ->label('Linhas Processadas'),
                 TextColumn::make('created_at')
@@ -102,9 +113,6 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
     {
         $data = $this->form->getState();
 
-        $record = $this->getRecord();
-
-        ds($data);
         $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data['filename'])
             ->first();
@@ -123,7 +131,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
             'filename' => $data['filename'],
             'attachment' => $data['attachment'],
             'rows' => 0,
-            'status' => UploadStatusEnum::PENDING->value,
+            'status' => 'pending',
         ]);
 
         Notification::make()
@@ -136,6 +144,8 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 
     public function getRecord()
     {
+        ds($this);
         return [];
     }
+
 }
