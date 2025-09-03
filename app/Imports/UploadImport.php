@@ -71,7 +71,11 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
         return [
             BeforeImport::class => function (BeforeImport $event) {
                 Log::info('Starting import for file: ' . $this->tenant_id);
-                //$upload = \App\Models\Upload::find($this->upload_id);
+                $upload = \App\Models\Upload::find($this->upload_id);
+                if ($upload) {
+                    $upload->status = 'processing';
+                    $upload->save();
+                }
 
 
             },
