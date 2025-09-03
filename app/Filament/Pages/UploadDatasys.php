@@ -74,8 +74,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                     ->limit(50),
                 IconColumn::make('status')
                     ->icon(fn(string $state): Heroicon => match ($state) {
-                        'pending' => Heroicon::Clock,
-                        'processing' => Heroicon::OutlinedClock,
+                        'pending', 'processing' => Heroicon::Clock,
                         'pocessed' => Heroicon::OutlinedCheckCircle,
                         'failed' => Heroicon::OutlinedXCircle,
                     })
@@ -85,8 +84,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                         'processed' => 'success',
                         'failed' => 'danger',
                     }),
-                TextColumn::make('rows')
-                    ->label('Linhas Processadas'),
+
                 TextColumn::make('created_at')
                     ->label('Enviado Em')
                     ->dateTime('d/m/Y H:i:s'),

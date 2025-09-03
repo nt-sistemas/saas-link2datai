@@ -44,9 +44,9 @@ class AppServiceProvider extends ServiceProvider
         Categoria::observe(CategoriaObserver::class);
         Grupo::observe(GrupoObserver::class);
         TipoGrupo::observe(TipoGrupoObserver::class);
-        ModalidadeVenda::observe(ModalidadeVendaObserver::class);
-        PlanoHabilitado::observe(PlanoHabilitadoObserver::class);
-        GrupoEstoque::observe(GrupoEstoqueObserver::class);
+        //ModalidadeVenda::observe(ModalidadeVendaObserver::class);
+        //PlanoHabilitado::observe(PlanoHabilitadoObserver::class);
+        //GrupoEstoque::observe(GrupoEstoqueObserver::class);
 
 
     }

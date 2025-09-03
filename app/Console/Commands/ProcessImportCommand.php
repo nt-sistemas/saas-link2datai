@@ -42,7 +42,7 @@ class ProcessImportCommand extends Command
 
 
                     // Dispara o job para processar o import
-                    ProcessImportJob::dispatch($import);
+                    ProcessImportJob::dispatch($import, $tenant->id);
 
 
                     $this->info("Import {$import->id} processado com sucesso.");
