@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Events\ImportFailed;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, ShouldQueue, WithEvents
+class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents
 {
     public $tenant_id;
     public $upload_id;
