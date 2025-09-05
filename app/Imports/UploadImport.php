@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Events\ImportFailed;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithChunkReading, ShouldQueue, WithEvents
+class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, ShouldQueue, WithEvents
 {
     public $tenant_id;
     public $upload_id;
@@ -50,7 +50,6 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
         ];
 
         return Import::create($mongoImport);
-
     }
 
     public function columnFormats(): array
@@ -61,10 +60,7 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
         ];
     }
 
-    public function chunkSize(): int
-    {
-        return 1000;
-    }
+
 
     public function registerEvents(): array
     {
@@ -76,8 +72,6 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
                     $upload->status = 'processing';
                     $upload->save();
                 }
-
-
             },
             AfterImport::class => function (AfterImport $event) {
                 //\Artisan::call('datasys:etl');

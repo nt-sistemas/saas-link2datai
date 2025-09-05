@@ -31,6 +31,12 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => '#002855',
             ])
+            ->navigationGroups([
+                'Datasys',
+                'Ajustes Pedidos',
+                'Configurações',
+            ])
+            ->collapsibleNavigationGroups(false)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -43,9 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Link2Data Intelligence')
             ->brandLogo(asset('assets/logo.svg'))
             ->brandLogoHeight('5rem')
-            ->widgets([
-
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

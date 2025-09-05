@@ -18,10 +18,10 @@ php artisan optimize
 #compilar os assets
 #nvm
 
-#export NVM_DIR="~/.nvm"
-#source ~/.nvm/nvm.sh
+export NVM_DIR="~/.nvm"
+source ~/.nvm/nvm.sh
 
-npm install
+npm install --yes
 
 npm run build
 

@@ -76,6 +76,12 @@ class Totalizador extends Component
 
         $this->myChart = [
             'type' => 'bar',
+            'options' => [
+                'width' => '100%',
+                'responsive' => true,
+
+
+            ],
             'data' => [
                 'labels' => ['Total', 'Meta'],
                 'datasets' => [
