@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Events\ImportFailed;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents
+class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents, WithChunkReading, ShouldQueue
 {
     public $tenant_id;
     public $upload_id;
@@ -34,6 +34,7 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
     public function model(array $row)
     {
         ++$this->rows;
+        ini_set('memory_limit', '-1');
 
         $data_pedido = Date::excelToDateTimeObject($row['data_pedido']);
         $row['tenant_id'] = $this->tenant_id;
@@ -89,5 +90,10 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
     public function getRowCount(): int
     {
         return $this->rows;
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 }
