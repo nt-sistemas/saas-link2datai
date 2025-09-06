@@ -21,6 +21,8 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents, WithChunkReading, ShouldQueue
 {
+    public $timeout = 600;
+
     public $tenant_id;
     public $upload_id;
     private $rows = 0;
