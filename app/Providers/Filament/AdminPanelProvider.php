@@ -32,11 +32,16 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => '#002855',
             ])
             ->navigationGroups([
-                'Datasys',
-                'Ajustes Pedidos',
-                'Configurações',
+                NavigationGroup::make('Datasys')
+                    ->collapsed(false),
+
+                NavigationGroup::make('Ajustes Pedidos')
+                    ->collapsed(false),
+
+                NavigationGroup::make('Configurações')
+                    ->collapsed(false),
+
             ])
-            ->collapsibleNavigationGroups(false)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
