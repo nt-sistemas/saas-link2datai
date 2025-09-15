@@ -3,6 +3,7 @@
 namespace App\Livewire\App\Vendedores;
 
 use App\Models\Filial;
+use App\Models\Grupo;
 use App\Models\Venda;
 use App\Models\Vendedor;
 use Carbon\Carbon;
@@ -24,6 +25,7 @@ class Main extends Component
 
 
     public $vendedor_id;
+    public $filial_id = null;
 
     public $vendedor;
 
@@ -43,8 +45,6 @@ class Main extends Component
         $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
         $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
         $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
-
-
     }
 
 
@@ -65,7 +65,6 @@ class Main extends Component
                     </div>
                 </div>
             HTML;
-
     }
 
     #[Computed]
@@ -77,14 +76,79 @@ class Main extends Component
             ->get();
     }
 
-    public function changeView()
+    #[Computed]
+    public function getFiliais()
     {
-        //ds($this->item1);
-        //$this->item1 = !$this->item1;
-        Redis::set(auth()->user()->id . $this->vendedor_id . '_dashboard_view', $this->item1 === true ? 'true' : 'false');
-        $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
-        $this->mount($this->vendedor_id);
+        return \App\Models\Filial::query()
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->orderBy('code', 'asc')
+            ->get();
+    }
 
-        //ds($this->item1);
+    #[Computed]
+    public function totalCategoria($categoryId)
+    {
+
+        $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
+
+
+        $total = 0;
+        foreach ($grupos as $grupo) {
+            $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
+            $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
+            $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+
+            $total += Venda::query()
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->where('vendedor_id', $this->vendedor_id)
+                ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                    $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
+                })
+                ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
+                    $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+                })
+                ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
+                    $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
+                })
+                ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+                ->sum($grupo->campo_valor_id);
+        }
+        ds($total);
+
+        return $total;
+    }
+
+    #[Computed]
+    public function quantidadeCategoria($categoryId)
+    {
+
+        $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
+
+
+        $quantidade = 0;
+        foreach ($grupos as $grupo) {
+            $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
+            $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
+            $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+
+            $quantidade += Venda::query()
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->where('vendedor_id', $this->vendedor_id)
+                ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                    $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
+                })
+                ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
+                    $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+                })
+                ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
+                    $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
+                })
+                ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+                ->count();
+        }
+
+        return $quantidade;
     }
 }

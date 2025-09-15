@@ -137,7 +137,7 @@ class Dashboard extends Component
             ->get();
     }
 
-   #[Computed]
+    #[Computed]
     public function totalCategoria($categoryId)
     {
 
@@ -164,13 +164,9 @@ class Dashboard extends Component
                 })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->sum($grupo->campo_valor_id);
-
-
         }
 
         return $total;
-
-
     }
 
     #[Computed]
@@ -200,12 +196,8 @@ class Dashboard extends Component
                 })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->count();
-
-
         }
 
         return $quantidade;
-
-
     }
 }

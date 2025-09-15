@@ -1,6 +1,9 @@
 <?php
 
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\App\Filiais\Categories\Show as FilialCategoriesShow;
+use App\Livewire\App\Vendedores\Categories\Show as VendedorCategoriesShow;
+use App\Livewire\Categories\Show;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,10 +19,13 @@ Route::middleware('auth')->group(function () {
         Route::get('', \App\Livewire\App\Dashboard::class)->name('dashboard');
         Route::get('filiais/{id}', \App\Livewire\App\Filiais\Main::class)->name('filiais');
         Route::get('filiais', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
-        Route::get('vendedores/{id}', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
+        Route::get('vendedores/{id}/{filial_id?}', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');
         Route::get('vendedores', \App\Livewire\App\Vendedores\Show::class)->name('vendedores.show');
         Route::get('movimentacao/{id}', \App\Livewire\App\Movimentacao\Main::class)->name('movimentacao');
         Route::get('grupo-estoque/{id}', \App\Livewire\App\GrupoEstoque\Main::class)->name('grupo-estoque');
+        Route::get('categories/{id}', Show::class)->name('categories.show');
+        Route::get('categories/{id}/filial/{filial_id}', FilialCategoriesShow::class)->name('categories.filial.show');
+        Route::get('categories/{id}/vendedor/{vendedor_id}', VendedorCategoriesShow::class)->name('categories.vendedor.show');
     });
 
     Route::prefix('backoffice')->name('admin.')->group(function () {
@@ -65,7 +71,5 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', \App\Livewire\Admin\Groups\Create::class)->name('groups.create');
             Route::get('/{id}/edit', \App\Livewire\Admin\Groups\Edit::class)->name('groups.edit');
         });
-
-
     });
 });

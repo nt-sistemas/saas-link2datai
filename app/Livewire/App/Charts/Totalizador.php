@@ -30,6 +30,7 @@ class Totalizador extends Component
 
     public function mount()
     {
+        ds($this->filial_id);
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
@@ -40,7 +41,6 @@ class Totalizador extends Component
         $this->dt_fim = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
         $this->cardValor = $this->getDataValor();
         $this->cardQuant = $this->getDataQuant();
-
     }
 
     public function render()
@@ -56,7 +56,6 @@ class Totalizador extends Component
                     <x-loading class="loading-bars text-primary" />
                 </div>
             HTML;
-
     }
 
     public function getDataValor(): array
@@ -71,7 +70,7 @@ class Totalizador extends Component
         $vendas = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filial_id, function ($query, $filial_id) {
-                $query->where('filial_id', $this->filial_id);
+                $query->where('filial_id', $filial_id);
             })
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
                 $query->where('vendedor_id', $this->vendedor_id);
@@ -93,7 +92,7 @@ class Totalizador extends Component
 
         $metas = Meta::query()
             ->where('tenant_id', auth()->user()->tenant_id)
-            ->where('grupo_id',$grupo->id)
+            ->where('grupo_id', $grupo->id)
             ->when($this->filial_id, function ($query, $filial_id) {
                 $query->where('filial_id', $filial_id);
             })
@@ -164,7 +163,7 @@ class Totalizador extends Component
 
         $metas = Meta::query()
             ->where('tenant_id', auth()->user()->tenant_id)
-            ->where('grupo_id',$grupo->id)
+            ->where('grupo_id', $grupo->id)
             ->when($this->filial_id, function ($query, $filial_id) {
                 $query->where('filial_id', $filial_id);
             })

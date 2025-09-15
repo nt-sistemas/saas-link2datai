@@ -40,25 +40,30 @@
             <div wire:sortable.item="{{ $category->id }}" wire:key="category-{{ $category->id }}"
                 class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-primary text-lg font-bold">.:: {{ $category->name }} | Total: R$ {{number_format($this->totalCategoria($category->id),2,',','.')}} | Quantidade: {{$this->quantidadeCategoria($category->id)}} ::. </h2>
+                    <h2 class="text-primary text-lg font-bold">.:: {{ $category->name }} | Total: R$
+                        {{ number_format($this->totalCategoria($category->id), 2, ',', '.') }} | Quantidade:
+                        {{ $this->quantidadeCategoria($category->id) }} ::. </h2>
                     <x-icon wire:sortable.handle name="s-hand-raised"
                         class="hover:text-primary text-gray-200 handle cursor-move" />
                 </div>
                 <ul wire:sortable-group.item-group="{{ $category->id }}" class="grid grid-cols-1 lg:grid-cols-3 gap-2"
                     wire:sortable-group.options="{ animation: 100 }">
                     @foreach ($category->groups()->orderBy('order')->get() as $group)
-                        <li wire:sortable-group.item="{{ $group->id }}" wire:key="group-{{ $group->id }}"
-                            class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow ">
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
-                                <x-icon wire:sortable-group.handle name="s-hand-raised"
-                                    class="hover:text-primary text-gray-200 handle cursor-move" />
-                            </div>
-                            <div>
-                                <livewire:app.charts.totalizador wire:key="{{ $group->id }}" :grupo_id="$group->id" />
-                            </div>
+                        <a href="{{ route('app.categories.show', $group->id) }}" class="">
+                            <li wire:sortable-group.item="{{ $group->id }}" wire:key="group-{{ $group->id }}"
+                                class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow hover:bg-secondary/50 ">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
+                                    <x-icon wire:sortable-group.handle name="s-hand-raised"
+                                        class="hover:text-primary text-gray-200 handle cursor-move" />
+                                </div>
+                                <div>
+                                    <livewire:app.charts.totalizador wire:key="{{ $group->id }}"
+                                        :grupo_id="$group->id" />
+                                </div>
 
-                        </li>
+                            </li>
+                        </a>
                     @endforeach
                 </ul>
             </div>
