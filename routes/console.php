@@ -15,7 +15,7 @@ Schedule::command('link2b:process-excel-file')
     ->appendOutputTo(storage_path('logs/process-excel-file.log'));
 
 Schedule::command('etl:process-import')
-    ->everyFiveMinutes()
+    ->everyTwoMinutes()
     ->withoutOverlapping()
     ->runInBackground()
     ->onOneServer()
