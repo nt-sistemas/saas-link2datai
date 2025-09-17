@@ -37,4 +37,9 @@ class Filial extends Model
     {
         return $this->belongsToMany(MetaGrupo::class, 'meta_filial_grupo', 'filial_id', 'meta_grupo_id')->withPivot('month', 'year', 'quant', 'valor');
     }
+
+    public function vendedores()
+    {
+        return $this->hasMany(Vendedor::class);
+    }
 }

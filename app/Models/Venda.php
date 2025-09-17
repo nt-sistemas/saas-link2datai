@@ -26,7 +26,10 @@ class Venda extends Model
         'grupo_id',
         'valor_total',
         'base_faturamento_compra',
-        'valor_franquia'
+        'valor_franquia',
+        'descricao_comercial',
+        'categoria',
+        'fabricante',
     ];
 
     protected $casts = [
@@ -77,7 +80,6 @@ class Venda extends Model
 
     public function tipo_grupo()
     {
-        return $this->belongsTo(TipoGrupo::class,'tipo_grupo_id');
+        return $this->belongsTo(TipoGrupo::class, 'tipo_grupo_id');
     }
-
 }

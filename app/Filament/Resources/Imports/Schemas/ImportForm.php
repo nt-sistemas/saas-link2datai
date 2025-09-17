@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Imports\Schemas;
 
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,8 +15,9 @@ class ImportForm
     {
         return $schema
             ->components([
-                Textarea::make('data')
-                    ->json(),
+                KeyValue::make('data')
+                    ->disabled()
+                    ->columnSpanFull(),
                 TextInput::make('data_pedido'),
                 Toggle::make('is_processed'),
                 TextInput::make('message_error'),

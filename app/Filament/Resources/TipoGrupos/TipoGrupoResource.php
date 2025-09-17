@@ -18,14 +18,14 @@ class TipoGrupoResource extends Resource
 {
     protected static ?string $model = TipoGrupo::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
     protected static ?string $recordTitleAttribute = 'Tipo de Pedidos';
     protected static ?string $modelLabel = 'tipo de pedido';
     protected static ?string $pluralModelLabel = 'tipos de pedido';
     protected static ?string $navigationLabel = 'Tipos de Pedido';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Ajustes Pedidos';
+
 
     public static function form(Schema $schema): Schema
     {

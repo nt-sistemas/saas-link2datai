@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vendedors\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -11,12 +12,17 @@ class VendedorForm
     {
         return $schema
             ->components([
-                TextInput::make('tenant_id')
-                    ->required(),
                 TextInput::make('document')
                     ->required(),
                 TextInput::make('name')
                     ->required(),
+                Select::make('filial_id')
+                    ->label('Filial')
+                    ->options(function () {
+                        return \App\Models\Filial::pluck('name', 'id');
+                    })
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 }

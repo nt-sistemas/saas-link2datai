@@ -21,7 +21,11 @@ class CategoriaResource extends Resource
 
     protected static ?string $model = Categoria::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static ?string $recordTitleAttribute = 'Categorias';
+    protected static ?string $modelLabel = 'Categoria';
+    protected static ?string $pluralModelLabel = 'Categorias';
+    protected static ?string $navigationLabel = 'Categorias';
 
 
 

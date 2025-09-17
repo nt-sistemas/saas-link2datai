@@ -18,13 +18,13 @@ class PlanoHabilitadoResource extends Resource
 {
     protected static ?string $model = PlanoHabilitado::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDevicePhoneMobile;
 
-       protected static ?string $recordTitleAttribute = 'Planos Habilitados';
+    protected static ?string $recordTitleAttribute = 'Planos Habilitados';
     protected static ?string $modelLabel = 'Plano Habilitado';
     protected static ?string $pluralModelLabel = 'Planos Habilitados';
     protected static ?string $navigationLabel = 'Planos Habilitados';
-    protected static string|\UnitEnum|null $navigationGroup = 'Ajustes Pedidos';
+
     public static function form(Schema $schema): Schema
     {
         return PlanoHabilitadoForm::configure($schema);

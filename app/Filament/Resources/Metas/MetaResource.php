@@ -18,7 +18,7 @@ class MetaResource extends Resource
 {
     protected static ?string $model = Meta::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 
     protected static ?string $recordTitleAttribute = 'Metas';
 

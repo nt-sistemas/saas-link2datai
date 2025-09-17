@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Vendedors\Tables;
 
+use App\Livewire\Admin\Categories\Create;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -16,6 +18,9 @@ class VendedorsTable
             ->columns([
                 TextColumn::make('name')
                     ->label('Nome')
+                    ->searchable(),
+                TextColumn::make('filial.name')
+                    ->label('Filial')
                     ->searchable(),
 
                 TextColumn::make('document')
@@ -37,10 +42,13 @@ class VendedorsTable
                 //
             ])
             ->recordActions([
+
                 EditAction::make(),
+
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+
                     //DeleteBulkAction::make(),
                 ]),
             ]);

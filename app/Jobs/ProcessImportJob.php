@@ -34,7 +34,6 @@ class ProcessImportJob implements ShouldQueue
         $this->data['data_pedido'] = Carbon::parse($data->data_pedido)->format('Y-m-d');
         $this->tenantId = $tenantId;
         $this->importId = $data['id'];;
-
     }
 
     /**
@@ -58,6 +57,9 @@ class ProcessImportJob implements ShouldQueue
             $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
             $venda->data_pedido = date_format(date_create($this->data['data_pedido'] ?? $this->data['Data_0x0020_pedido']), 'Y-m-d');
             $venda->numero_pedido = $this->data['numero_pv'] ?? $this->data['Numero_x0020_Pedido'];
+            $venda->descricao_comercial = $this->data['descricao_comercial'] ?? null;
+            $venda->categoria = $this->data['categoria'] ?? null;
+            $venda->fabricante = $this->data['fabricante'] ?? null;
             $venda->save();
 
 
@@ -189,6 +191,4 @@ class ProcessImportJob implements ShouldQueue
 
         return $modalidadeVenda->id;
     }
-
-
 }

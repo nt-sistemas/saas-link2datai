@@ -18,13 +18,13 @@ class ModalidadeVendaResource extends Resource
 {
     protected static ?string $model = ModalidadeVenda::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
-       protected static ?string $recordTitleAttribute = 'Modalidades de Vendas';
+    protected static ?string $recordTitleAttribute = 'Modalidades de Vendas';
     protected static ?string $modelLabel = 'Modalidade de Venda';
     protected static ?string $pluralModelLabel = 'Modalidades de Vendas';
     protected static ?string $navigationLabel = 'Modalidades de Vendas';
-    protected static string|\UnitEnum|null $navigationGroup = 'Ajustes Pedidos';
+
     public static function form(Schema $schema): Schema
     {
         return ModalidadeVendaForm::configure($schema);

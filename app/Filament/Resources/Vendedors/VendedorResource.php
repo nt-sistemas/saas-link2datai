@@ -20,11 +20,11 @@ class VendedorResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-       protected static ?string $recordTitleAttribute = 'Vendedores';
+    protected static ?string $recordTitleAttribute = 'Vendedores';
     protected static ?string $modelLabel = 'Vendedor';
     protected static ?string $pluralModelLabel = 'Vendedores';
     protected static ?string $navigationLabel = 'Vendedores';
-    protected static string|\UnitEnum|null $navigationGroup = 'Configurações';
+
     public static function form(Schema $schema): Schema
     {
         return VendedorForm::configure($schema);

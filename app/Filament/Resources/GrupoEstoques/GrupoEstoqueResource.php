@@ -18,13 +18,13 @@ class GrupoEstoqueResource extends Resource
 {
     protected static ?string $model = GrupoEstoque::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBox;
 
-       protected static ?string $recordTitleAttribute = 'Grupos de Estoques';
+    protected static ?string $recordTitleAttribute = 'Grupos de Estoques';
     protected static ?string $modelLabel = 'Grupo de Estoque';
     protected static ?string $pluralModelLabel = 'Grupos de Estoques';
     protected static ?string $navigationLabel = 'Grupos de Estoques';
-    protected static string|\UnitEnum|null $navigationGroup = 'Ajustes Pedidos';
+
     public static function form(Schema $schema): Schema
     {
         return GrupoEstoqueForm::configure($schema);

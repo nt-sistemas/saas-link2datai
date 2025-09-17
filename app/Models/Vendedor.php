@@ -18,6 +18,8 @@ class Vendedor extends Model
         'tenant_id',
         'document',
         'name',
+        'filial_id',
+        'avatar',
     ];
 
     public function tenant()
@@ -38,5 +40,10 @@ class Vendedor extends Model
     public function metas_grupo()
     {
         return $this->belongsToMany(MetaGrupo::class, 'meta_vendedor_grupo', 'vendedor_id', 'meta_grupo_id')->withPivot('month', 'year', 'quant', 'valor');
+    }
+
+    public function filial()
+    {
+        return $this->belongsTo(Filial::class);
     }
 }

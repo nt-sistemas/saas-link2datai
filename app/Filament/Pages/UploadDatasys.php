@@ -38,13 +38,12 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
     protected static ?string $pluralModelLabel = 'Uploads Datasys';
     protected static ?string $navigationLabel = 'Upload';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Datasys';
+
 
 
     public function mount(): void
     {
         $this->form->fill($this->getRecord());
-
     }
 
     /**
@@ -61,7 +60,6 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                     ->storeFileNamesIn('filename')
 
             ]);
-
     }
 
     public function table(Table $table): Table
@@ -145,5 +143,4 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
         ds($this);
         return [];
     }
-
 }

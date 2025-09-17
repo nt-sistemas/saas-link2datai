@@ -18,13 +18,13 @@ class FilialResource extends Resource
 {
     protected static ?string $model = Filial::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-       protected static ?string $recordTitleAttribute = 'Filiais';
+    protected static ?string $recordTitleAttribute = 'Filiais';
     protected static ?string $modelLabel = 'Filial';
     protected static ?string $pluralModelLabel = 'Filiais';
     protected static ?string $navigationLabel = 'Filiais';
-    protected static string|\UnitEnum|null $navigationGroup = 'Configurações';
+
     public static function form(Schema $schema): Schema
     {
         return FilialForm::configure($schema);
