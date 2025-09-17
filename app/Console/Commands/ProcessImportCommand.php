@@ -35,21 +35,11 @@ class ProcessImportCommand extends Command
             $this->info("Processando imports para o tenant: {$tenant->name}");
 
 
-            $imports = $tenant->imports()->where('is_processed', false)->chunk(10000, function ($imports) use ($tenant) {
-
-                foreach ($imports as $import) {
-                    Log::info("Processando import: {$import->id} - {$import->name}");
-
-
-                    // Dispara o job para processar o import
-                    ProcessImportJob::dispatch($import, $tenant->id);
-
-
-                    $this->info("Import {$import->id} processado com sucesso.");
-                }
-            });
-
-
+            $imports = $tenant->imports()->where('is_processed', false)->limit(1000)->get();
+            foreach ($imports as $import) {
+                ProcessImportJob::dispatch($import, $tenant->id);
+                $this->info("Import ID {$import->id} despachado para processamento.");
+            }
         }
 
 
@@ -60,8 +50,4 @@ class ProcessImportCommand extends Command
 
 
     }
-
-
 }
-
-

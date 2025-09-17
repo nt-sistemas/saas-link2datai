@@ -38,12 +38,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        User::observe(UserObserver::class);
-        Filial::observe(FilialObserver::class);
-        Vendedor::observe(VendedorObserver::class);
-        Categoria::observe(CategoriaObserver::class);
-        Grupo::observe(GrupoObserver::class);
-        TipoGrupo::observe(TipoGrupoObserver::class);
+        //User::observe(UserObserver::class);
+        //Filial::observe(FilialObserver::class);
+        //Vendedor::observe(VendedorObserver::class);
+        //Categoria::observe(CategoriaObserver::class);
+        //Grupo::observe(GrupoObserver::class);
+        //TipoGrupo::observe(TipoGrupoObserver::class);
         //ModalidadeVenda::observe(ModalidadeVendaObserver::class);
         //PlanoHabilitado::observe(PlanoHabilitadoObserver::class);
         //GrupoEstoque::observe(GrupoEstoqueObserver::class);

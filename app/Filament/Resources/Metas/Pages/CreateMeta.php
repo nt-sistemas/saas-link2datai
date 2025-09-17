@@ -31,6 +31,9 @@ class CreateMeta extends CreateRecord
     {
         $vendedores_id = $data['vendedor_id'];
 
+        ds($vendedores_id);
+        exit;
+
         foreach ($vendedores_id as $vendedor_id) {
             $lastVenda = Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
