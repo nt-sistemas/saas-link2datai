@@ -239,6 +239,7 @@ class Show extends Component
             ->orderBy('total', 'desc')
             ->groupBy('filial_id')
             ->with('filial')
+            ->limit(10)
             ->get();
 
         if ($vendas->isEmpty()) {
@@ -380,6 +381,7 @@ class Show extends Component
             ->orderBy('total', 'desc')
             ->groupBy('vendedor_id')
             ->with('vendedor')
+            ->limit(10)
             ->get();
 
         if ($vendas->isEmpty()) {
