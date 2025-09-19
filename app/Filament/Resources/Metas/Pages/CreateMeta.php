@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Metas\Pages;
 use App\Filament\Resources\Metas\MetaResource;
 use App\Models\Meta;
 use App\Models\Venda;
+use App\Models\Vendedor;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateMeta extends CreateRecord
@@ -31,21 +32,14 @@ class CreateMeta extends CreateRecord
     {
         $vendedores_id = $data['vendedor_id'];
 
-        ds($vendedores_id);
-        exit;
-
         foreach ($vendedores_id as $vendedor_id) {
-            $lastVenda = Venda::query()
-                ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('vendedor_id', $vendedor_id)
-                ->orderBy('data_pedido', 'desc')
-                ->first();
+            $vendedor = Vendedor::find($vendedor_id);
 
             Meta::create([
                 'tenant_id' => auth()->user()->tenant_id,
                 'grupo_id' => $data['grupo_id'],
-                'filial_id' => $lastVenda->filial_id,
-                'vendedor_id' => $vendedor_id,
+                'filial_id' => $vendedor->filial_id,
+                'vendedor_id' => $vendedor->id,
                 'ano' => $data['ano'],
                 'mes' => $data['mes'],
                 'valor_meta' => $data['valor_meta'],

@@ -24,6 +24,7 @@ class ModalidadeVendaResource extends Resource
     protected static ?string $modelLabel = 'Modalidade de Venda';
     protected static ?string $pluralModelLabel = 'Modalidades de Vendas';
     protected static ?string $navigationLabel = 'Modalidades de Vendas';
+    protected static ?int $navigationSort = 8;
 
     public static function form(Schema $schema): Schema
     {

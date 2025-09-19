@@ -40,12 +40,10 @@ class MetaForm
                     ->live()
                     ->required(),
                 \Filament\Forms\Components\Select::make('vendedor_id')
-                    ->options(fn(Get $get): Collection => Venda::query()
-                        ->groupBy('vendedor_id', 'vendedores.name', 'vendedores.id')
+                    ->options(fn(Get $get): Collection => Vendedor::query()
                         ->whereIn('filial_id', $get('filial_id'))
-                        ->join('vendedores', 'vendedores.id', '=', 'vendedor_id')
-                        ->orderBy('vendedores.name', 'asc')
-                        ->pluck('vendedores.name', 'vendedores.id'))
+                        ->orderBy('name', 'asc')
+                        ->pluck('name', 'id'))
                     ->searchable()
                     ->multiple()
                     ->preload(),

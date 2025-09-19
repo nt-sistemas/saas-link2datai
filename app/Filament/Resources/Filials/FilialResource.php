@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Filials;
 use App\Filament\Resources\Filials\Pages\CreateFilial;
 use App\Filament\Resources\Filials\Pages\EditFilial;
 use App\Filament\Resources\Filials\Pages\ListFilials;
+use App\Filament\Resources\Filials\RelationManagers\VendedoresRelationManager;
 use App\Filament\Resources\Filials\Schemas\FilialForm;
 use App\Filament\Resources\Filials\Tables\FilialsTable;
 use App\Models\Filial;
@@ -24,6 +25,7 @@ class FilialResource extends Resource
     protected static ?string $modelLabel = 'Filial';
     protected static ?string $pluralModelLabel = 'Filiais';
     protected static ?string $navigationLabel = 'Filiais';
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
@@ -38,7 +40,7 @@ class FilialResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            VendedoresRelationManager::class,
         ];
     }
 

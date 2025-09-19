@@ -19,6 +19,7 @@ class GrupoResource extends Resource
     protected static ?string $model = Grupo::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

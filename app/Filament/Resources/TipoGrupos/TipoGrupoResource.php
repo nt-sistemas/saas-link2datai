@@ -24,6 +24,7 @@ class TipoGrupoResource extends Resource
     protected static ?string $modelLabel = 'tipo de pedido';
     protected static ?string $pluralModelLabel = 'tipos de pedido';
     protected static ?string $navigationLabel = 'Tipos de Pedido';
+    protected static ?int $navigationSort = 1;
 
 
 

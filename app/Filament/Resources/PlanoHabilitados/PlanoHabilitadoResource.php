@@ -24,6 +24,7 @@ class PlanoHabilitadoResource extends Resource
     protected static ?string $modelLabel = 'Plano Habilitado';
     protected static ?string $pluralModelLabel = 'Planos Habilitados';
     protected static ?string $navigationLabel = 'Planos Habilitados';
+    protected static ?int $navigationSort = 9;
 
     public static function form(Schema $schema): Schema
     {

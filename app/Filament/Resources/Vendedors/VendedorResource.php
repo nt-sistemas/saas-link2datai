@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Vendedors;
 use App\Filament\Resources\Vendedors\Pages\CreateVendedor;
 use App\Filament\Resources\Vendedors\Pages\EditVendedor;
 use App\Filament\Resources\Vendedors\Pages\ListVendedors;
+use App\Filament\Resources\Vendedors\RelationManagers\MetasRelationManager;
 use App\Filament\Resources\Vendedors\Schemas\VendedorForm;
 use App\Filament\Resources\Vendedors\Tables\VendedorsTable;
 use App\Models\Vendedor;
@@ -24,6 +25,7 @@ class VendedorResource extends Resource
     protected static ?string $modelLabel = 'Vendedor';
     protected static ?string $pluralModelLabel = 'Vendedores';
     protected static ?string $navigationLabel = 'Vendedores';
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {
@@ -38,7 +40,7 @@ class VendedorResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            MetasRelationManager::class,
         ];
     }
 

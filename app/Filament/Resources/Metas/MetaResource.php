@@ -21,6 +21,10 @@ class MetaResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 
     protected static ?string $recordTitleAttribute = 'Metas';
+    protected static ?string $modelLabel = 'Meta';
+    protected static ?string $pluralModelLabel = 'Metas';
+    protected static ?string $navigationLabel = 'Metas';
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

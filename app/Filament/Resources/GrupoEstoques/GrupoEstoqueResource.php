@@ -24,6 +24,7 @@ class GrupoEstoqueResource extends Resource
     protected static ?string $modelLabel = 'Grupo de Estoque';
     protected static ?string $pluralModelLabel = 'Grupos de Estoques';
     protected static ?string $navigationLabel = 'Grupos de Estoques';
+    protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
     {

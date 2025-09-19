@@ -37,6 +37,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
     protected static ?string $modelLabel = 'Upload Datasys';
     protected static ?string $pluralModelLabel = 'Uploads Datasys';
     protected static ?string $navigationLabel = 'Upload';
+    protected static ?int $navigationSort = 20;
 
 
 

@@ -26,6 +26,7 @@ class CategoriaResource extends Resource
     protected static ?string $modelLabel = 'Categoria';
     protected static ?string $pluralModelLabel = 'Categorias';
     protected static ?string $navigationLabel = 'Categorias';
+    protected static ?int $navigationSort = 2;
 
 
 
