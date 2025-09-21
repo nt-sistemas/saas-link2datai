@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class VendedorForm
 {
@@ -16,18 +17,8 @@ class VendedorForm
             ->components([
                 TextInput::make('document')
                     ->label('CPF')
-                    ->required()
-                    ->rule(static function (Get $get, Component $component): \Closure {
-                        return function ($attribute, $value, $fail) use ($get, $component) {
-                            $vendedorExists = \App\Models\Vendedor::where('document', strtoupper($value))
-                                ->where('tenant_id', auth()->user()->tenant_id)
-                                ->exists();
+                    ->required(),
 
-                            if ($vendedorExists) {
-                                $fail('Este CPF já está cadastrado.');
-                            }
-                        };
-                    }),
                 TextInput::make('name')
                     ->label('Nome')
                     ->required(),
@@ -40,6 +31,4 @@ class VendedorForm
                     ->preload(),
             ]);
     }
-
-
 }
