@@ -78,11 +78,11 @@ class Totalizador extends Component
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
                 $query->where('tipo_grupo_id', $tipo_grupo_id);
             })
-            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
-                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
-            })
             ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
                 $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+            })
+            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
             ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                 $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
@@ -149,11 +149,11 @@ class Totalizador extends Component
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
                 $query->where('tipo_grupo_id', $tipo_grupo_id);
             })
-            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
-                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
-            })
             ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
                 $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+            })
+            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
             ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                 $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
