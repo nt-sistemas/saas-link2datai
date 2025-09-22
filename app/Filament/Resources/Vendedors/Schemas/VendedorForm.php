@@ -17,8 +17,21 @@ class VendedorForm
             ->components([
                 TextInput::make('document')
                     ->label('CPF')
-                    ->required(),
+                    ->required(fn(string $context) => $context === 'create')
+                    ->rule(static function (Get $get, string $context): \Closure {
+                        return function ($attribute, $value, $fail) use ($get, $context) {
+                            if ($context === 'create') {
+                                $vendedorExists = \App\Models\Vendedor::where('document', strtoupper($value))
+                                    ->where('tenant_id', auth()->user()->tenant_id)
+                                    ->exists();
 
+                                if ($vendedorExists) {
+                                    $fail('Este CPF já está cadastrado.');
+                                }
+                            }
+                        };
+                    })
+                    ->rules([new \App\Class\Uitl\ValidarCPF()]),
                 TextInput::make('name')
                     ->label('Nome')
                     ->required(),
