@@ -151,4 +151,52 @@ class Main extends Component
 
         return $quantidade;
     }
+
+    public function reorderCategories($data)
+    {
+
+        $categoriesIds = [];
+        foreach ($data as $row) {
+            $categoriesIds[] = $row['value'];
+        }
+
+        $categories = Categoria::query()->findMany($categoriesIds)
+            ->map(function (Categoria $category) use ($categoriesIds) {
+                $category->order = array_flip($categoriesIds)[$category->id];
+
+                return $category;
+            });
+
+        Categoria::query()->upsert(
+            $categories->toArray(),
+            ['id'],
+            ['order']
+        );
+    }
+
+    public function reorderGroups($data)
+    {
+
+        foreach ($data as $row) {
+            $groupsId = [];
+            $categoryId = $row['value'];
+            foreach ($row['items'] as $item) {
+                $groupsId[] = $item['value'];
+
+                $groups = Grupo::query()->findMany($groupsId)
+                    ->map(function (Grupo $grupo) use ($groupsId, $categoryId) {
+                        $grupo->order = array_flip($groupsId)[$grupo->id];
+                        $grupo->categoria_id = $categoryId;
+
+                        return $grupo;
+                    });
+
+                Grupo::query()->upsert(
+                    $groups->toArray(),
+                    ['id'],
+                    ['order', 'categoria_id'],
+                );
+            }
+        }
+    }
 }

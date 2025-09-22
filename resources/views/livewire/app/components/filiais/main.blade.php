@@ -42,21 +42,23 @@
                 <ul wire:sortable-group.item-group="{{ $category->id }}" class="grid grid-cols-1 lg:grid-cols-3 gap-2"
                     wire:sortable-group.options="{ animation: 100 }">
                     @foreach ($category->groups()->orderBy('order')->get() as $group)
-                        <a href="{{ route('app.categories.filial.show', [$group->id, $filial_id]) }}" class="">
-                            <li wire:sortable-group.item="{{ $group->id }}" wire:key="group-{{ $group->id }}"
-                                class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow hover:bg-secondary/50 ">
-                                <div class="flex items-center justify-between">
-                                    <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
+                        <li wire:sortable-group.item="{{ $group->id }}" wire:key="group-{{ $group->id }}"
+                            class="bg-white w-full p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow hover:bg-secondary/50 ">
+                            <div class="flex items-center justify-between py-2">
+                                <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('app.categories.filial.show', [$group->id, $filial_id]) }}"
+                                        class="btn btn-sm btn-primary text-sm">Detalhes</a>
                                     <x-icon wire:sortable-group.handle name="s-hand-raised"
                                         class="hover:text-primary text-gray-200 handle cursor-move" />
                                 </div>
-                                <div>
-                                    <livewire:app.charts.totalizador wire:key="{{ $group->id }}" :grupo_id="$group->id"
-                                        :filial_id="$filial_id" />
-                                </div>
+                            </div>
+                            <div>
+                                <livewire:app.charts.totalizador wire:key="{{ $group->id }}" :grupo_id="$group->id"
+                                    :filial_id="$filial_id" />
+                            </div>
 
-                            </li>
-                        </a>
+                        </li>
                     @endforeach
                 </ul>
             </div>
