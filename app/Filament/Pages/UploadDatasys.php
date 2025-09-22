@@ -74,7 +74,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                 IconColumn::make('status')
                     ->icon(fn(string $state): Heroicon => match ($state) {
                         'pending', 'processing' => Heroicon::Clock,
-                        'pocessed' => Heroicon::OutlinedCheckCircle,
+                        'completed' => Heroicon::OutlinedCheckCircle,
                         'failed' => Heroicon::OutlinedXCircle,
                     })
                     ->color(fn(string $state): string => match ($state) {
