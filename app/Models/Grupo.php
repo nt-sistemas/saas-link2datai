@@ -16,7 +16,6 @@ class Grupo extends Model
 
     protected $fillable = [
         'tenant_id',
-        'tipo_grupo_id',
         'name',
         'description',
         'order',
@@ -31,7 +30,7 @@ class Grupo extends Model
 
     public function tipoGrupo()
     {
-        return $this->belongsTo(TipoGrupo::class);
+        return $this->belongsToMany(TipoGrupo::class, 'tipo_grupo_grupo', 'grupo_id', 'tipo_grupo_id');
     }
 
     public function grupo_estoque()

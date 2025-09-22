@@ -68,7 +68,7 @@ class Show extends Component
     {
         $grupo = Grupo::find($this->id);
 
-        $tipo_grupo_id = $grupo->tipoGrupo()->pluck('id')->first();
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
@@ -82,7 +82,7 @@ class Show extends Component
             })
             ->whereBetween('data_pedido', [$this->data_ini, $this->data_fim])
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
-                $query->where('tipo_grupo_id', $tipo_grupo_id);
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
             ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                 $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
@@ -203,7 +203,7 @@ class Show extends Component
     {
         $grupo = Grupo::find($this->id);
 
-        $tipo_grupo_id = $grupo->tipoGrupo()->pluck('id')->first();
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
@@ -217,7 +217,7 @@ class Show extends Component
                 $query->where('vendedor_id', $vendedor_id);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
-                $query->where('tipo_grupo_id', $tipo_grupo_id);
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
             ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                 $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
@@ -341,7 +341,7 @@ class Show extends Component
     {
         $grupo = Grupo::find($this->id);
 
-        $tipo_grupo_id = $grupo->tipoGrupo()->pluck('id')->first();
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
@@ -355,7 +355,7 @@ class Show extends Component
                 $query->where('vendedor_id', $vendedor_id);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
-                $query->where('tipo_grupo_id', $tipo_grupo_id);
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
             ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                 $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);

@@ -18,7 +18,8 @@ class GruposTable
                 TextColumn::make('categoria.name'),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('description')
+                TextColumn::make('tipoGrupo.name')
+                    ->label('Tipo de Grupo')
                     ->searchable(),
                 TextColumn::make('order')
                     ->numeric()

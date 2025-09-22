@@ -24,11 +24,11 @@ class TipoGrupo extends Model
 
     public function grupos()
     {
-        return $this->hasMany(Grupo::class);
+        return $this->hasMany(Grupo::class, 'tipo_grupo_id', 'id');
     }
 
     public function vendas()
     {
-        return $this->hasMany(Venda::class,'tipo_grupo_id','id');
+        return $this->hasMany(Venda::class, 'tipo_grupo_id', 'id');
     }
 }

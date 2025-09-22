@@ -62,7 +62,7 @@ class Totalizador extends Component
     {
         $grupo = Grupo::find($this->grupo_id);
 
-        $tipo_grupo_id = $grupo->tipoGrupo()->pluck('id')->first();
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
@@ -76,7 +76,7 @@ class Totalizador extends Component
                 $query->where('vendedor_id', $this->vendedor_id);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
-                $query->where('tipo_grupo_id', $tipo_grupo_id);
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
             ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
                 $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
@@ -133,7 +133,7 @@ class Totalizador extends Component
     {
         $grupo = Grupo::find($this->grupo_id);
 
-        $tipo_grupo_id = $grupo->tipoGrupo()->pluck('id')->first();
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
         $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
@@ -147,7 +147,7 @@ class Totalizador extends Component
                 $query->where('vendedor_id', $this->vendedor_id);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
-                $query->where('tipo_grupo_id', $tipo_grupo_id);
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
             ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
                 $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);

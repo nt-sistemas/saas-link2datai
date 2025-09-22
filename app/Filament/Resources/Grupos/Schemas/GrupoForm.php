@@ -21,12 +21,14 @@ class GrupoForm
     {
         return $schema
             ->components([
-                Select::make('tipo_grupo_id')
-                    ->label('Tipo de Pedidos')
-                    ->options(TipoGrupo::query()->where('tenant_id', auth()->user()->tenant_id)->pluck('name', 'id'))
-                    ->required(),
                 TextInput::make('name')
                     ->label('Nome do Grupo')
+                    ->required(),
+                Select::make('tipo_grupo_id')
+                    ->label('Tipo de Pedidos')
+                    ->multiple()
+                    ->preload()
+                    ->relationship('tipoGrupo', 'name')
                     ->required(),
                 TextInput::make('description')
                     ->label('Descrição'),
