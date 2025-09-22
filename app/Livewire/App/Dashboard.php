@@ -146,13 +146,18 @@ class Dashboard extends Component
 
         $total = 0;
         foreach ($grupos as $grupo) {
+            $tipo_grupo_ids = $grupo->tipoGrupo->pluck('id')->toArray();
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
             $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
             $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
+
             $total += Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->when($tipo_grupo_ids, function ($query) use ($tipo_grupo_ids) {
+                    $query->whereIn('tipo_grupo_id', $tipo_grupo_ids);
+                })
+                ->whereIn('tipo_grupo_id', $tipo_grupo_ids)
                 ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                     $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
                 })
@@ -181,10 +186,13 @@ class Dashboard extends Component
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
             $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
             $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+            $tipo_grupo_ids = $grupo->tipoGrupo->pluck('id')->toArray();
 
             $quantidade += Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->when($tipo_grupo_ids, function ($query) use ($tipo_grupo_ids) {
+                    $query->whereIn('tipo_grupo_id', $tipo_grupo_ids);
+                })
                 ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                     $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
                 })

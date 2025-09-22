@@ -2,6 +2,7 @@
 
 namespace App\Livewire\App\Filiais;
 
+use App\Models\Categoria;
 use App\Models\Filial;
 use App\Models\Grupo;
 use App\Models\Venda;
@@ -105,10 +106,13 @@ class Main extends Component
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
             $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
             $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+            $tipo_grupo_ids = $grupo->tipoGrupo->pluck('id')->toArray();
 
             $total += Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->when($tipo_grupo_ids, function ($query) use ($tipo_grupo_ids) {
+                    $query->whereIn('tipo_grupo_id', $tipo_grupo_ids);
+                })
                 ->where('filial_id', $this->filial_id)
                 ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                     $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
@@ -139,10 +143,13 @@ class Main extends Component
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
             $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
             $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+            $tipo_grupo_ids = $grupo->tipoGrupo->pluck('id')->toArray();
 
             $quantidade += Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('tipo_grupo_id', $grupo->tipo_grupo_id)
+                ->when($tipo_grupo_ids, function ($query) use ($tipo_grupo_ids) {
+                    $query->whereIn('tipo_grupo_id', $tipo_grupo_ids);
+                })
                 ->where('filial_id', $this->filial_id)
                 ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                     $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
