@@ -80,7 +80,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                     ->color(fn(string $state): string => match ($state) {
                         'pending' => 'gray',
                         'processing' => 'blue',
-                        'processed' => 'success',
+                        'completed' => 'success',
                         'failed' => 'danger',
                     }),
 
