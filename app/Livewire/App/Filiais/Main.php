@@ -76,13 +76,41 @@ class Main extends Component
 
     public function getVendedores()
     {
-        return Venda::query()
+        $vendedores = $this->filial->vendedores()->pluck('id')->toArray();
+
+        $vendedoresVendas =  Venda::query()
             ->select('vendedor_id')
             ->where('tenant_id', auth()->user()->tenant_id)
+            ->whereNotIn('vendedor_id', $vendedores)
             ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
             ->where('filial_id', $this->filial_id)
             ->groupBy('vendedor_id')
             ->get();
+
+        ds($vendedoresVendas);
+
+        $resp = [];
+
+        foreach ($vendedores as $vendedor) {
+            $resp[] = [
+                'id' => $vendedor,
+                'name' => \App\Models\Vendedor::find($vendedor)->name,
+                'vinculado' => true,
+            ];
+        }
+
+        foreach ($vendedoresVendas as $vendedor) {
+            ds($vendedor);
+            $resp[] = [
+                'id' => $vendedor->vendedor_id,
+                'name' => \App\Models\Vendedor::find($vendedor->vendedor_id)->name,
+                'vinculado' => false,
+            ];
+        }
+
+        ds($resp);
+
+        return $resp;
     }
 
     #[Computed]

@@ -20,10 +20,10 @@
         </x-slot:actions>
     </x-header>
     <div class="flex flex-wrap gap-2 mb-4">
-        @foreach ($this->getVendedores() as $filial)
-            <a href="{{ route('app.vendedores', [$filial->vendedor->id, $filial->id]) }}" class="">
-                <x-badge value="{{ $filial->vendedor->name }}"
-                    class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary" />
+        @foreach ($this->getVendedores() as $vendedor)
+            <a href="{{ route('app.vendedores', [$vendedor['id'], $filial->id]) }}" class="">
+                <x-badge value="{{ $vendedor['name'] }}"
+                    class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary {{ $vendedor['vinculado'] ? '' : 'bg-secondary/50 text-primary' }}" />
             </a>
         @endforeach
     </div>

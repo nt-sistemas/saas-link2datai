@@ -30,11 +30,13 @@ class Totalizador extends Component
 
     public function mount()
     {
-        ds($this->filial_id);
+
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
             ->first();
+
+
 
         $date = $this->lastUpdated->data_pedido;
         $this->dt_inicio = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
@@ -102,6 +104,8 @@ class Totalizador extends Component
             ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
             ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
             ->sum('valor_meta');
+
+
 
 
         return [

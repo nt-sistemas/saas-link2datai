@@ -76,7 +76,12 @@ class MetasRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateDataUsing(function (array $data): array {
+                        $data['tenant_id'] = auth()->user()->tenant_id;
+
+                        return $data;
+                    }),
                 //AssociateAction::make(),
             ])
             ->recordActions([
