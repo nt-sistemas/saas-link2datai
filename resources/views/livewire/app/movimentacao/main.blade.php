@@ -18,8 +18,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-4">
         <div class="bg-white rounded shadow p-4 mb-4 md:mb-0">
             @php
+                $percentual = (($total - $mes_anterior) / ($mes_anterior == 0 ? 1 : $mes_anterior)) * 100;
 
-                $percentual = $total == 0 ? 0 : (($total - $mes_anterior) / $mes_anterior) * 100;
             @endphp
             <h3 class="text-lg font-semibold text-primary">Total de {{ $tipo_grupo->name }}</h3>
             <x-menu-separator />
@@ -54,8 +54,10 @@
         </div>
         <div class="bg-white rounded shadow p-4 mb-4 md:mb-0">
             @php
+                $percentual =
+                    (($quantidade - $quantidade_anterior) / ($quantidade_anterior == 0 ? 1 : $quantidade_anterior)) *
+                    100;
 
-                $percentual = (($quantidade - $quantidade_anterior) / $quantidade_anterior) * 100;
             @endphp
             <h3 class="text-lg font-semibold text-primary">Quantidade de {{ $tipo_grupo->name }}</h3>
             <x-menu-separator />
