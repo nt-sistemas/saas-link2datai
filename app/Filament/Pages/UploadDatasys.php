@@ -141,7 +141,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 
     public function getRecord()
     {
-        ds($this);
+
         return [];
     }
 }

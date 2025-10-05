@@ -119,13 +119,10 @@ class Dashboard extends Component
 
     public function changeView()
     {
-        //ds($this->item1);
-        //$this->item1 = !$this->item1;
+
         Redis::set(auth()->user()->id . '_dashboard_view', $this->item1 === true ? 'true' : 'false');
         $this->item1 = filter_var(Redis::get(auth()->user()->id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
         $this->mount();
-
-        //ds($this->item1);
     }
 
     #[Computed]

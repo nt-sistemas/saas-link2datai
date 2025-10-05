@@ -25,7 +25,6 @@ class ChartFilialMensal extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
         $this->lastMountUpdated = Carbon::parse($lastVenda->data_pedido)->format('m');
-
     }
 
     public function render()
@@ -40,7 +39,6 @@ class ChartFilialMensal extends Component
                     <x-loading class="loading-bars text-primary" />
                 </div>
             HTML;
-
     }
 
     #[Computed]
@@ -71,9 +69,8 @@ class ChartFilialMensal extends Component
 
 
             $data['categories'] = $vendas->pluck('data_pedido')->toArray();
-
         }
-        ds($data);
+
         return $data;
     }
 }

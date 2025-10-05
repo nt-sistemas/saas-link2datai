@@ -28,7 +28,7 @@ class Show extends Component
     public function mount()
     {
         $this->group = Grupo::find($this->id);
-        ds($this->vendedor_id);
+
 
 
         $this->lastUpdated = Venda::query()

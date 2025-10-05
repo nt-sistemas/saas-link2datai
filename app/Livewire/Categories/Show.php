@@ -3,6 +3,7 @@
 namespace App\Livewire\Categories;
 
 use App\Models\Grupo;
+use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
 use Livewire\Attributes\Computed;
@@ -23,8 +24,10 @@ class Show extends Component
     public $vendedor_id = null;
 
     public array $chartPeriodo;
-    public array $chartRankingFiliais;
-    public array $chartRankingVendedores;
+    public array $chartRankingFiliaisValores;
+    public array $chartRankingFiliaisQuantidades;
+    public array $chartRankingVendedoresValores;
+    public array $chartRankingVendedoresQuantidades;
 
     public function mount()
     {
@@ -41,8 +44,10 @@ class Show extends Component
 
 
         $this->chartPeriodo = $this->getDataChart();
-        $this->chartRankingFiliais = $this->getRankingFiliais();
-        $this->chartRankingVendedores = $this->getRankingVendedores();
+        $this->chartRankingFiliaisQuantidades = $this->getRankingFiliaisQuantidades();
+        $this->chartRankingFiliaisValores = $this->getRankingFiliaisValores();
+        $this->chartRankingVendedoresValores = $this->getRankingVendedoresValores();
+        $this->chartRankingVendedoresQuantidades = $this->getRankingVendedoresQuantidades();
     }
     public function render()
     {
@@ -204,7 +209,7 @@ class Show extends Component
     }
 
     #[Computed]
-    public function getRankingFiliais()
+    public function getRankingFiliaisValores()
     {
         $grupo = Grupo::find($this->id);
 
@@ -239,8 +244,9 @@ class Show extends Component
             ->orderBy('total', 'desc')
             ->groupBy('filial_id')
             ->with('filial')
-            ->limit(10)
             ->get();
+
+
 
         if ($vendas->isEmpty()) {
             return [
@@ -289,64 +295,202 @@ class Show extends Component
         }
 
         $chart = [];
+        $collect = collect();
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->filial->name;
-            $chart['data'][] = $venda->total;
-            $chart['quantidade'][] = $venda->quantidade;
+            $metas = Meta::query()
+                ->selectRaw('SUM(valor_meta) as meta_valor')
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('filial_id', $venda->filial_id)
+                ->where('grupo_id', $this->id)
+                ->whereBetween('mes', [Carbon::parse($this->data_ini)->month, Carbon::parse($this->data_fim)->month])
+                ->whereBetween('ano', [Carbon::parse($this->data_ini)->year, Carbon::parse($this->data_fim)->year])
+                ->get();
+
+
+
+            $collect->push([
+                'filial' => $venda->filial->name,
+                'total' => $venda->total,
+                'quantidade' => $venda->quantidade,
+                'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
+            ]);
+        }
+
+        foreach ($collect->sortByDesc('atingimento_valor')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['filial'];
+            $chart['data'][] = $item['total'];
+            $chart['quantidade'][] = $item['quantidade'];
+            $chart['atingimento_valor'][] = $item['atingimento_valor'];
         }
 
 
 
+
+
         return [
-            'valor_total' => [
-                'type' => 'bar',
+            'type' => 'bar',
 
-                'options' => [
-                    'indexAxis' => 'y',
-                    'width' => '100%',
-                    'maintainAspectRatio' => false,
-                    'responsive' => true,
-
+            'options' => [
+                'indexAxis' => 'y',
+                'width' => '100%',
+                'maintainAspectRatio' => true,
+                'responsive' => true,
+                'plugins' => [
+                    'legend' => [
+                        'display' => true,
+                        'onHover' => $this->hover(),
+                    ],
                 ],
-                'data' => [
-                    'labels' => $chart['labels'],
-                    'datasets' => [
-                        [
-                            'label' => $grupo->name . ' | Total - R$',
-                            'data' => $chart['data'],
-                            'backgroundColor' => ['#002855'],
-                        ],
 
-                    ]
-                ]
             ],
-            'quantidade_total' => [
-                'type' => 'bar',
-                'options' => [
-                    'indexAxis' => 'y',
-                    'width' => '100%',
-                    'maintainAspectRatio' => false,
-                    'responsive' => true,
 
-                ],
-                'data' => [
-                    'labels' => $chart['labels'],
-                    'datasets' => [
-                        [
-                            'label' => $grupo->name . ' | Quantidade - Unidades',
-                            'data' => $chart['quantidade'],
-                            'backgroundColor' => ['#002855'],
-                        ],
+            'data' => [
+                'labels' => $chart['labels'],
+                'datasets' => [
+                    [
+                        'label' => $grupo->name . ' | Meta Valor - %',
+                        'data' => $chart['atingimento_valor'],
+                        'backgroundColor' => ['#002855'],
+                    ],
 
-                    ]
                 ]
             ]
+
+
         ];
     }
 
     #[Computed]
-    public function getRankingVendedores()
+    public function getRankingFiliaisQuantidades()
+    {
+        $grupo = Grupo::find($this->id);
+
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
+
+        $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
+        $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
+        $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+
+        $vendas = Venda::query()
+            ->selectRaw('filial_id,Count(id) as quantidade')
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->whereBetween('data_pedido', [$this->data_ini, $this->data_fim])
+            ->when($this->filial_id, function ($query, $filial_id) {
+                $query->where('filial_id', $filial_id);
+            })
+            ->when($this->vendedor_id, function ($query, $vendedor_id) {
+                $query->where('vendedor_id', $vendedor_id);
+            })
+            ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
+            })
+            ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
+                $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
+            })
+            ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
+                $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+            })
+            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
+            })
+            ->groupBy('filial_id')
+            ->with('filial')
+            ->get();
+
+
+
+        if ($vendas->isEmpty()) {
+            return [
+                'valor_total' => [
+                    'type' => 'bar',
+
+                    'options' => [
+                        'width' => '100%',
+                        'maintainAspectRatio' => true,
+                        'responsive' => true,
+
+                    ],
+                    'data' => [
+                        'labels' => [],
+                        'datasets' => [
+                            [
+                                'label' => $grupo->name . ' | Total - R$',
+                                'data' => [],
+                                'backgroundColor' => ['#002855'],
+                            ],
+
+                        ]
+                    ]
+                ],
+
+            ];
+        }
+
+        $chart = [];
+        $collect = collect();
+
+        foreach ($vendas as $venda) {
+            ds($venda);
+            $metas = Meta::query()
+                ->selectRaw('SUM(quantidade) as meta_quantidade')
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('filial_id', $venda->filial_id)
+                ->where('grupo_id', $this->id)
+                ->whereBetween('mes', [Carbon::parse($this->data_ini)->month, Carbon::parse($this->data_fim)->month])
+                ->whereBetween('ano', [Carbon::parse($this->data_ini)->year, Carbon::parse($this->data_fim)->year])
+                ->get();
+
+
+
+            $collect->push([
+                'filial' => $venda->filial->name,
+                'total' => $venda->total,
+                'quantidade' => $venda->quantidade,
+                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
+            ]);
+        }
+
+
+
+        foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['filial'];
+            $chart['data'][] = $item['total'];
+            $chart['quantidade'][] = $item['quantidade'];
+            $chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
+        }
+
+
+
+
+
+        return [
+            'type' => 'bar',
+            'options' => [
+                'indexAxis' => 'y',
+                'width' => '100%',
+                'maintainAspectRatio' => true,
+                'responsive' => true,
+
+            ],
+
+            'data' => [
+                'labels' => $chart['labels'],
+                'datasets' => [
+                    [
+                        'label' => $grupo->name . ' | Quantidade - %',
+                        'data' => $chart['quantidade'],
+                        'backgroundColor' => ['#002855'],
+                    ],
+
+                ]
+            ]
+
+        ];
+    }
+
+    #[Computed]
+    public function getRankingVendedoresValores()
     {
         $grupo = Grupo::find($this->id);
 
@@ -378,10 +522,157 @@ class Show extends Component
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('total', 'desc')
             ->groupBy('vendedor_id')
             ->with('vendedor')
-            ->limit(10)
+            ->get();
+
+
+
+        if ($vendas->isEmpty()) {
+            return [
+                'valor_total' => [
+                    'type' => 'bar',
+
+                    'options' => [
+                        'width' => '100%',
+                        'maintainAspectRatio' => false,
+                        'responsive' => true,
+
+                    ],
+                    'data' => [
+                        'labels' => [],
+                        'datasets' => [
+                            [
+                                'label' => $grupo->name . ' | Total - R$',
+                                'data' => [],
+                                'backgroundColor' => ['#002855'],
+                            ],
+
+                        ]
+                    ]
+                ],
+                'quantidade_total' => [
+                    'type' => 'bar',
+                    'options' => [
+                        'width' => '100%',
+                        'maintainAspectRatio' => false,
+                        'responsive' => true,
+
+                    ],
+                    'data' => [
+                        'labels' => [],
+                        'datasets' => [
+                            [
+                                'label' => $grupo->name . ' | Quantidade - Unidades',
+                                'data' => [],
+                                'backgroundColor' => ['#002855'],
+                            ],
+
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        $chart = [];
+        $collect = collect();
+
+        foreach ($vendas as $venda) {
+            $metas = Meta::query()
+                ->selectRaw('SUM(valor_meta) as meta_valor,SUM(quantidade) as meta_quantidade')
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('vendedor_id', $venda->vendedor_id)
+                ->where('grupo_id', $this->id)
+                ->whereBetween('mes', [Carbon::parse($this->data_ini)->month, Carbon::parse($this->data_fim)->month])
+                ->whereBetween('ano', [Carbon::parse($this->data_ini)->year, Carbon::parse($this->data_fim)->year])
+                ->get();
+
+            $collect->push([
+                'vendedor' => $venda->vendedor->name,
+                'total' => $venda->total,
+                'quantidade' => $venda->quantidade,
+                'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
+                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
+            ]);
+        }
+
+        foreach ($collect->sortByDesc('atingimento_valor')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['vendedor'];
+            $chart['data'][] = $item['total'];
+            $chart['quantidade'][] = $item['quantidade'];
+            $chart['atingimento_valor'][] = $item['atingimento_valor'];
+            $chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
+        }
+
+
+
+        return  [
+            'type' => 'bar',
+
+            'options' => [
+                'indexAxis' => 'y',
+                'width' => '100%',
+                'maintainAspectRatio' => true,
+                'responsive' => true,
+                'animation' => [
+                    'delay' => 500,
+                    'duration' => 500
+                ],
+
+
+
+            ],
+            'data' => [
+                'labels' => $chart['labels'],
+                'datasets' => [
+                    [
+                        'label' => $grupo->name . ' | Total - R$',
+                        'data' => $chart['atingimento_valor'],
+                        'backgroundColor' => ['#002855'],
+                    ],
+
+                ]
+            ]
+
+
+
+        ];
+    }
+    #[Computed]
+    public function getRankingVendedoresQuantidades()
+    {
+        $grupo = Grupo::find($this->id);
+
+        $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
+
+        $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
+        $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
+        $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
+
+        $vendas = Venda::query()
+            ->selectRaw('vendedor_id,Count(id) as quantidade')
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->whereBetween('data_pedido', [$this->data_ini, $this->data_fim])
+            ->when($this->filial_id, function ($query, $filial_id) {
+                $query->where('filial_id', $filial_id);
+            })
+            ->when($this->vendedor_id, function ($query, $vendedor_id) {
+                $query->where('vendedor_id', $vendedor_id);
+            })
+            ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
+                $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
+            })
+            ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
+                $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
+            })
+            ->when($plano_habilitado_ids, function ($query) use ($plano_habilitado_ids) {
+                $query->whereIn('plano_habilitado_id', $plano_habilitado_ids);
+            })
+            ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
+                $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
+            })
+            ->groupBy('vendedor_id')
+            ->with('vendedor')
             ->get();
 
         if ($vendas->isEmpty()) {
@@ -431,65 +722,58 @@ class Show extends Component
         }
 
         $chart = [];
+        $collect = collect();
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->vendedor->name;
-            $chart['data'][] = $venda->total;
-            $chart['quantidade'][] = $venda->quantidade;
+            $metas = Meta::query()
+                ->selectRaw('SUM(quantidade) as meta_quantidade')
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('vendedor_id', $venda->vendedor_id)
+                ->where('grupo_id', $this->id)
+                ->whereBetween('mes', [Carbon::parse($this->data_ini)->month, Carbon::parse($this->data_fim)->month])
+                ->whereBetween('ano', [Carbon::parse($this->data_ini)->year, Carbon::parse($this->data_fim)->year])
+                ->get();
+
+            $collect->push([
+                'vendedor' => $venda->vendedor->name,
+                'total' => $venda->total,
+                'quantidade' => $venda->quantidade,
+                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
+            ]);
+        }
+
+        foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['vendedor'];
+            $chart['data'][] = $item['total'];
+            $chart['quantidade'][] = $item['quantidade'];
+            $chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
         }
 
 
 
-        return [
-            'valor_total' => [
-                'type' => 'bar',
 
-                'options' => [
-                    'indexAxis' => 'y',
-                    'width' => '100%',
-                    'maintainAspectRatio' => false,
-                    'responsive' => true,
-                    'animation' => [
-                        'delay' => 500,
-                        'duration' => 500
+
+        return  [
+            'type' => 'bar',
+            'options' => [
+                'indexAxis' => 'y',
+                'width' => '100%',
+                'maintainAspectRatio' => true,
+                'responsive' => true,
+
+            ],
+            'data' => [
+                'labels' => $chart['labels'],
+                'datasets' => [
+                    [
+                        'label' => $grupo->name . ' | Quantidade - Unidades',
+                        'data' => $chart['quantidade'],
+                        'backgroundColor' => ['#002855'],
                     ],
 
-
-
-                ],
-                'data' => [
-                    'labels' => $chart['labels'],
-                    'datasets' => [
-                        [
-                            'label' => $grupo->name . ' | Total - R$',
-                            'data' => $chart['data'],
-                            'backgroundColor' => ['#002855'],
-                        ],
-
-                    ]
-                ]
-            ],
-            'quantidade_total' => [
-                'type' => 'bar',
-                'options' => [
-                    'indexAxis' => 'y',
-                    'width' => '100%',
-                    'maintainAspectRatio' => false,
-                    'responsive' => true,
-
-                ],
-                'data' => [
-                    'labels' => $chart['labels'],
-                    'datasets' => [
-                        [
-                            'label' => $grupo->name . ' | Quantidade - Unidades',
-                            'data' => $chart['quantidade'],
-                            'backgroundColor' => ['#002855'],
-                        ],
-
-                    ]
                 ]
             ]
+
         ];
     }
 
@@ -498,5 +782,19 @@ class Show extends Component
         $this->chartPeriodo = $this->getDataChart();
         $this->chartRankingFiliais = $this->getRankingFiliais();
         $this->chartRankingVendedores = $this->getRankingVendedores();
+    }
+
+    public function hover()
+    {
+        return 'function(event, chartElement) {
+            event.native.target.style.cursor = chartElement[0] ? "pointer" : "default";
+        }';
+    }
+
+    public function atingimento_meta($meta, $venda)
+    {
+        $percentual =
+            (($venda - $meta) / ($meta == 0 ? 1 : $meta)) * 100;
+        return number_format($percentual, 2, '.', '');
     }
 }

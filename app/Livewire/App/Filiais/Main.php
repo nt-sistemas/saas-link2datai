@@ -87,7 +87,6 @@ class Main extends Component
             ->groupBy('vendedor_id')
             ->get();
 
-        ds($vendedoresVendas);
 
         $resp = [];
 
@@ -100,7 +99,7 @@ class Main extends Component
         }
 
         foreach ($vendedoresVendas as $vendedor) {
-            ds($vendedor);
+
             $resp[] = [
                 'id' => $vendedor->vendedor_id,
                 'name' => \App\Models\Vendedor::find($vendedor->vendedor_id)->name,
@@ -108,7 +107,7 @@ class Main extends Component
             ];
         }
 
-        ds($resp);
+
 
         return $resp;
     }
@@ -154,7 +153,7 @@ class Main extends Component
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->sum($grupo->campo_valor_id);
         }
-        ds($total);
+
 
         return $total;
     }

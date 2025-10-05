@@ -17,7 +17,7 @@ class Main extends Component
 {
     public $id;
 
-     public $date_ini;
+    public $date_ini;
     public $date_fim;
 
     public $data;
@@ -39,36 +39,36 @@ class Main extends Component
     {
         $this->id = $id;
         $link2B = new \App\Helper\Link2BClass(auth()->user()->tenant_id);
-        $this->tipo_grupo=TipoGrupo::find($id);
+        $this->tipo_grupo = TipoGrupo::find($id);
 
-       $this->date_ini = $link2B->getDateRange()['date_ini'];
-       $this->date_fim = $link2B->getDateRange()['date_fim'];
-       $this->mes_anterior_ini = Carbon::parse($this->date_ini)->subMonth()->startOfMonth()->format('Y-m-d');
-       $this->mes_anterior_fim = Carbon::parse($this->date_ini)->subMonth()->endOfMonth()->format('Y-m-d');
+        $this->date_ini = $link2B->getDateRange()['date_ini'];
+        $this->date_fim = $link2B->getDateRange()['date_fim'];
+        $this->mes_anterior_ini = Carbon::parse($this->date_ini)->subMonth()->startOfMonth()->format('Y-m-d');
+        $this->mes_anterior_fim = Carbon::parse($this->date_ini)->subMonth()->endOfMonth()->format('Y-m-d');
 
 
-       $this->chartData = $this->getChartData();
-       $this->chartDataFilial = $this->getChartDataFilial();
-       //$this->chartDataVendedor = $this->getChartDataVendedor();
-       //$this->chartDataProduto = $this->getChartDataProduto();
+        $this->chartData = $this->getChartData();
+        $this->chartDataFilial = $this->getChartDataFilial();
+        //$this->chartDataVendedor = $this->getChartDataVendedor();
+        //$this->chartDataProduto = $this->getChartDataProduto();
 
-       $mes_anterior = Carbon::parse($this->date_ini)->subMonth()->format('Y-m');
+        $mes_anterior = Carbon::parse($this->date_ini)->subMonth()->format('Y-m');
 
-       $this->total = Venda::where('tipo_grupo_id', $this->id)
-           ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
-           ->sum('valor_total');
+        $this->total = Venda::where('tipo_grupo_id', $this->id)
+            ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+            ->sum('valor_total');
 
         $this->mes_anterior = Venda::where('tipo_grupo_id', $this->id)
-               ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
-               ->sum('valor_total');
+            ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
+            ->sum('valor_total');
 
         $this->quantidade = Venda::where('tipo_grupo_id', $this->id)
-               ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
-               ->count();
+            ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+            ->count();
 
         $this->quantidade_anterior = Venda::where('tipo_grupo_id', $this->id)
-               ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
-               ->count();
+            ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
+            ->count();
     }
 
     public function render()
@@ -76,9 +76,9 @@ class Main extends Component
         return view('livewire.app.movimentacao.main');
     }
 
-     public function placeholder()
-        {
-            return <<<'HTML'
+    public function placeholder()
+    {
+        return <<<'HTML'
                 <div class="flex items-center justify-center h-screen">
                     <div class="p-4  animate-pulse max-w-sm w-full mx-auto">
                         <div>
@@ -88,8 +88,7 @@ class Main extends Component
                     </div>
                 </div>
             HTML;
-
-        }
+    }
 
     #[Computed]
     public function getData()
@@ -97,9 +96,9 @@ class Main extends Component
 
 
         return $this->tipo_grupo->vendas()
-        ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
-        ->orderBy('data_pedido','asc')
-        ->get();
+            ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+            ->orderBy('data_pedido', 'asc')
+            ->get();
     }
 
     #[Computed]
@@ -137,27 +136,27 @@ class Main extends Component
 
 
 
-       return $dataChart;
+        return $dataChart;
     }
 
-        #[Computed]
+    #[Computed]
     public function getChartDataFilial()
     {
         $data = Venda::query()
-        ->selectRaw('filial_id, sum(valor_total) as total')
-        ->where('tipo_grupo_id', $this->id)
-        ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
-        ->groupBy('filial_id')
-        ->get();
+            ->selectRaw('filial_id, sum(valor_total) as total')
+            ->where('tipo_grupo_id', $this->id)
+            ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
+            ->groupBy('filial_id')
+            ->get();
 
         $data_anterior = Venda::query()
-        ->selectRaw('filial_id, sum(valor_total) as total')
-        ->where('tipo_grupo_id', $this->id)
-        ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
-        ->groupBy('filial_id')
-        ->get();
+            ->selectRaw('filial_id, sum(valor_total) as total')
+            ->where('tipo_grupo_id', $this->id)
+            ->whereBetween('data_pedido', [$this->mes_anterior_ini, $this->mes_anterior_fim])
+            ->groupBy('filial_id')
+            ->get();
 
-        ds($data_anterior);
+
 
         $dataChart = [];
         foreach ($data as $item) {

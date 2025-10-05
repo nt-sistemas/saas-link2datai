@@ -118,7 +118,7 @@ class Main extends Component
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->sum($grupo->campo_valor_id);
         }
-        ds($total);
+
 
         return $total;
     }

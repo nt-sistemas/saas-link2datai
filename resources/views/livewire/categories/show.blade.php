@@ -51,24 +51,24 @@
         <div class="flex  gap-4 w-full lg:flex-row flex-col">
             <div class="p-4 rounded-lg shadow-md bg-white w-full">
                 <span class="font-semibold">Ranking Filiais Valor Total - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliais.valor_total" />
+                <x-chart wire:model="chartRankingFiliaisValores" />
             </div>
 
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
                 <span class="font-semibold">Ranking Filiais Quantidade de Vendas - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliais.quantidade_total" />
+                <x-chart wire:model="chartRankingFiliaisQuantidades" />
             </div>
         </div>
     @endif
     <div class="flex  gap-4 w-full lg:flex-row flex-col">
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Valor Total - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedores.valor_total" class="h-96 w-full" />
+            <x-chart wire:model="chartRankingVendedoresValores" class="h-96 w-full" />
         </div>
 
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
             <span class="font-semibold">Ranking Vendedores Quantidade de Vendas - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedores.quantidade_total" class="h-96 w-full" />
+            <x-chart wire:model="chartRankingVendedoresQuantidades" class="h-96 w-full" />
         </div>
     </div>
 </div>
