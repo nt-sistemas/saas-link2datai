@@ -35,6 +35,18 @@ class CreateMeta extends CreateRecord
         foreach ($vendedores_id as $vendedor_id) {
             $vendedor = Vendedor::find($vendedor_id);
 
+            $meta_existente = Meta::where('tenant_id', auth()->user()->tenant_id)
+                ->where('grupo_id', $data['grupo_id'])
+                ->where('filial_id', $vendedor->filial_id)
+                ->where('vendedor_id', $vendedor->id)
+                ->where('ano', $data['ano'])
+                ->where('mes', $data['mes'])
+                ->first();
+
+            if ($meta_existente) {
+                continue; // Pula para o próximo vendedor se a meta já existir
+            }
+
             Meta::create([
                 'tenant_id' => auth()->user()->tenant_id,
                 'grupo_id' => $data['grupo_id'],
