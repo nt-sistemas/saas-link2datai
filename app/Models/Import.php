@@ -15,6 +15,8 @@ class Import extends Model
         'data',
         'is_processed',
         'message_error',
+        'message',
+
     ];
 
     protected $casts = [

@@ -20,6 +20,7 @@ class ImportResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
     protected static ?int $navigationSort = 10;
+    protected static bool $canCreateAnother = false;
 
     public static function form(Schema $schema): Schema
     {

@@ -21,11 +21,14 @@ class ImportsTable
                     ->searchable(),
                 TextColumn::make('data_pedido')
                     ->label('Data do Pedido')
+                    ->date('d/m/Y')
                     ->searchable(),
                 IconColumn::make('is_processed')
                     ->label('Processado')
-
                     ->boolean(),
+                TextColumn::make('message')
+                    ->label('Mensagem')
+                    ->searchable(),
                 TextColumn::make('message_error')
                     ->label('Mensagem de Erro')
                     ->searchable(),

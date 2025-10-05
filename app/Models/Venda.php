@@ -30,6 +30,7 @@ class Venda extends Model
         'descricao_comercial',
         'categoria',
         'fabricante',
+        'import_id',
     ];
 
     protected $casts = [

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Imports\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
@@ -15,14 +16,32 @@ class ImportForm
     {
         return $schema
             ->components([
+                TextInput::make('message')
+                    ->label('Mensagem')
+                    ->disabled(),
+                TextInput::make('data_pedido')
+                    ->label('Data do Pedido'),
+
+                Toggle::make('is_processed')
+                    ->label('Processado'),
+                TextInput::make('message_error')
+                    ->label('Mensagem de Erro'),
+                TextInput::make('numero_pedido')
+                    ->label('Número do Pedido'),
                 KeyValue::make('data')
-                    ->disabled()
+                    ->label('Dados Importados')
                     ->columnSpanFull(),
-                TextInput::make('data_pedido'),
-                Toggle::make('is_processed'),
-                TextInput::make('message_error'),
-                TextInput::make('numero_pedido'),
-                TextInput::make('tenant_id'),
             ]);
+    }
+
+    protected static function getActions(): array
+    {
+        return [
+            Action::make('processar_importacao')
+                ->label('Processar Importação')
+                ->action('processImport')
+                ->color('success')
+                ->icon('heroicon-o-arrow-up-tray'),
+        ];
     }
 }

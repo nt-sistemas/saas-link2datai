@@ -44,30 +44,57 @@ class ProcessImportJob implements ShouldQueue
 
         try {
             $import = \App\Models\Import::find($this->importId);
-            $venda = new Venda();
-            $venda->tenant_id = $this->data['tenant_id'];
-            $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $this->tenantId);
-            $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $this->tenantId);
-            $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $this->tenantId);
-            $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $this->tenantId);
-            $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $this->tenantId);
-            $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $this->tenantId);
-            $venda->base_faturamento_compra = $this->data['base_faturamento_compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
-            $venda->valor_franquia = $this->data['valor_franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
-            $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
-            $venda->data_pedido = date_format(date_create($this->data['data_pedido'] ?? $this->data['Data_0x0020_pedido']), 'Y-m-d');
-            $venda->numero_pedido = $this->data['numero_pv'] ?? $this->data['Numero_x0020_Pedido'];
-            $venda->descricao_comercial = $this->data['descricao_comercial'] ?? null;
-            $venda->categoria = $this->data['categoria'] ?? null;
-            $venda->fabricante = $this->data['fabricante'] ?? null;
-            $venda->save();
+            $vendaExists = Venda::where('import_id', $import->id)
+                ->where('tenant_id', $this->tenantId)
+                ->first();
 
+            if ($vendaExists) {
+                Log::info("Import id: {$this->importId} Reprocessando venda existente.");
+                $venda = $vendaExists;
+                $venda->tenant_id = $this->tenantId;
+                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $this->tenantId);
+                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $this->tenantId);
+                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $this->tenantId);
+                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $this->tenantId);
+                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $this->tenantId);
+                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $this->tenantId);
+                $venda->base_faturamento_compra = $this->data['base_faturamento_compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
+                $venda->valor_franquia = $this->data['valor_franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
+                $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
+                $venda->data_pedido = date_format(date_create($this->data['data_pedido'] ?? $this->data['Data_0x0020_pedido']), 'Y-m-d');
+                $venda->numero_pedido = $this->data['numero_pv'] ?? $this->data['Numero_x0020_Pedido'];
+                $venda->descricao_comercial = $this->data['descricao_comercial'] ?? null;
+                $venda->categoria = $this->data['categoria'] ?? null;
+                $venda->fabricante = $this->data['fabricante'] ?? null;
+                $venda->import_id = $import->id;
+                $venda->save();
+            } else {
+                Log::info("Import id: {$this->importId} processando nova venda.");
+                $venda = new Venda();
+                $venda->tenant_id = $this->tenantId;
+                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $this->tenantId);
+                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $this->tenantId);
+                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $this->tenantId);
+                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $this->tenantId);
+                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $this->tenantId);
+                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $this->tenantId);
+                $venda->base_faturamento_compra = $this->data['base_faturamento_compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
+                $venda->valor_franquia = $this->data['valor_franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
+                $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
+                $venda->data_pedido = date_format(date_create($this->data['data_pedido'] ?? $this->data['Data_0x0020_pedido']), 'Y-m-d');
+                $venda->numero_pedido = $this->data['numero_pv'] ?? $this->data['Numero_x0020_Pedido'];
+                $venda->descricao_comercial = $this->data['descricao_comercial'] ?? null;
+                $venda->categoria = $this->data['categoria'] ?? null;
+                $venda->fabricante = $this->data['fabricante'] ?? null;
+                $venda->import_id = $import->id;
+                $venda->save();
 
-            Log::info("Import id: {$this->importId} processado com sucesso.");
-            $import = \App\Models\Import::find($this->importId);
-            $import->is_processed = true;
-            $import->message_error = null;
-            $import->save();
+                Log::info("Import id: {$this->importId} processado com sucesso.");
+                $import = \App\Models\Import::find($this->importId);
+                $import->is_processed = true;
+                $import->message_error = null;
+                $import->save();
+            }
         } catch (\Exception $e) {
             if ($this->ties > 0) {
                 $this->ties--;

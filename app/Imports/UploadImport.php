@@ -39,10 +39,10 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
         ini_set('memory_limit', '-1');
 
         $data_pedido = Date::excelToDateTimeObject($row['data_pedido']);
-        $row['tenant_id'] = $this->tenant_id;
+
 
         $row['data_pedido'] = Carbon::parse($data_pedido)->format('Y-m-d');
-        ds($row);
+
 
         $mongoImport = [
             'tenant_id' => $this->tenant_id,
