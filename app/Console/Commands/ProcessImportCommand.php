@@ -36,6 +36,19 @@ class ProcessImportCommand extends Command
 
 
             $imports = $tenant->imports()->where('is_processed', false)->limit(1000)->get();
+
+            if ($imports->isEmpty()) {
+                $this->info("Nenhum import pendente para o tenant: {$tenant->name}");
+                $uploads = $tenant->uploads()->where('status', 'processing')->first();
+                if ($uploads) {
+                    $uploads->status = 'completed';
+                    $uploads->save();
+                    $this->info("Upload ID {$uploads->id} marcado como completed.");
+                }
+                continue;
+            }
+
+
             foreach ($imports as $import) {
                 ProcessImportJob::dispatch($import, $tenant->id);
                 $this->info("Import ID {$import->id} despachado para processamento.");

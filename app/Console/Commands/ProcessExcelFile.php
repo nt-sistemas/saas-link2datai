@@ -29,9 +29,11 @@ class ProcessExcelFile extends Command
     {
         $tenants = \App\Models\Tenant::all();
         foreach ($tenants as $tenant) {
-            $upload = $tenant->uploads()->where('status', 'pending')->first();
+            $upload = $tenant->uploads()->where('status', 'pending')->orderBy('created_at')->first();
             if (!$upload) {
                 $this->info("No pending uploads for tenant: " . $tenant->name);
+                $upload = $tenant->uploads()->where('status', 'processing')->first();
+
                 continue;
             }
 
@@ -41,10 +43,14 @@ class ProcessExcelFile extends Command
                 continue;
             }
             $this->info("Processing file for tenant: " . $tenant->name);
+            if ($upload->status === 'processing') {
+                $this->info("Upload ID {$upload->id} is already being processed. Skipping.");
+                continue;
+            }
+            $upload->status = 'processing';
             Excel::import(new UploadImport($tenant->id, $upload->id), $filePath);
             $upload->rows = new UploadImport($tenant->id, $upload->id)->getRowCount();
             $upload->save();
-
         }
     }
 }
