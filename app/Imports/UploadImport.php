@@ -27,6 +27,7 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
     public $upload_id;
     private $rows = 0;
     public $filename;
+    public $failOnTimeout = false;
 
     public function __construct($tenant_id, $upload_id = null, $filename = null)
     {
