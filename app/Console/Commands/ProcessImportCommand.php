@@ -41,9 +41,19 @@ class ProcessImportCommand extends Command
                 $this->info("Nenhum import pendente para o tenant: {$tenant->name}");
                 $uploads = $tenant->uploads()->where('status', 'processing')->first();
                 if ($uploads) {
-                    $uploads->status = 'completed';
-                    $uploads->save();
-                    $this->info("Upload ID {$uploads->id} marcado como completed.");
+                    $importPending = $tenant->imports()->where('filename', $uploads->filename)->get();
+
+                    if ($importPending->isNotEmpty()) {
+                        if ($importPending->where('is_processed', false)->isNotEmpty()) {
+                            $this->info("Import(s) pendente(s) encontrado(s) para o upload: {$uploads->id}");
+                            continue;
+                        } else {
+                            $this->info("Todos os imports do upload: {$uploads->id} já foram processados.");
+                            $uploads->status = 'completed';
+                            $uploads->save();
+                            $this->info("Upload ID {$uploads->id} marcado como completed.");
+                        }
+                    }
                 }
                 continue;
             }
