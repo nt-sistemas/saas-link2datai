@@ -48,9 +48,9 @@ class ProcessExcelFile extends Command
                 continue;
             }
             $upload->status = 'processing';
-            Excel::import(new UploadImport($tenant->id, $upload->id), $filePath);
-            $upload->rows = new UploadImport($tenant->id, $upload->id)->getRowCount();
-            $upload->save();
+            Excel::import(new UploadImport($tenant->id, $upload->id, $upload->filename), $filePath);
+            //$upload->rows = new UploadImport($tenant->id, $upload->id)->getRowCount();
+            //$upload->save();
         }
     }
 }

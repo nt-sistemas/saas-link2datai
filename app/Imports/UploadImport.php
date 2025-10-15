@@ -26,11 +26,13 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
     public $tenant_id;
     public $upload_id;
     private $rows = 0;
+    public $filename;
 
-    public function __construct($tenant_id, $upload_id = null)
+    public function __construct($tenant_id, $upload_id = null, $filename = null)
     {
         $this->tenant_id = $tenant_id;
         $this->upload_id = $upload_id;
+        $this->filename = $filename;
     }
 
     public function model(array $row)
@@ -46,6 +48,7 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
 
         $mongoImport = [
             'tenant_id' => $this->tenant_id,
+            'filename' => $this->filename,
             'data_pedido' => Carbon::parse($data_pedido)->format('Y-m-d'),
             'numero_pedido' => $row['numero_pv'],
             'data' => $row,
