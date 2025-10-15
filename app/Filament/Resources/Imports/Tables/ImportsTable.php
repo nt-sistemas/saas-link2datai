@@ -23,6 +23,9 @@ class ImportsTable
                     ->label('Data do Pedido')
                     ->date('d/m/Y')
                     ->searchable(),
+                TextColumn::make('filename')
+                    ->label('Nome do Arquivo')
+                    ->searchable(),
                 IconColumn::make('is_processed')
                     ->label('Processado')
                     ->boolean(),
