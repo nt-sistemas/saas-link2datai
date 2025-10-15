@@ -45,19 +45,19 @@ class ProcessImportJob implements ShouldQueue
         try {
             $import = \App\Models\Import::find($this->importId);
             $vendaExists = Venda::where('import_id', $import->id)
-                ->where('tenant_id', $this->tenantId)
+                ->where('tenant_id', $import->tenant_id)
                 ->first();
 
             if ($vendaExists) {
                 Log::info("Import id: {$this->importId} Reprocessando venda existente.");
                 $venda = $vendaExists;
-                $venda->tenant_id = $this->tenantId;
-                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $this->tenantId);
-                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $this->tenantId);
-                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $this->tenantId);
-                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $this->tenantId);
-                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $this->tenantId);
-                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $this->tenantId);
+                $venda->tenant_id = $import->tenant_id;
+                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $import->tenant_id);
+                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $import->tenant_id);
+                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $import->tenant_id);
+                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $import->tenant_id);
+                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $import->tenant_id);
+                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $import->tenant_id);
                 $venda->base_faturamento_compra = $this->data['base_faturamento_compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
                 $venda->valor_franquia = $this->data['valor_franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
                 $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
@@ -71,13 +71,13 @@ class ProcessImportJob implements ShouldQueue
             } else {
                 Log::info("Import id: {$this->importId} processando nova venda.");
                 $venda = new Venda();
-                $venda->tenant_id = $this->tenantId;
-                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $this->tenantId);
-                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $this->tenantId);
-                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $this->tenantId);
-                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $this->tenantId);
-                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $this->tenantId);
-                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $this->tenantId);
+                $venda->tenant_id = $import->tenant_id;
+                $venda->filial_id = $this->processarFilial($this->data['filial'] ?? $this->data['Filial'], $import->tenant_id);
+                $venda->vendedor_id = $this->processarVendedor($this->data['nome_vendedor'], $this->data['cpf_vendedor'], $import->tenant_id);
+                $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['tipo_pedido'], $import->tenant_id);
+                $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['grupo_estoque'], $import->tenant_id);
+                $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['plano_habilitacao'], $import->tenant_id);
+                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['modalidade_venda'], $import->tenant_id);
                 $venda->base_faturamento_compra = $this->data['base_faturamento_compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
                 $venda->valor_franquia = $this->data['valor_franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
                 $venda->valor_total = $this->data['valor_caixa'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
