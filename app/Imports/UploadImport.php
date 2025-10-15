@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents, WithChunkReading, ShouldQueue
 {
-    public $timeout = 600;
+    public $timeout = 1800;
 
     public $tenant_id;
     public $upload_id;
@@ -82,9 +82,6 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
             AfterImport::class => function (AfterImport $event) {
                 //\Artisan::call('datasys:etl');
                 Log::info('Import completed successfully.');
-
-
-                \Artisan::call('etl:process-import');
             },
             ImportFailed::class => function (ImportFailed $event) {
                 Log::error('Import failed', ['error' => $event->getException()->getMessage()]);
@@ -99,6 +96,6 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 500;
     }
 }
