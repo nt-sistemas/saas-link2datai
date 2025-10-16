@@ -97,6 +97,6 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
 
     public function chunkSize(): int
     {
-        return 500;
+        return 10000;
     }
 }
