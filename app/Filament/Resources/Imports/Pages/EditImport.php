@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Imports\Pages;
 
 use App\Filament\Resources\Imports\ImportResource;
 use App\Jobs\ProcessImportJob;
+use App\Models\Import;
 use App\Models\Venda;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -50,6 +51,23 @@ class EditImport extends EditRecord
 
                 ->color('success')
                 ->icon('heroicon-o-arrow-up-tray'),
+            Action::make('processar_importacao')
+                ->action(function () {
+
+                    ProcessImportJob::dispatch($this->record, auth()->user()->tenant_id);
+
+                    Notification::make()
+                        ->title('Registro Reprocessado com Sucesso!')
+                        ->success()
+                        ->send();
+
+
+                    $this->redirect($this->getResource()::getUrl('index'));
+                })
+                ->label('Processar Manualmente')
+                ->color('primary')
+                ->icon('heroicon-o-arrow-path'),
+
         ];
     }
 }
