@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -10,7 +11,7 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('etl:process-import')
-    ->everyTwoMinutes()
+    ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground()
     ->onOneServer()
