@@ -80,7 +80,7 @@ class ProcessImportJob implements ShouldQueue
                 $venda->tipo_grupo_id = $this->processarTipoPedido($this->data['Tipo Pedido'], $import->tenant_id);
                 $venda->grupo_estoque_id = $this->processarGrupoEstoque($this->data['Grupo Estoque'], $import->tenant_id);
                 $venda->plano_habilitado_id = $this->processarPlanoHabilitado($this->data['Plano Habilitação'] ?? null, $import->tenant_id);
-                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['Modalidade Venda'], $import->tenant_id);
+                $venda->modalidade_venda_id = $this->processarModalidadeVenda($this->data['Modalidade Venda'] ?? null, $import->tenant_id);
                 $venda->base_faturamento_compra = $this->data['Base Faturamento Compra'] ?? $this->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00;
                 $venda->valor_franquia = $this->data['Valor Franquia'] ?? $this->data['ValorFranquia'] ?? 0.00;
                 $venda->valor_total = $this->data['Valor Total'] ?? $this->data['Valor_x0020_Caixa'] ?? 0.00;
