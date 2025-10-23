@@ -23,9 +23,12 @@ class Dashboard extends Component
 
     public $selectedTab = 'chart-tab';
 
+    public $filiais_multi_ids = [];
+
 
     public function mount()
     {
+        Redis::del(auth()->user()->id . '_show-details');
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
@@ -128,10 +131,13 @@ class Dashboard extends Component
     #[Computed]
     public function getFiliais()
     {
-        return \App\Models\Filial::query()
+        $data = \App\Models\Filial::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('code', 'asc')
             ->get();
+
+
+        return $data;
     }
 
     #[Computed]
@@ -204,5 +210,31 @@ class Dashboard extends Component
         }
 
         return $quantidade;
+    }
+
+    public function updateDashboard()
+    {
+
+
+        $this->dispatch('update-command', [
+            'filial_id' => $this->filiais_multi_ids,
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ]);
+    }
+
+    public function clickDetalhes($grupo_id)
+    {
+        $data = [
+            'filial_multi_ids' => $this->filiais_multi_ids ?? null,
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ];
+
+        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
+
+        $this->dispatch('show-details',);
+
+        return redirect()->route('app.categories.show', $grupo_id);
     }
 }

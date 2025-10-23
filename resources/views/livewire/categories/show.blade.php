@@ -35,11 +35,33 @@
 
         </x-slot:actions>
     </x-header>
+
+
+
+    @if (!empty($filiais_multi_ids))
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <span class="font-semibold text-xl text-primary text-center w-full">Filiais Selecionadas</span>
+            <x-menu-separator class="my-2" />
+            <div class="flex flex-wrap gap-2 mt-2 justify-center">
+                @foreach ($filiais_multi_ids as $filial_id)
+                    <x-badge value="{{ \App\Models\Filial::find($filial_id)->name }}"
+                        class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary" />
+                @endforeach
+
+            </div>
+
+        </div>
+    @endif
+
     {{-- The best athlete wants his opponent at his best. --}}
     <div class="flex flex-col gap-4 justify-between">
         <div class="p-4 rounded-lg shadow-md bg-white">
             <span class="font-semibold">Total de Vendas - {{ $group->name }}</span>
             <x-chart wire:model="chartPeriodo.valor_total" class="h-48 w-full" />
+        </div>
+        <div class="p-4 rounded-lg shadow-md bg-white">
+            <span class="font-semibold">Total de Vendas larapex - {{ $group->name }}</span>
+            <livewire:app.charts.chart-bar :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
         </div>
 
         <div class="p-4 bg-white rounded-lg shadow-md">

@@ -2,14 +2,16 @@
 
 namespace App\Livewire\Categories;
 
+use App\Livewire\App\Charts\ChartBar;
 use App\Models\Grupo;
 use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
-
+use Livewire\Attributes\On;
 
 #[Lazy]
 class Show extends Component
@@ -22,6 +24,7 @@ class Show extends Component
 
     public $filial_id = null;
     public $vendedor_id = null;
+    public $filiais_multi_ids = [];
 
     public array $chartPeriodo;
     public array $chartRankingFiliaisValores;
@@ -29,8 +32,23 @@ class Show extends Component
     public array $chartRankingVendedoresValores;
     public array $chartRankingVendedoresQuantidades;
 
+
+
     public function mount()
     {
+        $this->data_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
+        $this->data_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $data = Redis::get(auth()->user()->id . '_show_details');
+        $this->filiais_multi_ids = is_null($data) ? [] : array_filter(json_decode($data, true)['filial_multi_ids']);
+        $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
+        $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
+
+
+
+
+
+
         $this->group = Grupo::find($this->id);
 
 
@@ -39,12 +57,11 @@ class Show extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
 
-        $this->data_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
-        $this->data_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
+
 
 
         $this->chartPeriodo = $this->getDataChart();
-        $this->chartRankingFiliaisQuantidades = $this->getRankingFiliaisQuantidades();
+        //$this->chartRankingFiliaisQuantidades = $this->getRankingFiliaisQuantidades();
         $this->chartRankingFiliaisValores = $this->getRankingFiliaisValores();
         $this->chartRankingVendedoresValores = $this->getRankingVendedoresValores();
         $this->chartRankingVendedoresQuantidades = $this->getRankingVendedoresQuantidades();
@@ -431,7 +448,7 @@ class Show extends Component
         $collect = collect();
 
         foreach ($vendas as $venda) {
-            ds($venda);
+
             $metas = Meta::query()
                 ->selectRaw('SUM(quantidade) as meta_quantidade')
                 ->where('tenant_id', auth()->user()->tenant_id)
@@ -780,8 +797,15 @@ class Show extends Component
     public function filter()
     {
         $this->chartPeriodo = $this->getDataChart();
-        $this->chartRankingFiliais = $this->getRankingFiliais();
-        $this->chartRankingVendedores = $this->getRankingVendedores();
+        $this->dispatch('show-filter-chart-bar', [
+            'dt_inicio' => $this->data_ini,
+            'dt_fim' => $this->data_fim,
+            'filiais_multi_ids' => $this->filiais_multi_ids,
+        ]);
+        //$this->dispatch('refresh:chart', ['min' => rand(1, 5), 'max' => rand(1, 30)])->to(ChartBar::class);
+
+        //$this->chartRankingFiliais = $this->getRankingFiliais();
+        //$this->chartRankingVendedores = $this->getRankingVendedores();
     }
 
     public function hover()

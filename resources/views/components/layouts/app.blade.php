@@ -52,6 +52,8 @@
 
     {{--  TOAST area --}}
     <x-toast />
+    @larapexScripts
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     @livewireScripts
 </body>

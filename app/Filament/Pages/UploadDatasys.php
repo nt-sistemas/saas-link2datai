@@ -20,13 +20,19 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
-
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
+use Livewire\WithFileUploads;
 
 class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable;
+    use WithFileUploads;
+
+    public $file;
 
     public array|null $attachment = null;
     public string|null $filename = null;
@@ -71,6 +77,9 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                 TextColumn::make('filename')
                     ->label('Nome do Arquivo')
                     ->limit(50),
+                TextColumn::make('rows')
+                    ->label('Quantidade de Linhas'),
+
                 IconColumn::make('status')
                     ->icon(fn(string $state): Heroicon => match ($state) {
                         'pending', 'processing' => Heroicon::Clock,
@@ -108,8 +117,59 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 
     public function save(): void
     {
-        $data = $this->form->getState();
 
+        $data = $this->file;
+
+        $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
+            ->where('filename', $data->getClientOriginalName())
+            ->first();
+
+        if ($uploadExists) {
+            Notification::make()
+                ->danger()
+                ->title('Arquivo Já foi enviado anteriormente')
+                ->send();
+            return;
+        } //$this->form->getState();
+
+        $client = new Client();
+        $clientBaseUrl = env('LINK2B_ETL_API_URL', 'http://localhost:3000');
+
+        $options = [
+            'multipart' => [
+                [
+                    'name' => 'file',
+                    'contents' => Utils::tryFopen($data->getRealPath(), 'r'),
+                    'filename' => $data->getClientOriginalName(),
+                    'headers'  => [
+                        'Content-Type' => $data->getMimeType()
+                    ]
+                ],
+                [
+                    'name' => 'tenant_id',
+                    'contents' => auth()->user()->tenant_id
+                ],
+                [
+                    'name' => 'user_id',
+                    'contents' => auth()->user()->id
+                ]
+            ]
+        ];
+
+        $request = new Request('POST', $clientBaseUrl . '/uploads');
+        $client->sendAsync($request, $options)->wait();
+
+        Notification::make()
+            ->success()
+            ->title('Arquivo enviado com sucesso')
+            ->send();
+
+        $this->redirect('/admin/upload-datasys');
+
+        //ds($res->getStatusCode());
+        //ds($res->getBody()->getContents());
+
+        /*
         $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data['filename'])
             ->first();
@@ -136,12 +196,26 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
             ->title('Arquivo enviado com sucesso')
             ->send();
 
-        $this->redirect('/admin/upload-datasys');
+        $this->redirect('/admin/upload-datasys');*/
     }
 
     public function getRecord()
     {
 
         return [];
+    }
+
+    public function placeholder()
+    {
+        return <<<'HTML'
+                <div class="flex items-center justify-center h-screen">
+                    <div class="p-4  animate-pulse max-w-sm w-full mx-auto">
+                        <div>
+                            <img src="{{asset('/assets/loading.svg')}}" alt="loading"/>
+
+                        </div>
+                    </div>
+                </div>
+            HTML;
     }
 }

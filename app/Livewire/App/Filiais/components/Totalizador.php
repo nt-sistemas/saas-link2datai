@@ -27,7 +27,6 @@ class Totalizador extends Component
     public $cardQuant = [];
     public $filial_id = null;
     public $vendedor_id = null;
-    public $filiais_multi_ids = [];
 
 
     public function mount()
@@ -79,10 +78,7 @@ class Totalizador extends Component
         $vendas = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filial_id, function ($query) {
-                $query->where('filial_id', $this->filial_id);
-            })
-            ->when($this->filiais_multi_ids, function ($query) {
-                $query->whereIn('filial_id', $this->filiais_multi_ids);
+                $query->whereIn('filial_id', $this->filial_id);
             })
             ->when($this->vendedor_id, function ($query) {
                 $query->where('vendedor_id', $this->vendedor_id);
@@ -106,10 +102,7 @@ class Totalizador extends Component
             ->where('tenant_id', auth()->user()->tenant_id)
             ->where('grupo_id', $grupo->id)
             ->when($this->filial_id, function ($query) {
-                $query->where('filial_id', $this->filial_id);
-            })
-            ->when($this->filiais_multi_ids, function ($query) {
-                $query->whereIn('filial_id', $this->filiais_multi_ids);
+                $query->whereIn('filial_id', $this->filial_id);
             })
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
                 $query->where('vendedor_id', $vendedor_id);
@@ -158,11 +151,8 @@ class Totalizador extends Component
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
         $vendas = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
-            ->when($this->filial_id, function ($query) {
+            ->when($this->filial_id, function ($query, $filial_id) {
                 $query->where('filial_id', $this->filial_id);
-            })
-            ->when($this->filiais_multi_ids, function ($query) {
-                $query->whereIn('filial_id', $this->filiais_multi_ids);
             })
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
                 $query->where('vendedor_id', $this->vendedor_id);
@@ -224,7 +214,7 @@ class Totalizador extends Component
     #[On('update-command')]
     public function updateChart($data)
     {
-        $this->filiais_multi_ids = $data['filial_id'] ?? null;
+        $this->filial_id = $data['filial_id'] ?? null;
         $this->dt_inicio = $data['dt_inicio'] ?? $this->dt_inicio;
         $this->dt_fim = $data['dt_fim'] ?? $this->dt_fim;
         $this->vendedor_id = $data['vendedor_id'] ?? null;

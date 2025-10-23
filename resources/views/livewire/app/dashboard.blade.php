@@ -31,6 +31,23 @@
             </a>
         @endforeach
     </div>
+    <div class="flex flex-col lg:flex-row gap-2 mb-4 justify-between bg-white p-4 rounded-lg shadow-md">
+        <div class="flex flex-col lg:flex-row gap-2 flex-1 flex-wrap">
+            <div>
+                <x-datetime label="Data Inicial" wire:model="date_ini" />
+            </div>
+            <div>
+                <x-datetime label="Data Final" wire:model="date_fim" />
+            </div>
+            <div class="w-full lg:w-1/3">
+                <x-choices label="Selecione a Filial" wire:model="filiais_multi_ids" :options="$this->getFiliais()"
+                    option-label="name" clearable />
+            </div>
+        </div>
+        <div class="w-full lg:w-auto flex items-end">
+            <x-button label="Atualizar" class="btn-primary mt-6" wire:click="updateDashboard" />
+        </div>
+    </div>
 
 
 
@@ -54,14 +71,15 @@
                             <div class="flex items-center justify-between p-2 ">
                                 <h2 class="text-primary text-lg font-bold">{{ $group->name }}</h2>
                                 <div class="flex gap-2">
-                                    <a href="{{ route('app.categories.show', $group->id) }}"
-                                        class="btn btn-sm btn-primary text-sm">Detalhes</a>
+                                    <x-button class="btn btn-sm btn-primary text-sm" label="Detalhes"
+                                        wire:click="clickDetalhes('{{ $group->id }}')" />
                                     <x-icon wire:sortable-group.handle name="s-hand-raised"
                                         class="hover:text-primary text-gray-200 handle cursor-move" />
                                 </div>
                             </div>
                             <div>
-                                <livewire:app.charts.totalizador wire:key="{{ $group->id }}" :grupo_id="$group->id" />
+                                <livewire:app.charts.totalizador wire:key="{{ $group->id }}" :grupo_id="$group->id"
+                                    :dt_ini="$date_ini" :dt_fim="$date_fim" />
                             </div>
 
                         </li>
