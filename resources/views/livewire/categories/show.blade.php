@@ -75,25 +75,34 @@
                     :filiais_multi_ids="$filiais_multi_ids" />
             </div>
             <div class="p-4 rounded-lg shadow-md bg-white w-full">
-                <span class="font-semibold">Ranking Filiais Valor Total - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliaisValores" />
+                <span class="font-semibold">Ranking Filiais Quantidade Total - {{ $group->name }}</span>
+                <livewire:app.charts.chart-ranking-filiais-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
+                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
             </div>
 
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
-                <span class="font-semibold">Ranking Filiais Quantidade de Vendas - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliaisQuantidades" />
+                <span class="font-semibold">Ranking Filiais Atingimento Metas - {{ $group->name }}</span>
+                <livewire:app.charts.chart-ranking-filiais-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
             </div>
         </div>
     @endif
-    <div class="flex  gap-4 w-full lg:flex-row flex-col">
+    <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Valor Total - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedoresValores" class="h-96 w-full" />
+            <livewire:app.charts.chart-ranking-vendedores-valor :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
+                :filiais_multi_ids="$filiais_multi_ids" />
+        </div>
+        <div class="p-4 rounded-lg shadow-md bg-white w-full">
+            <span class="font-semibold">Ranking Vendedores Quantidade Total - {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
+                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
         </div>
 
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
-            <span class="font-semibold">Ranking Vendedores Quantidade de Vendas - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedoresQuantidades" class="h-96 w-full" />
+            <span class="font-semibold">Ranking Vendedores Atingimento Metas - {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
         </div>
     </div>
 </div>

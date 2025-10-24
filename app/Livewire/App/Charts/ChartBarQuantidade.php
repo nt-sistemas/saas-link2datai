@@ -90,7 +90,7 @@ class ChartBarQuantidade extends LivewireChartComponent
 
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = Carbon::parse($venda->data)->toDateString();
+            $chart['labels'][] = Carbon::parse($venda->data)->format('d/m/Y');
             $chart['data'][] = $venda->total ?? 0;
             $chart['quantidade'][] = $venda->quantidade ?? 0;
         }
@@ -154,6 +154,7 @@ class ChartBarQuantidade extends LivewireChartComponent
                 'title' => [
                     'text' => 'Período: ' . Carbon::parse($this->dt_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($this->dt_fim)->format('d/m/Y'),
                 ],
+                'categories' => $this->getDataChart()['labels'] ?? [],
             ]);
     }
 }

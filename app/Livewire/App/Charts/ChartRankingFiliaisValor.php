@@ -153,11 +153,16 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             ->setPlotOptions([
                 'bar' => [
                     'borderRadius' => 4,
-                    'columnWidth' => '70%',
+                    'padding' => 10,
+                    'columnWidth' => '90%',
+                    'barHeight' => '90%',
                     'horizontal' => true,
                     'dataLabels' => [
+                        //'position' => 'top',
                         'enabled' => true,
                         //'orientation' => 'vertical',
+                        'hideOverflowingLabels' => true,
+
 
                     ],
 

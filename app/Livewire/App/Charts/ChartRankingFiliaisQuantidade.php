@@ -136,12 +136,12 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
                 [
                     'name' => "Valores",
                     //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['data'] ?? []
+                    'data' => $this->getDataChart()['quantidade'] ?? []
                 ],
                 [
                     'name' => "Metas",
                     //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['metas'] ?? []
+                    'data' => $this->getDataChart()['metas_quantidade'] ?? []
                 ],
 
             ])
@@ -153,7 +153,8 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
             ->setPlotOptions([
                 'bar' => [
                     'borderRadius' => 4,
-                    'columnWidth' => '70%',
+                    'columnWidth' => '90%',
+                    'barHeight' => '90%',
                     'horizontal' => true,
                     'dataLabels' => [
                         'enabled' => true,
@@ -176,10 +177,6 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
             // /**
             //  * using String
             //  */
-            ->jsCallback('dataLabels.formatter', "function (val, opts) {
-                
-                return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            }")
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {
                 console.log(val);
                 console.log(index);

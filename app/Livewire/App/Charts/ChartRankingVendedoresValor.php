@@ -12,7 +12,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartBarValor extends LivewireChartComponent
+class ChartRankingVendedoresValor extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -62,15 +62,15 @@ class ChartBarValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, DATE(data_pedido) as data,Count(id) as quantidade')
+            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, vendedor_id,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
+            ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
             })
             ->when($this->vendedores_multi_ids, function ($query) {
                 $query->whereIn('vendedor_id', $this->vendedores_multi_ids);
             })
-            ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
                 $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
             })
@@ -83,31 +83,65 @@ class ChartBarValor extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('data', 'asc')
-            ->groupBy('data')
+            ->orderBy('total', 'desc')
+            ->groupBy('vendedor_id')
+            ->with('vendedor')
             ->get();
 
         $chart = [];
 
 
+        $collect = collect();
+
         foreach ($vendas as $venda) {
-            $chart['labels'][] = Carbon::parse($venda->data)->format('d/m/Y');
-            $chart['data'][] = $venda->total ?? 0;
-            $chart['quantidade'][] = $venda->quantidade ?? 0;
+            $metas = Meta::query()
+                ->selectRaw('SUM(valor_meta) as meta_valor, SUM(quantidade) as meta_quantidade')
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('vendedor_id', $venda->vendedor_id)
+                ->where('grupo_id', $grupo->id)
+                ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
+                ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
+                ->get();
+
+
+
+            $collect->push([
+                'vendedor' => $venda->vendedor->name,
+                'total' => $venda->total,
+                'quantidade' => $venda->quantidade,
+                'meta_valor' => $metas->first()->meta_valor ?? 0,
+                'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
+                //'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
+            ]);
         }
+
+        foreach ($collect->sortByDesc('total')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['vendedor'];
+            $chart['data'][] = $item['total'];
+            $chart['quantidade'][] = $item['quantidade'];
+            $chart['metas_valor'][] = $item['meta_valor'];
+            $chart['metas_quantidade'][] = $item['meta_quantidade'];
+            //$chart['atingimento_valor'][] = $item['atingimento_valor'];
+        }
+
 
         return $chart;
     }
     public function build()
     {
 
-        $this->chart = (new WireableAreaChart($this->chart_id)) // ->id($this->chart_id)
+        $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
             //->addBar('Valor', $this->dataSource())
             ->setDataset([
                 [
-                    'name' => "Valores Diários",
-                    'labels' => $this->getDataChart()['labels'] ?? [],
+                    'name' => "Valores",
+                    //'labels' => $this->getDataChart()['labels'] ?? [],
                     'data' => $this->getDataChart()['data'] ?? []
+                ],
+                [
+                    'name' => "Metas",
+                    //'labels' => $this->getDataChart()['labels'] ?? [],
+                    'data' => $this->getDataChart()['metas_valor'] ?? []
                 ],
 
             ])
@@ -116,14 +150,30 @@ class ChartBarValor extends LivewireChartComponent
                 'opacity' => 1.0
             ])
             ->colors(['#002855', '#feb019'])
+            ->setChart([
+                'type' => 'bar',
+                'height' => 500,
+                'toolbar' => [
+                    'show' => true,
+                    'tools' => [
+                        'download' => true,
+                    ],
+                ],
+            ])
             ->setPlotOptions([
                 'bar' => [
-                    'borderRadius' => 8,
-                    'padding' => 4,
-                    'columnWidth' => '70%',
+                    'height' => 300,
+                    'borderRadius' => 4,
+                    'padding' => 10,
+                    'columnWidth' => '90%',
+                    'barHeight' => '90%',
+                    'horizontal' => true,
                     'dataLabels' => [
+                        //'position' => 'top',
                         'enabled' => true,
-                        'orientation' => 'vertical',
+                        //'orientation' => 'vertical',
+                        'hideOverflowingLabels' => true,
+
 
                     ],
 
