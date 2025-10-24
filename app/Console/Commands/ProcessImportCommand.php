@@ -35,37 +35,18 @@ class ProcessImportCommand extends Command
 
         foreach ($tenants as $tenant) {
 
-            $this->info("Processando imports para o tenant: {$tenant->name}");
+            $this->info("Processando imports para o cliente: {$tenant->name}");
 
+            $imports = $this->getImports($tenant->id);
 
-            $imports = $tenant->imports()->where('is_processed', false)->limit(1000)->get();
-
-            if ($imports->isEmpty()) {
-                $this->info("Nenhum import pendente para o tenant: {$tenant->name}");
-                $uploads = $tenant->uploads()->where('status', 'processing')->first();
-                if ($uploads) {
-                    $importPending = $tenant->imports()->where('filename', $uploads->filename)->get();
-
-                    if ($importPending->isNotEmpty()) {
-                        if ($importPending->where('is_processed', false)->isNotEmpty()) {
-                            $this->info("Import(s) pendente(s) encontrado(s) para o upload: {$uploads->id}");
-                            continue;
-                        } else {
-                            $this->info("Todos os imports do upload: {$uploads->id} já foram processados.");
-                            $uploads->status = 'completed';
-                            $uploads->save();
-                            $this->info("Upload ID {$uploads->id} marcado como completed.");
-                        }
-                    }
-                }
+            if ($imports == 0) {
+                $this->info("Nenhum import pendente para o cliente: {$tenant->name}");
                 continue;
             }
 
+            $this->info("Encontrados {$imports} imports pendentes para o cliente: {$tenant->name}");
 
-            foreach ($imports as $import) {
-                ProcessImportJob::dispatch($import, $tenant->id);
-                $this->info("Import ID {$import->id} despachado para processamento.");
-            }
+            ProcessImportJob::dispatch($tenant->id);
         }
 
 
@@ -75,5 +56,16 @@ class ProcessImportCommand extends Command
         //$import->save();
 
 
+    }
+
+    public function getImports($tenantId)
+    {
+        $imports = Import::where('tenant_id', $tenantId)
+            ->where('is_processed', false)
+            ->count();
+
+        //$this->info("Encontrados {$imports} imports pendentes para o tenant ID: {$tenantId}");
+
+        return $imports;
     }
 }
