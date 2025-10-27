@@ -30,6 +30,8 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           script: "cd /var/www/saas-link2datai &&
+                export NVM_DIR=/home/${{ secrets.USERNAME }}/.nvm &&
+                source /home/${{ secrets.USERNAME }}/.nvm/nvm.sh &&
                 git pull origin main &&
                 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
                 php artisan migrate --force &&
