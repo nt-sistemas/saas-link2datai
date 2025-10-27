@@ -29,12 +29,11 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /var/www/saas-link2datai
-                git pull origin main # or your main branch name
-                composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-                php artisan migrate --force
-                php artisan cache:clear
-                php artisan config:clear
-                php artisan route:clear
-                php artisan view:clear
-                # Add any other post-deployment commands like php artisan up if you used down"
+          script: "cd /var/www/saas-link2datai &&
+                git pull origin main &&
+                composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+                php artisan migrate --force &&
+                php artisan cache:clear &&
+                php artisan config:clear &&
+                php artisan route:clear &&
+                php artisan view:clear "
