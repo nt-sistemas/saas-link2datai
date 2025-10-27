@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy on Contabo
 on:
   push:
     branches:
@@ -9,9 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4' # or your desired PHP version
+          extensions: mbstring, pdo_pgsql, zip, gd, dom, fileinfo,redis,mongo
 
-      - name: Run a one-line script
+      - name: Install Composer dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist
+
+      - name: Build assets (if applicable)
+        run: npm install && npm run build # or yarn install && yarn build
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -19,4 +29,12 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /var/www/saas-link2datai && chmod +x .scripts/deploy.sh && ./.scripts/deploy.sh"
+          script: "cd /var/www/saas-link2datai
+                git pull origin main # or your main branch name
+                composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+                php artisan migrate --force
+                php artisan cache:clear
+                php artisan config:clear
+                php artisan route:clear
+                php artisan view:clear
+                # Add any other post-deployment commands like php artisan up if you used down"
