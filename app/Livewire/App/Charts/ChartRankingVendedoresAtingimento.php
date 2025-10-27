@@ -140,11 +140,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
                     //'labels' => $this->getDataChart()['labels'] ?? [],
                     'data' => $this->getDataChart()['atingimento_valor'] ?? []
                 ],
-                [
-                    'name' => "Quantidade",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['atingimento_quantidade'] ?? []
-                ],
+                
 
             ])
             ->showDataLabels(true)

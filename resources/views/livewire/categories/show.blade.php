@@ -31,7 +31,7 @@
             </div>
         </x-slot:middle>
         <x-slot:actions>
-            <x-button icon="o-funnel" class="btn-primary" wire:click="filter" />
+            <x-button icon="o-funnel" class="btn-primary" wire:click="filter"  spinner="filter" label="Filtrar" />
 
         </x-slot:actions>
     </x-header>
@@ -80,9 +80,16 @@
                     :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
             </div>
 
+        </div>
+        <div class="flex  gap-4 w-full lg:flex-row flex-col">
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
-                <span class="font-semibold">Ranking Filiais Atingimento Metas - {{ $group->name }}</span>
+                <span class="font-semibold">Ranking Filiais Atingimento Metas - R$ {{ $group->name }}</span>
                 <livewire:app.charts.chart-ranking-filiais-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
+            </div>
+            <div class="p-4 bg-white rounded-lg shadow-md w-full">
+                <span class="font-semibold">Ranking Filiais Atingimento Metas - UND. {{ $group->name }}</span>
+                <livewire:app.charts.chart-ranking-filiais-atingimento-unidade :grupo_id="$group->id" :dt_inicio="$data_ini"
                     :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
             </div>
         </div>
@@ -98,10 +105,16 @@
             <livewire:app.charts.chart-ranking-vendedores-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
                 :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
         </div>
-
+    </div>
+    <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
-            <span class="font-semibold">Ranking Vendedores Atingimento Metas - {{ $group->name }}</span>
+            <span class="font-semibold">Ranking Vendedores Atingimento Metas - R$ {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Ranking Vendedores Atingimento Metas - UNID. {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-atingimento-unidade :grupo_id="$group->id" :dt_inicio="$data_ini"
                 :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
         </div>
     </div>

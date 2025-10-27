@@ -12,7 +12,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartRankingFiliaisAtingimento extends LivewireChartComponent
+class ChartRankingVendedoresAtingimentoUnidade extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -48,7 +48,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
         $this->build();
     }
 
-    #[Computed]
+    #[Computed()]
     public function getDataChart()
     {
         $grupo = Grupo::find($this->grupo_id);
@@ -62,7 +62,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, filial_id,Count(id) as quantidade')
+            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, vendedor_id,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
@@ -84,8 +84,8 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
             ->orderBy('total', 'desc')
-            ->groupBy('filial_id')
-            ->with('filial')
+            ->groupBy('vendedor_id')
+            ->with('vendedor')
             ->get();
 
         $chart = [];
@@ -97,7 +97,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             $metas = Meta::query()
                 ->selectRaw('SUM(valor_meta) as meta_valor, SUM(quantidade) as meta_quantidade')
                 ->where('tenant_id', auth()->user()->tenant_id)
-                ->where('filial_id', $venda->filial_id)
+                ->where('vendedor_id', $venda->vendedor_id)
                 ->where('grupo_id', $grupo->id)
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
@@ -106,7 +106,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
 
 
             $collect->push([
-                'filial' => $venda->filial->name,
+                'vendedor' => $venda->vendedor->name,
                 'total' => $venda->total,
                 'quantidade' => $venda->quantidade,
                 'meta_valor' => $metas->first()->meta_valor ?? 0,
@@ -116,8 +116,8 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             ]);
         }
 
-        foreach ($collect->sortByDesc('atingimento_valor')->slice(0, 10) as $item) {
-            $chart['labels'][] = $item['filial'];
+        foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
+            $chart['labels'][] = $item['vendedor'];
             $chart['data'][] = $item['total'];
             $chart['quantidade'][] = $item['quantidade'];
             $chart['metas_valor'][] = $item['meta_valor'];
@@ -136,17 +136,27 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             //->addBar('Valor', $this->dataSource())
             ->setDataset([
                 [
-                    'name' => "Valores",
+                    'name' => "Quantidade",
                     //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['atingimento_valor'] ?? []
-                ],                
+                    'data' => $this->getDataChart()['atingimento_quantidade'] ?? []
+                ],
 
             ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0
             ])
-            ->colors(['#002855', '#feb019'])
+            ->colors(['#feb019'])
+            ->setChart([
+                'type' => 'bar',
+                'height' => 500,
+                'toolbar' => [
+                    'show' => true,
+                    'tools' => [
+                        'download' => true,
+                    ],
+                ],
+            ])
             ->setPlotOptions([
                 'bar' => [
                     'borderRadius' => 4,

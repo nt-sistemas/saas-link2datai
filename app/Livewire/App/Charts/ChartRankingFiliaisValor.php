@@ -152,6 +152,7 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             ->colors(['#002855', '#feb019'])
             ->setPlotOptions([
                 'bar' => [
+                    'height' => '450px',
                     'borderRadius' => 4,
                     'padding' => 10,
                     'columnWidth' => '90%',

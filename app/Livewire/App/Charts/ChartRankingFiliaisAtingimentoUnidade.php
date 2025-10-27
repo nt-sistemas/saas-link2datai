@@ -12,7 +12,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartRankingFiliaisAtingimento extends LivewireChartComponent
+class ChartRankingFiliaisAtingimentoUnidade extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -116,7 +116,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             ]);
         }
 
-        foreach ($collect->sortByDesc('atingimento_valor')->slice(0, 10) as $item) {
+        foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
             $chart['labels'][] = $item['filial'];
             $chart['data'][] = $item['total'];
             $chart['quantidade'][] = $item['quantidade'];
@@ -136,17 +136,17 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             //->addBar('Valor', $this->dataSource())
             ->setDataset([
                 [
-                    'name' => "Valores",
+                    'name' => "Quantidade",
                     //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['atingimento_valor'] ?? []
-                ],                
+                    'data' => $this->getDataChart()['atingimento_quantidade'] ?? []
+                ],
 
             ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0
             ])
-            ->colors(['#002855', '#feb019'])
+            ->colors(['#feb019'])
             ->setPlotOptions([
                 'bar' => [
                     'borderRadius' => 4,

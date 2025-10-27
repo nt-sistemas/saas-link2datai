@@ -796,7 +796,7 @@ class Show extends Component
 
     public function filter()
     {
-        $this->chartPeriodo = $this->getDataChart();
+        //$this->chartPeriodo = $this->getDataChart();
         $this->dispatch('show-filter-chart-bar', [
             'dt_inicio' => $this->data_ini,
             'dt_fim' => $this->data_fim,
