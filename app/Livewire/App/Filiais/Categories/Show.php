@@ -429,7 +429,6 @@ class Show extends Component
         $collect = collect();
 
         foreach ($vendas as $venda) {
-            ds($venda);
             $metas = Meta::query()
                 ->selectRaw('SUM(quantidade) as meta_quantidade')
                 ->where('tenant_id', auth()->user()->tenant_id)

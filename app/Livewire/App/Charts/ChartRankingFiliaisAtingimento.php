@@ -40,7 +40,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
     #[On('show-filter-chart-bar')]
     public function refreshChart($params)
     {
-        ds($params);
+        
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
         $this->filiais_multi_ids = $params['filiais_multi_ids'];

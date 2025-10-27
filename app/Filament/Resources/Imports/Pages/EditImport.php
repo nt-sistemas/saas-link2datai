@@ -24,9 +24,7 @@ class EditImport extends EditRecord
             //DeleteAction::make(),
             Action::make('reprocessar_importacao')
                 ->action(function () {
-                    ds($this->record->id);
-
-                    $venda = Venda::where('import_id', $this->record->id)->first();
+                                      $venda = Venda::where('import_id', $this->record->id)->first();
                     if ($venda) {
                         $this->record->message = 'Reprocessado manualmente pelo usuário ' . auth()->user()->name . ' em ' . Carbon::now()->format('d/m/Y H:i:s');
                         $this->record->save();

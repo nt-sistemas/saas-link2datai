@@ -166,9 +166,6 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 
         $this->redirect('/admin/upload-datasys');
 
-        //ds($res->getStatusCode());
-        //ds($res->getBody()->getContents());
-
         /*
         $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data['filename'])

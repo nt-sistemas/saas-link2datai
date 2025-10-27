@@ -65,9 +65,6 @@ class Totalizador extends Component
     #[Computed]
     public function getDataValor(): array
     {
-        ds($this->filial_id);
-        ds($this->dt_inicio);
-        ds($this->dt_fim);
         $grupo = Grupo::find($this->grupo_id);
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();

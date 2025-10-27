@@ -77,7 +77,7 @@ class ProcessImportJob implements ShouldQueue
                 $venda->categoria = $import->data['Categoria'] ?? null;
                 $venda->fabricante = $import->data['Fabricante'] ?? null;
                 $venda->import_id = $import->id;
-                ds($venda);
+               
                 $venda->save();
             } else {
                 Log::info("Import id: {$import->id} processando nova venda.");
@@ -98,7 +98,7 @@ class ProcessImportJob implements ShouldQueue
                 $venda->categoria = $import->data['Categoria'] ?? null;
                 $venda->fabricante = $import->data['Fabricante'] ?? null;
                 $venda->import_id = $import->id;
-                ds($venda);
+              
                 $venda->save();
 
                 Log::info("Import id: {$import->id} processado com sucesso.");
