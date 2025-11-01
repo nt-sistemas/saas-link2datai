@@ -51,9 +51,7 @@ class ProcessImportJob implements ShouldQueue
             // The format of the input string
             $format = 'm/d/Y H:i:s';
             $carbonDate = Carbon::createFromFormat($format, $dateString);
-            if ($row->data['Valor Caixa']) {
-                ds($row->data['Valor Caixa']);
-            }
+
 
             $dataInsert = [
                 'tenant_id' => $row->tenant_id,
