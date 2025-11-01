@@ -54,13 +54,13 @@ class ProcessImportCommand extends Command
                 $batchJobs[] = $dataImport;
 
                 if (count($batchJobs) >= 100) {
-                    ProcessImportJob::dispatch($tenant->id, $batchJobs);
+                    ProcessImportJob::dispatch($tenant->id, $batchJobs)->onQueue('imports_process');
                     $batchJobs = [];
                 }
             }
 
             if (!empty($batchJobs)) {
-                ProcessImportJob::dispatch($tenant->id, $batchJobs);
+                ProcessImportJob::dispatch($tenant->id, $batchJobs)->onQueue('imports_process');
             }
         }
 

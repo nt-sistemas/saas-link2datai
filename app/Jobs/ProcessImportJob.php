@@ -32,6 +32,7 @@ class ProcessImportJob implements ShouldQueue
      */
     public function __construct($tenantId, $data)
     {
+        $this->queue = 'imports_process';
         $this->tenantId = $tenantId;
         $this->data = $data;
     }
