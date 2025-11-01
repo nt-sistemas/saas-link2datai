@@ -28,4 +28,18 @@ class Import extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public static function atualizarStatusImportacaoPorRegistro(Venda $venda)
+    {
+
+        $import = self::where('tenant_id', $venda->tenant_id)
+            ->where('id', $venda->import_id)
+            ->first();
+
+        if ($import) {
+            $import->is_processed = true;
+            $import->message = 'Registro processado com sucesso.';
+            $import->save();
+        }
+    }
 }

@@ -3,7 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Enum\UploadStatusEnum;
+use App\Jobs\ExcelMongoDBJob;
+use App\Models\Import;
 use App\Models\Upload;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
@@ -23,6 +26,9 @@ use Filament\Schemas\Contracts\HasSchemas;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
+use Illuminate\Support\Facades\Date;
+use League\Csv\Reader;
+use League\Csv\Statement;
 use Livewire\WithFileUploads;
 
 class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
@@ -118,9 +124,9 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
     public function save(): void
     {
 
-        $data = $this->file;
+        $data = $this->form->getState();
 
-        $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
+        /*$uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data->getClientOriginalName())
             ->first();
 
@@ -164,36 +170,79 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
             ->title('Arquivo enviado com sucesso')
             ->send();
 
-        $this->redirect('/admin/upload-datasys');
+        $this->redirect('/admin/upload-datasys');*/
 
-        /*
+
         $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data['filename'])
             ->first();
 
-        if ($uploadExists) {
+        /*if ($uploadExists) {
             Notification::make()
                 ->danger()
                 ->title('Arquivo Já foi enviado anteriormente')
                 ->send();
             return;
-        }
+        }*/
+
+        $filePath = storage_path('app/public/' . $data['attachment']);
+
+        $csv = Reader::createFromPath($filePath, 'r');
+        $csv->setDelimiter(';');
+        $csv->setHeaderOffset(0);
+
+        $records = (new Statement())->process($csv);
+
+        $batchInserts = [];
 
         Upload::create([
             'tenant_id' => auth()->user()->tenant_id,
             'user_id' => auth()->user()->id,
             'filename' => $data['filename'],
             'attachment' => $data['attachment'],
-            'rows' => 0,
+            'rows' => count($records),
             'status' => 'pending',
         ]);
+
+        foreach ($records as $record) {
+            $batchInserts[] = [
+                'tenant_id' => auth()->user()->tenant_id,
+                'filename' => $data['filename'],
+                'data_pedido' => new Date($record['Data Pedido'], 'Y-m-d'),
+                'numero_pedido' => $record['Número PV'],
+                'data' => json_encode($record, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'is_processed' => false,
+            ];
+
+            if (count($batchInserts) >= 1000) {
+                ExcelMongoDBJob::dispatch($batchInserts);
+
+                $batchInserts = [];
+            }
+        }
+
+        if (!empty($batchInserts)) {
+            ExcelMongoDBJob::dispatch($batchInserts);
+
+
+            $batchInserts = [];
+        }
+
+
+
+
+
+
+
+
+
 
         Notification::make()
             ->success()
             ->title('Arquivo enviado com sucesso')
             ->send();
 
-        $this->redirect('/admin/upload-datasys');*/
+        $this->redirect('/admin/upload-datasys');
     }
 
     public function getRecord()

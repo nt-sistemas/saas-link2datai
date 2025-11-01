@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy(\App\Observers\VendaObserver::class)]
 class Venda extends Model
 {
     /** @use HasFactory<\Database\Factories\VendaFactory> */
@@ -13,6 +15,8 @@ class Venda extends Model
     use HasUuids;
 
     protected $table = 'vendas';
+    protected $primaryKey = 'id';
+    protected $uniqueBy = ['import_id', 'tenant_id'];
     protected $fillable = [
         'tenant_id',
         'data_pedido',

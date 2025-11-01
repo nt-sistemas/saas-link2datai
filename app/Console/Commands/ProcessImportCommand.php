@@ -46,7 +46,22 @@ class ProcessImportCommand extends Command
 
             $this->info("Encontrados {$imports} imports pendentes para o cliente: {$tenant->name}");
 
-            ProcessImportJob::dispatch($tenant->id);
+            $dataImports = $tenant->imports()->where('is_processed', false)->limit(500)->get();
+
+            $batchJobs = [];
+
+            foreach ($dataImports as $dataImport) {
+                $batchJobs[] = $dataImport;
+
+                if (count($batchJobs) >= 100) {
+                    ProcessImportJob::dispatch($tenant->id, $batchJobs);
+                    $batchJobs = [];
+                }
+            }
+
+            if (!empty($batchJobs)) {
+                ProcessImportJob::dispatch($tenant->id, $batchJobs);
+            }
         }
 
 

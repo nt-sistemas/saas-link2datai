@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -19,7 +20,7 @@ use Maatwebsite\Excel\Events\ImportFailed;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents, WithChunkReading, ShouldQueue
+class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, WithEvents, WithBatchInserts
 {
     public $timeout = 1800;
 
@@ -95,8 +96,9 @@ class UploadImport implements ToModel, WithHeadingRow, WithColumnFormatting, Wit
         return $this->rows;
     }
 
-    public function chunkSize(): int
+    public function batchSize(): int
     {
-        return 10000;
+        // Number of models to insert per batch when using WithBatchInserts
+        return 1000;
     }
 }

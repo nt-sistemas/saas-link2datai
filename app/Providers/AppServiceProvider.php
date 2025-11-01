@@ -18,6 +18,7 @@ use App\Models\Filial;
 use App\Models\ModalidadeVenda;
 use App\Models\PlanoHabilitado;
 use App\Models\User;
+use App\Models\Venda;
 use App\Models\Vendedor;
 use App\Observers\UserObserver;
 use Illuminate\Support\ServiceProvider;
@@ -38,16 +39,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        User::observe(UserObserver::class);
+        //User::observe(UserObserver::class);
         //Filial::observe(FilialObserver::class);
-        Vendedor::observe(VendedorObserver::class);
+        //Vendedor::observe(VendedorObserver::class);
         //Categoria::observe(CategoriaObserver::class);
-        Grupo::observe(GrupoObserver::class);
+        //Grupo::observe(GrupoObserver::class);
         //TipoGrupo::observe(TipoGrupoObserver::class);
         //ModalidadeVenda::observe(ModalidadeVendaObserver::class);
         //PlanoHabilitado::observe(PlanoHabilitadoObserver::class);
         //GrupoEstoque::observe(GrupoEstoqueObserver::class);
-
-
+        //Venda::observe(\App\Observers\VendaObserver::class);
     }
 }
