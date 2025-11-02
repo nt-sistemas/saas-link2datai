@@ -65,7 +65,7 @@ class ProcessImportJob implements ShouldQueue
                 'base_faturamento_compra' => $this->convertToFloat($row->data['Base Faturamento Compra'] ?? $row->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00),
                 'valor_franquia' => $this->convertToFloat($row->data['Valor Franquia'] ?? $row->data['ValorFranquia'] ?? 0.00),
                 'valor_total' => $this->convertToFloat($row->data['Valor Caixa'] ?? $row->data['Valor_x0020_Caixa'] ?? 0.00),
-                'data_pedido' => $carbonDate->format('Y-m-d H:i:s'), //Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
+                'data_pedido' => $carbonDate->format('Y-m-d'), //Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
                 'numero_pedido' => $row->data['Número PV'] ?? $row->data['Numero_x0020_Pedido'],
                 'descricao_comercial' => $row->data['Descricao Comercial'] ?? null,
                 'categoria' => $row->data['Categoria'] ?? null,
