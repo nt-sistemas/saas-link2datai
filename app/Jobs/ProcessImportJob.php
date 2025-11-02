@@ -50,7 +50,7 @@ class ProcessImportJob implements ShouldQueue
             $dateString = $row->data['Data Pedido'];
 
             // The format of the input string
-            $format = 'm/d/Y H:i:s';
+            $format = 'd/m/Y H:i:s';
             $carbonDate = Carbon::createFromFormat($format, $dateString);
 
 
