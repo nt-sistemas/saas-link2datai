@@ -34,6 +34,7 @@ jobs:
             source ~/.nvm/nvm.sh &&
             git pull origin main &&
             composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+            php artisan queue:restart &&
             php artisan migrate --force &&
             php artisan cache:clear &&
             php artisan config:clear &&
