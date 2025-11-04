@@ -44,6 +44,7 @@ class ProcessImportJob implements ShouldQueue
     {
         $batchInsert = [];
 
+
         foreach ($this->data as $row) {
 
             // The input string

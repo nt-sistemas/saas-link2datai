@@ -126,53 +126,6 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
 
         $data = $this->form->getState();
 
-        /*$uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
-            ->where('filename', $data->getClientOriginalName())
-            ->first();
-
-        if ($uploadExists) {
-            Notification::make()
-                ->danger()
-                ->title('Arquivo Já foi enviado anteriormente')
-                ->send();
-            return;
-        } //$this->form->getState();
-
-        $client = new Client();
-        $clientBaseUrl = env('LINK2B_ETL_API_URL', 'http://localhost:3000');
-
-        $options = [
-            'multipart' => [
-                [
-                    'name' => 'file',
-                    'contents' => Utils::tryFopen($data->getRealPath(), 'r'),
-                    'filename' => $data->getClientOriginalName(),
-                    'headers'  => [
-                        'Content-Type' => $data->getMimeType()
-                    ]
-                ],
-                [
-                    'name' => 'tenant_id',
-                    'contents' => auth()->user()->tenant_id
-                ],
-                [
-                    'name' => 'user_id',
-                    'contents' => auth()->user()->id
-                ]
-            ]
-        ];
-
-        $request = new Request('POST', $clientBaseUrl . '/uploads');
-        $client->sendAsync($request, $options)->wait();
-
-        Notification::make()
-            ->success()
-            ->title('Arquivo enviado com sucesso')
-            ->send();
-
-        $this->redirect('/admin/upload-datasys');*/
-
-
         $uploadExists = Upload::where('tenant_id', auth()->user()->tenant_id)
             ->where('filename', $data['filename'])
             ->first();
@@ -186,6 +139,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
         }*/
 
         $filePath = storage_path('app/public/' . $data['attachment']);
+
 
         $csv = Reader::createFromPath($filePath, 'r');
         $csv->setDelimiter(';');
@@ -208,7 +162,7 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
             $batchInserts[] = [
                 'tenant_id' => auth()->user()->tenant_id,
                 'filename' => $data['filename'],
-                'data_pedido' => new Date($record['Data Pedido'], 'Y-m-d'),
+                'data_pedido' => $this->validateDate($record['Data Pedido']),
                 'numero_pedido' => $record['Número PV'],
                 'data' => json_encode($record, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                 'is_processed' => false,
@@ -263,5 +217,18 @@ class UploadDatasys extends Page implements HasActions, HasSchemas, HasTable
                     </div>
                 </div>
             HTML;
+    }
+
+    public function validateDate($dateString)
+    {
+        $format = 'd/m/Y H:i';
+        $date = Carbon::createFromFormat($format, $dateString);
+
+        if (!$date) {
+            throw new \Exception("Data inválida: $dateString");
+            return null;
+        }
+
+        return $date->format('Y-m-d H:i');
     }
 }
