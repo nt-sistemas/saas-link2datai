@@ -28,7 +28,7 @@ class Dashboard extends Component
 
     public function mount()
     {
-        Redis::del(auth()->user()->id . '_show-details');
+        Redis::del(auth()->user()->id . '_show_details');
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
@@ -214,6 +214,11 @@ class Dashboard extends Component
 
     public function updateDashboard()
     {
+        $data = [
+            'filial_multi_ids' => $this->filiais_multi_ids ?? null,
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ];
 
 
         $this->dispatch('update-command', [
@@ -221,6 +226,8 @@ class Dashboard extends Component
             'dt_inicio' => $this->date_ini,
             'dt_fim' => $this->date_fim,
         ]);
+
+        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
     }
 
     public function clickDetalhes($grupo_id)
@@ -233,7 +240,7 @@ class Dashboard extends Component
 
         Redis::set(auth()->user()->id . '_show_details', json_encode($data));
 
-        $this->dispatch('show-details',);
+        $this->dispatch('show-details');
 
         return redirect()->route('app.categories.show', $grupo_id);
     }

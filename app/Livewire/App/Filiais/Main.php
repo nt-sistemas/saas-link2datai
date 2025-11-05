@@ -36,12 +36,21 @@ class Main extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
 
+        if ($this->lastUpdated) {
+            $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
+        } else {
+            $this->daysOfData = 0;
+        }
 
-        $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
 
-        $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
-        $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
+        $this->date_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
+        $this->date_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
         $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->filial_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+
+        $data = Redis::get(auth()->user()->id . '_show_details');
+
+        $this->date_ini = is_null($data) ? $this->date_ini : json_decode($data, true)['dt_inicio'];
+        $this->date_fim = is_null($data) ? $this->date_fim : json_decode($data, true)['dt_fim'];
     }
 
     public function render()
@@ -73,12 +82,11 @@ class Main extends Component
     }
 
 
-
     public function getVendedores()
     {
         $vendedores = $this->filial->vendedores()->pluck('id')->toArray();
 
-        $vendedoresVendas =  Venda::query()
+        $vendedoresVendas = Venda::query()
             ->select('vendedor_id')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereNotIn('vendedor_id', $vendedores)
@@ -106,7 +114,6 @@ class Main extends Component
                 'vinculado' => false,
             ];
         }
-
 
 
         return $resp;
@@ -240,5 +247,18 @@ class Main extends Component
                 );
             }
         }
+    }
+
+    public function updateFilter()
+    {
+        $data = [
+            'filial_multi_ids' => $this->filiais_multi_ids ?? null,
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ];
+
+        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
+
+        $this->mount($this->filial_id);
     }
 }

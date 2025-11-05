@@ -39,8 +39,7 @@ class Totalizador extends Component
             ->first();
 
 
-
-        $date = $this->lastUpdated->data_pedido;
+        $date = $this->lastUpdated->data_pedido ?? Carbon::now();
         $this->dt_inicio = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
         $this->dt_fim = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
         $this->cardValor = $this->getDataValor();
@@ -114,8 +113,6 @@ class Totalizador extends Component
             ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
             ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
             ->sum('valor_meta');
-
-
 
 
         return [
