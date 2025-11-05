@@ -46,6 +46,11 @@ class Main extends Component
         $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
         $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
         $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+
+        $data = Redis::get(auth()->user()->id . '_show_details');
+
+        $this->date_ini = is_null($data) ? $this->date_ini : json_decode($data, true)['dt_inicio'];
+        $this->date_fim = is_null($data) ? $this->date_fim : json_decode($data, true)['dt_fim'];
     }
 
 
@@ -205,5 +210,22 @@ class Main extends Component
                 );
             }
         }
+    }
+
+    public function filter(): void
+    {
+        $data = [
+            'filial_multi_ids' => $this->filiais_multi_ids ?? null,
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ];
+
+        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
+
+
+        $this->dispatch('update-command', [
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ]);
     }
 }

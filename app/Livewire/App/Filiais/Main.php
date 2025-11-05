@@ -134,7 +134,6 @@ class Main extends Component
 
         $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
 
-
         $total = 0;
         foreach ($grupos as $grupo) {
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
@@ -260,5 +259,10 @@ class Main extends Component
         Redis::set(auth()->user()->id . '_show_details', json_encode($data));
 
         $this->mount($this->filial_id);
+
+        $this->dispatch('update-command', [
+            'dt_inicio' => $this->date_ini,
+            'dt_fim' => $this->date_fim,
+        ]);
     }
 }

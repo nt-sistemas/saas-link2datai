@@ -6,6 +6,7 @@ use App\Models\Grupo;
 use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -41,6 +42,10 @@ class Show extends Component
 
         $this->data_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->data_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
+        $data = Redis::get(auth()->user()->id . '_show_details');
+
+        $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
+        $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
 
 
         $this->chartPeriodo = $this->getDataChart();
@@ -49,6 +54,7 @@ class Show extends Component
         $this->chartRankingVendedoresValores = $this->getRankingVendedoresValores();
         $this->chartRankingVendedoresQuantidades = $this->getRankingVendedoresQuantidades();
     }
+
     public function render()
     {
         return view('livewire.app.filiais.categories.show');
@@ -245,7 +251,6 @@ class Show extends Component
             ->get();
 
 
-
         if ($vendas->isEmpty()) {
             return [
                 'valor_total' => [
@@ -306,7 +311,6 @@ class Show extends Component
                 ->get();
 
 
-
             $collect->push([
                 'filial' => $venda->filial->name,
                 'total' => $venda->total,
@@ -321,9 +325,6 @@ class Show extends Component
             $chart['quantidade'][] = $item['quantidade'];
             $chart['atingimento_valor'][] = $item['atingimento_valor'];
         }
-
-
-
 
 
         return [
@@ -397,7 +398,6 @@ class Show extends Component
             ->get();
 
 
-
         if ($vendas->isEmpty()) {
             return [
                 'valor_total' => [
@@ -439,7 +439,6 @@ class Show extends Component
                 ->get();
 
 
-
             $collect->push([
                 'filial' => $venda->filial->name,
                 'total' => $venda->total,
@@ -449,16 +448,12 @@ class Show extends Component
         }
 
 
-
         foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
             $chart['labels'][] = $item['filial'];
             $chart['data'][] = $item['total'];
             $chart['quantidade'][] = $item['quantidade'];
             $chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
         }
-
-
-
 
 
         return [
@@ -522,7 +517,6 @@ class Show extends Component
             ->groupBy('vendedor_id')
             ->with('vendedor')
             ->get();
-
 
 
         if ($vendas->isEmpty()) {
@@ -602,8 +596,7 @@ class Show extends Component
         }
 
 
-
-        return  [
+        return [
             'type' => 'bar',
 
             'options' => [
@@ -615,7 +608,6 @@ class Show extends Component
                     'delay' => 500,
                     'duration' => 500
                 ],
-
 
 
             ],
@@ -632,9 +624,9 @@ class Show extends Component
             ]
 
 
-
         ];
     }
+
     #[Computed]
     public function getRankingVendedoresQuantidades()
     {
@@ -747,10 +739,7 @@ class Show extends Component
         }
 
 
-
-
-
-        return  [
+        return [
             'type' => 'bar',
             'options' => [
                 'indexAxis' => 'y',

@@ -22,53 +22,75 @@
         ];
     @endphp
 
-    <x-breadcrumbs :items="$breadcrumbs" separator="o-slash" class="mb-4" />
+    <x-breadcrumbs :items="$breadcrumbs" separator="o-slash" class="mb-4"/>
     <x-header title="{{ $group->name }}" subtitle="{{ $group->description }}" separator>
         <x-slot:middle class="!justify-end">
             <div class="flex gap-2 justify-between items-center">
-                <x-datetime label="Data Inicial" wire:model="data_ini" />
-                <x-datetime label="Data Final" wire:model="data_fim" />
+                <x-datetime label="Data Inicial" wire:model="data_ini"/>
+                <x-datetime label="Data Final" wire:model="data_fim"/>
             </div>
         </x-slot:middle>
         <x-slot:actions>
-            <x-button icon="o-funnel" class="btn-primary" wire:click="filter" />
+            <x-button icon="o-funnel" class="btn-primary" wire:click="filter"/>
 
         </x-slot:actions>
     </x-header>
-    {{-- The best athlete wants his opponent at his best. --}}
+
     <div class="flex flex-col gap-4 justify-between">
         <div class="p-4 rounded-lg shadow-md bg-white">
             <span class="font-semibold">Total de Vendas - {{ $group->name }}</span>
-            <x-chart wire:model="chartPeriodo.valor_total" class="h-48 w-full" />
+            <livewire:app.charts.chart-bar-valor :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
+            />
         </div>
 
         <div class="p-4 bg-white rounded-lg shadow-md">
             <span class="font-semibold">Quantidade de Vendas - {{ $group->name }}</span>
-            <x-chart wire:model="chartPeriodo.quantidade_total" class="h-48 w-full" />
+            <livewire:app.charts.chart-bar-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
+            />
         </div>
-    </div>
+    </div> {{-- The best athlete wants his opponent at his best. --}}
+
     @if (!$filial_id)
         <div class="flex  gap-4 w-full lg:flex-row flex-col">
             <div class="p-4 rounded-lg shadow-md bg-white w-full">
                 <span class="font-semibold">Ranking Filiais Valor Total - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliaisValores" />
+                <x-chart wire:model="chartRankingFiliaisValores"/>
             </div>
 
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
                 <span class="font-semibold">Ranking Filiais Quantidade de Vendas - {{ $group->name }}</span>
-                <x-chart wire:model="chartRankingFiliaisQuantidades" />
+                <x-chart wire:model="chartRankingFiliaisQuantidades"/>
             </div>
         </div>
     @endif
-    <div class="flex  gap-4 w-full lg:flex-row flex-col">
+    <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Valor Total - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedoresValores" class="h-96 w-full" />
+            <livewire:app.charts.chart-ranking-vendedores-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                :dt_fim="$data_fim"
+            />
         </div>
-
-        <div class="p-4 bg-white rounded-lg shadow-md w-full">
-            <span class="font-semibold">Ranking Vendedores Quantidade de Vendas - {{ $group->name }}</span>
-            <x-chart wire:model="chartRankingVendedoresQuantidades" class="h-96 w-full" />
+        <div class="p-4 rounded-lg shadow-md bg-white w-full">
+            <span class="font-semibold">Ranking Vendedores Quantidade Total - {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                     :dt_fim="$data_fim"
+            />
         </div>
     </div>
+    <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Ranking Vendedores Atingimento Metas - R$ {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                      :dt_fim="$data_fim"
+            />
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Ranking Vendedores Atingimento Metas - UNID. {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-vendedores-atingimento-unidade :grupo_id="$group->id"
+                                                                              :dt_inicio="$data_ini"
+                                                                              :dt_fim="$data_fim"
+            />
+        </div>
+    </div>
+
 </div>

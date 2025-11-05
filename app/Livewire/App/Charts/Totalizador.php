@@ -6,6 +6,7 @@ use App\Models\Grupo;
 use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -40,10 +41,18 @@ class Totalizador extends Component
 
 
         $date = $this->lastUpdated->data_pedido ?? Carbon::now();
+
         $this->dt_inicio = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
         $this->dt_fim = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
+        $data = Redis::get(auth()->user()->id . '_show_details');
+
+        $this->dt_inicio = is_null($data) ? $this->dt_inicio : json_decode($data, true)['dt_inicio'];
+        $this->dt_fim = is_null($data) ? $this->dt_fim : json_decode($data, true)['dt_fim'];
         $this->cardValor = $this->getDataValor();
         $this->cardQuant = $this->getDataQuant();
+
+        ds($this->dt_inicio);
+        ds($this->dt_fim);
     }
 
     public function render()
@@ -65,6 +74,7 @@ class Totalizador extends Component
     #[Computed]
     public function getDataValor(): array
     {
+        ds([$this->dt_inicio, $this->dt_fim]);
         $grupo = Grupo::find($this->grupo_id);
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();

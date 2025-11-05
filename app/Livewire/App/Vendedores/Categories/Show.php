@@ -5,6 +5,7 @@ namespace App\Livewire\App\Vendedores\Categories;
 use App\Models\Grupo;
 use App\Models\Venda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
@@ -24,11 +25,13 @@ class Show extends Component
     public array $chartPeriodo;
     public array $chartRankingFiliais;
     public array $chartRankingVendedores;
+    public $vendedores_multi_ids = [];
 
     public function mount()
     {
         $this->group = Grupo::find($this->id);
 
+        array_push($this->vendedores_multi_ids, $this->vendedor_id);
 
 
         $this->lastUpdated = Venda::query()
@@ -39,11 +42,16 @@ class Show extends Component
         $this->data_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->data_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
 
+        $data = Redis::get(auth()->user()->id . '_show_details');
+
+        $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
+        $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
 
         $this->chartPeriodo = $this->getDataChart();
-        $this->chartRankingFiliais = $this->getRankingFiliais();
-        $this->chartRankingVendedores = $this->getRankingVendedores();
+        //$this->chartRankingFiliais = $this->getRankingFiliais();
+        //$this->chartRankingVendedores = $this->getRankingVendedores();
     }
+
     public function render()
     {
         return view('livewire.app.vendedores.categories.show');
@@ -288,7 +296,6 @@ class Show extends Component
         }
 
 
-
         return [
             'valor_total' => [
                 'type' => 'bar',
@@ -426,7 +433,6 @@ class Show extends Component
         }
 
 
-
         return [
             'valor_total' => [
                 'type' => 'bar',
@@ -440,7 +446,6 @@ class Show extends Component
                         'delay' => 500,
                         'duration' => 500
                     ],
-
 
 
                 ],
