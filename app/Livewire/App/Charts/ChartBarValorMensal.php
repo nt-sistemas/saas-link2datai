@@ -93,7 +93,6 @@ class ChartBarValorMensal extends LivewireChartComponent
             $chart['quantidade'][] = $venda->quantidade ?? 0;
         }
 
-        ds($chart);
 
         return $chart;
     }

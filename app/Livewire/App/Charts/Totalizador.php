@@ -51,8 +51,6 @@ class Totalizador extends Component
         $this->cardValor = $this->getDataValor();
         $this->cardQuant = $this->getDataQuant();
 
-        ds($this->dt_inicio);
-        ds($this->dt_fim);
     }
 
     public function render()
@@ -74,7 +72,7 @@ class Totalizador extends Component
     #[Computed]
     public function getDataValor(): array
     {
-        ds([$this->dt_inicio, $this->dt_fim]);
+
         $grupo = Grupo::find($this->grupo_id);
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
