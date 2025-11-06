@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function () {
     //Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
     Route::prefix('/')->name('app.')->group(function () {
         Route::get('', \App\Livewire\App\Dashboard::class)->name('dashboard');
+        Route::get('comparar', \App\Livewire\App\Comparador::class)->name('comparar');
         Route::get('filiais/{id}', \App\Livewire\App\Filiais\Main::class)->name('filiais');
         Route::get('filiais', \App\Livewire\App\Filiais\Show::class)->name('filiais.show');
         Route::get('vendedores/{id}/{filial_id?}', \App\Livewire\App\Vendedores\Main::class)->name('vendedores');

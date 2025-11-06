@@ -36,8 +36,9 @@
                            option-label="name" clearable/>
             </div>
         </div>
-        <div class="w-full lg:w-auto flex items-end">
+        <div class="w-full lg:w-auto flex items-end gap-4">
             <x-button label="Atualizar" class="btn-primary mt-6" wire:click="updateDashboard"/>
+            <x-button label="Comparar Meses" class="btn-secondary text-black mt-6" link="{{route('app.comparar')}}"/>
         </div>
     </div>
     <div class="flex flex-wrap gap-2 mb-4">
