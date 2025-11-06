@@ -39,8 +39,7 @@ class ChartBarQuantidadeComparar extends LivewireChartComponent
     #[On('show-filter-chart-bar-comparar')]
     public function refreshChart($params)
     {
-        ds('chegou no chart comparar');
-        ds($params);
+
 
         //$this->dt_inicio = $params['dt_inicio'];
         //$this->dt_fim = $params['dt_fim'];
