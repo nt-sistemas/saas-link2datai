@@ -84,9 +84,6 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
 
         $chart = [];
 
-        ds($vendas);
-
-
         $collect = collect();
 
         foreach ($vendas as $venda) {
