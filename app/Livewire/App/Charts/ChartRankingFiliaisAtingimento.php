@@ -28,7 +28,6 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
     }
 
 
-
     private function dataSource()
     {
 
@@ -40,7 +39,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
     #[On('show-filter-chart-bar')]
     public function refreshChart($params)
     {
-        
+
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
         $this->filiais_multi_ids = $params['filiais_multi_ids'];
@@ -52,7 +51,6 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
     public function getDataChart()
     {
         $grupo = Grupo::find($this->grupo_id);
-
 
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
@@ -104,7 +102,6 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
                 ->get();
 
 
-
             $collect->push([
                 'filial' => $venda->filial->name,
                 'total' => $venda->total,
@@ -129,19 +126,20 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
 
         return $chart;
     }
+
     public function build()
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-            //->addBar('Valor', $this->dataSource())
-            ->setDataset([
-                [
-                    'name' => "Valores",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['atingimento_valor'] ?? []
-                ],                
+        //->addBar('Valor', $this->dataSource())
+        ->setDataset([
+            [
+                'name' => "Valores",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['atingimento_valor'] ?? []
+            ],
 
-            ])
+        ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0
@@ -175,7 +173,7 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
             //  * using String
             //  */
             ->jsCallback('dataLabels.formatter', "function (val, opts) {
-                
+
                 return Math.abs(Math.round(val)) + '%';
             }")
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {
@@ -192,8 +190,11 @@ class ChartRankingFiliaisAtingimento extends LivewireChartComponent
 
     public function atingimento_meta($meta, $venda)
     {
+        if ($meta == 0) {
+            return 0;
+        }
         $percentual =
-            (($venda - $meta) / ($meta == 0 ? 1 : $meta)) * 100;
+            ($venda / $meta) * 100;
         return number_format($percentual, 2, '.', '');
     }
 }

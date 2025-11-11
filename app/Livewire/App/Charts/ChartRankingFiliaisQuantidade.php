@@ -28,7 +28,6 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
     }
 
 
-
     private function dataSource()
     {
 
@@ -40,7 +39,7 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
     #[On('show-filter-chart-bar')]
     public function refreshChart($params)
     {
-        
+
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
         $this->filiais_multi_ids = $params['filiais_multi_ids'];
@@ -52,7 +51,6 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
     public function getDataChart()
     {
         $grupo = Grupo::find($this->grupo_id);
-
 
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
@@ -67,9 +65,6 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
-            })
-            ->when($this->vendedores_multi_ids, function ($query) {
-                $query->whereIn('vendedor_id', $this->vendedores_multi_ids);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
                 $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
@@ -104,7 +99,6 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
                 ->get();
 
 
-
             $collect->push([
                 'filial' => $venda->filial->name,
                 'total' => $venda->total,
@@ -127,24 +121,25 @@ class ChartRankingFiliaisQuantidade extends LivewireChartComponent
 
         return $chart;
     }
+
     public function build()
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-            //->addBar('Valor', $this->dataSource())
-            ->setDataset([
-                [
-                    'name' => "Valores",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['quantidade'] ?? []
-                ],
-                [
-                    'name' => "Metas",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['metas_quantidade'] ?? []
-                ],
+        //->addBar('Valor', $this->dataSource())
+        ->setDataset([
+            [
+                'name' => "Valores",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['quantidade'] ?? []
+            ],
+            [
+                'name' => "Metas",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['metas_quantidade'] ?? []
+            ],
 
-            ])
+        ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0

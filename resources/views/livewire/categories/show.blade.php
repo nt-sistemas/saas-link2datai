@@ -22,30 +22,29 @@
         ];
     @endphp
 
-    <x-breadcrumbs :items="$breadcrumbs" separator="o-slash" class="mb-4" />
+    <x-breadcrumbs :items="$breadcrumbs" separator="o-slash" class="mb-4"/>
     <x-header title="{{ $group->name }}" subtitle="{{ $group->description }}" separator>
         <x-slot:middle class="!justify-end">
             <div class="flex gap-2 justify-between items-center">
-                <x-datetime label="Data Inicial" wire:model="data_ini" />
-                <x-datetime label="Data Final" wire:model="data_fim" />
+                <x-datetime label="Data Inicial" wire:model="data_ini"/>
+                <x-datetime label="Data Final" wire:model="data_fim"/>
             </div>
         </x-slot:middle>
         <x-slot:actions>
-            <x-button icon="o-funnel" class="btn-primary" wire:click="filter"  spinner="filter" label="Filtrar" />
+            <x-button icon="o-funnel" class="btn-primary" wire:click="filter" spinner="filter" label="Filtrar"/>
 
         </x-slot:actions>
     </x-header>
 
 
-
-    @if (!empty($filiais_multi_ids))
+    @if ($filiais_multi_ids && count($filiais_multi_ids) > 0)
         <div class="bg-white p-4 rounded-lg shadow-md">
             <span class="font-semibold text-xl text-primary text-center w-full">Filiais Selecionadas</span>
-            <x-menu-separator class="my-2" />
+            <x-menu-separator class="my-2"/>
             <div class="flex flex-wrap gap-2 mt-2 justify-center">
                 @foreach ($filiais_multi_ids as $filial_id)
                     <x-badge value="{{ \App\Models\Filial::find($filial_id)->name }}"
-                        class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary" />
+                             class="badge-primary text-sm hover:bg-secondary transition-colors hover:text-primary"/>
                 @endforeach
 
             </div>
@@ -54,68 +53,77 @@
     @endif
 
     {{-- The best athlete wants his opponent at his best. --}}
-    <div class="flex flex-col gap-4 justify-between">
+    <div class="flex flex-col gap-4 justify-between h-full">
         <div class="p-4 rounded-lg shadow-md bg-white">
             <span class="font-semibold">Total de Vendas - {{ $group->name }}</span>
             <livewire:app.charts.chart-bar-valor :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
-                :filiais_multi_ids="$filiais_multi_ids" />
+                                                 :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
 
         <div class="p-4 bg-white rounded-lg shadow-md">
             <span class="font-semibold">Quantidade de Vendas - {{ $group->name }}</span>
             <livewire:app.charts.chart-bar-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
-                :filiais_multi_ids="$filiais_multi_ids" />
+                                                      :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
     </div>
-    @if (!$filial_id)
-        <div class="flex  gap-4 w-full lg:flex-row flex-col">
-            <div class="p-4 rounded-lg shadow-md bg-white w-full">
-                <span class="font-semibold">Ranking Filiais Valor Total - {{ $group->name }}</span>
-                <livewire:app.charts.chart-ranking-filiais-valor :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
-                    :filiais_multi_ids="$filiais_multi_ids" />
-            </div>
-            <div class="p-4 rounded-lg shadow-md bg-white w-full">
-                <span class="font-semibold">Ranking Filiais Quantidade Total - {{ $group->name }}</span>
-                <livewire:app.charts.chart-ranking-filiais-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
-                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
-            </div>
+    <div class="flex  gap-4 w-full lg:flex-row flex-col">
+        <div class="p-4 rounded-lg shadow-md bg-white w-full">
+            <span class="font-semibold">Ranking Filiais Valor Total - {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-filiais-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                             :dt_fim="$data_fim"
+                                                             :filiais_multi_ids="$filiais_multi_ids"/>
+        </div>
+        <div class="p-4 rounded-lg shadow-md bg-white w-full">
+            <span class="font-semibold">Ranking Filiais Quantidade Total - {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-filiais-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                  :dt_fim="$data_fim"
+                                                                  :filiais_multi_ids="$filiais_multi_ids"/>
+        </div>
 
+    </div>
+    <div class="flex  gap-4 w-full lg:flex-row flex-col">
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Ranking Filiais Atingimento Metas - R$ {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-filiais-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                   :dt_fim="$data_fim"
+                                                                   :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
-        <div class="flex  gap-4 w-full lg:flex-row flex-col">
-            <div class="p-4 bg-white rounded-lg shadow-md w-full">
-                <span class="font-semibold">Ranking Filiais Atingimento Metas - R$ {{ $group->name }}</span>
-                <livewire:app.charts.chart-ranking-filiais-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
-                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
-            </div>
-            <div class="p-4 bg-white rounded-lg shadow-md w-full">
-                <span class="font-semibold">Ranking Filiais Atingimento Metas - UND. {{ $group->name }}</span>
-                <livewire:app.charts.chart-ranking-filiais-atingimento-unidade :grupo_id="$group->id" :dt_inicio="$data_ini"
-                    :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
-            </div>
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Ranking Filiais Atingimento Metas - UND. {{ $group->name }}</span>
+            <livewire:app.charts.chart-ranking-filiais-atingimento-unidade :grupo_id="$group->id"
+                                                                           :dt_inicio="$data_ini"
+                                                                           :dt_fim="$data_fim"
+                                                                           :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
-    @endif
+    </div>
+
     <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Valor Total - {{ $group->name }}</span>
-            <livewire:app.charts.chart-ranking-vendedores-valor :grupo_id="$group->id" :dt_inicio="$data_ini" :dt_fim="$data_fim"
-                :filiais_multi_ids="$filiais_multi_ids" />
+            <livewire:app.charts.chart-ranking-vendedores-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                                :dt_fim="$data_fim"
+                                                                :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Quantidade Total - {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
-                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
+                                                                     :dt_fim="$data_fim"
+                                                                     :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
     </div>
     <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
             <span class="font-semibold">Ranking Vendedores Atingimento Metas - R$ {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
-                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
+                                                                      :dt_fim="$data_fim"
+                                                                      :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
             <span class="font-semibold">Ranking Vendedores Atingimento Metas - UNID. {{ $group->name }}</span>
-            <livewire:app.charts.chart-ranking-vendedores-atingimento-unidade :grupo_id="$group->id" :dt_inicio="$data_ini"
-                :dt_fim="$data_fim" :filiais_multi_ids="$filiais_multi_ids" />
+            <livewire:app.charts.chart-ranking-vendedores-atingimento-unidade :grupo_id="$group->id"
+                                                                              :dt_inicio="$data_ini"
+                                                                              :dt_fim="$data_fim"
+                                                                              :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
     </div>
 </div>

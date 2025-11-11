@@ -28,7 +28,6 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
     }
 
 
-
     private function dataSource()
     {
 
@@ -40,7 +39,7 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
     #[On('show-filter-chart-bar')]
     public function refreshChart($params)
     {
-        
+
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
         $this->filiais_multi_ids = $params['filiais_multi_ids'];
@@ -52,8 +51,6 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
     public function getDataChart()
     {
         $grupo = Grupo::find($this->grupo_id);
-
-
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
@@ -67,9 +64,6 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
-            })
-            ->when($this->vendedores_multi_ids, function ($query) {
-                $query->whereIn('vendedor_id', $this->vendedores_multi_ids);
             })
             ->when($tipo_grupo_id, function ($query) use ($tipo_grupo_id) {
                 $query->whereIn('tipo_grupo_id', $tipo_grupo_id);
@@ -90,6 +84,8 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
 
         $chart = [];
 
+        ds($vendas);
+
 
         $collect = collect();
 
@@ -102,7 +98,6 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
-
 
 
             $collect->push([
@@ -127,24 +122,25 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
 
         return $chart;
     }
+
     public function build()
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-            //->addBar('Valor', $this->dataSource())
-            ->setDataset([
-                [
-                    'name' => "Valores",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['data'] ?? []
-                ],
-                [
-                    'name' => "Metas",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['metas_valor'] ?? []
-                ],
+        //->addBar('Valor', $this->dataSource())
+        ->setDataset([
+            [
+                'name' => "Valores",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['data'] ?? []
+            ],
+            [
+                'name' => "Metas",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['metas_valor'] ?? []
+            ],
 
-            ])
+        ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0
@@ -183,7 +179,7 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             //  * using String
             //  */
             ->jsCallback('dataLabels.formatter', "function (val, opts) {
-                
+
                 return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             }")
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {

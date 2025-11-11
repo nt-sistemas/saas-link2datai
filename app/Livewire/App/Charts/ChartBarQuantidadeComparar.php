@@ -40,10 +40,6 @@ class ChartBarQuantidadeComparar extends LivewireChartComponent
     public function refreshChart($params)
     {
 
-
-        //$this->dt_inicio = $params['dt_inicio'];
-        //$this->dt_fim = $params['dt_fim'];
-        //$this->filiais_multi_ids = $params['filiais_multi_ids'];
         $this->mes_inicio = $params['mes_inicial'];
         $this->ano_inicio = $params['ano_inicial'];
         $this->mes_final = $params['mes_final'];

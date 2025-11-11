@@ -3,7 +3,7 @@
         $breadcrumbs = [
             [
                 'icon' => 'o-rectangle-group',
-                'link' => '/admin',
+                'link' => '/',
             ],
             [
                 'label' => 'Comparar Meses',

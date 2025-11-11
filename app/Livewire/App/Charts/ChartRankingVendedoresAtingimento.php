@@ -28,7 +28,6 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
     }
 
 
-
     private function dataSource()
     {
 
@@ -40,7 +39,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
     #[On('show-filter-chart-bar')]
     public function refreshChart($params)
     {
-        
+
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
         $this->filiais_multi_ids = $params['filiais_multi_ids'];
@@ -51,8 +50,8 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
     #[Computed()]
     public function getDataChart()
     {
-        $grupo = Grupo::find($this->grupo_id);
 
+        $grupo = Grupo::find($this->grupo_id);
 
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
@@ -62,7 +61,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, vendedor_id,Count(id) as quantidade')
+            ->selectRaw('vendedor_id,SUM(' . $grupo->campo_valor_id . ') as total')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
@@ -83,10 +82,10 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('total', 'desc')
             ->groupBy('vendedor_id')
             ->with('vendedor')
             ->get();
+
 
         $chart = [];
 
@@ -99,10 +98,10 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
                 ->where('tenant_id', auth()->user()->tenant_id)
                 ->where('vendedor_id', $venda->vendedor_id)
                 ->where('grupo_id', $grupo->id)
+                ->whereIn('filial_id', $this->filiais_multi_ids)
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
-
 
 
             $collect->push([
@@ -129,20 +128,21 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
 
         return $chart;
     }
+
     public function build()
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-            //->addBar('Valor', $this->dataSource())
-            ->setDataset([
-                [
-                    'name' => "Valores",
-                    //'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['atingimento_valor'] ?? []
-                ],
-                
+        //->addBar('Valor', $this->dataSource())
+        ->setDataset([
+            [
+                'name' => "Valores",
+                //'labels' => $this->getDataChart()['labels'] ?? [],
+                'data' => $this->getDataChart()['atingimento_valor'] ?? []
+            ],
 
-            ])
+
+        ])
             ->showDataLabels(true)
             ->setFill([
                 'opacity' => 1.0
@@ -186,7 +186,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
             //  * using String
             //  */
             ->jsCallback('dataLabels.formatter', "function (val, opts) {
-                
+
                 return Math.abs(Math.round(val)) + '%';
             }")
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {
@@ -203,8 +203,11 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
 
     public function atingimento_meta($meta, $venda)
     {
+        if ($meta == 0) {
+            return 0;
+        }
         $percentual =
-            (($venda - $meta) / ($meta == 0 ? 1 : $meta)) * 100;
+            ($venda / $meta) * 100;
         return number_format($percentual, 2, '.', '');
     }
 }

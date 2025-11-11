@@ -82,6 +82,7 @@
             <span class="font-semibold">Ranking Vendedores Atingimento Metas - R$ {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-atingimento :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                       :dt_fim="$data_fim"
+                                                                      :filiais_multi_ids="$filial_multi_ids"
             />
         </div>
         <div class="p-4 bg-white rounded-lg shadow-md w-full">
@@ -89,6 +90,7 @@
             <livewire:app.charts.chart-ranking-vendedores-atingimento-unidade :grupo_id="$group->id"
                                                                               :dt_inicio="$data_ini"
                                                                               :dt_fim="$data_fim"
+                                                                              :filiais_multi_ids="$filial_multi_ids"
             />
         </div>
     </div>
