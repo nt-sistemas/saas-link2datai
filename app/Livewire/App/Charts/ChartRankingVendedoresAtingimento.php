@@ -98,7 +98,9 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
                 ->where('tenant_id', auth()->user()->tenant_id)
                 ->where('vendedor_id', $venda->vendedor_id)
                 ->where('grupo_id', $grupo->id)
-                ->whereIn('filial_id', $this->filiais_multi_ids)
+                ->when($this->filiais_multi_ids, function ($query) {
+                    $query->whereIn('filial_id', $this->filiais_multi_ids);
+                })
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
@@ -111,7 +113,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
                 'meta_valor' => $metas->first()->meta_valor ?? 0,
                 'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
                 'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
-                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
+                //'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
             ]);
         }
 
@@ -122,7 +124,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
             $chart['metas_valor'][] = $item['meta_valor'];
             $chart['metas_quantidade'][] = $item['meta_quantidade'];
             $chart['atingimento_valor'][] = $item['atingimento_valor'];
-            $chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
+            //$chart['atingimento_quantidade'][] = $item['atingimento_quantidade'];
         }
 
 
@@ -208,6 +210,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
         }
         $percentual =
             ($venda / $meta) * 100;
+       
         return number_format($percentual, 2, '.', '');
     }
 }

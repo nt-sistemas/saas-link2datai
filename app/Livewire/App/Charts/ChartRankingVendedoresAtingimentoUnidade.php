@@ -97,6 +97,9 @@ class ChartRankingVendedoresAtingimentoUnidade extends LivewireChartComponent
                 ->where('tenant_id', auth()->user()->tenant_id)
                 ->where('vendedor_id', $venda->vendedor_id)
                 ->where('grupo_id', $grupo->id)
+                ->when($this->filiais_multi_ids, function ($query) {
+                    $query->whereIn('filial_id', $this->filiais_multi_ids);
+                })
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
