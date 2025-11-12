@@ -89,7 +89,6 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
 
         $chart = [];
 
-
         $collect = collect();
 
         foreach ($vendas as $venda) {
@@ -104,6 +103,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
                 ->whereBetween('mes', [Carbon::parse($this->dt_inicio)->month, Carbon::parse($this->dt_fim)->month])
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
+            $vendedores = $vendas->pluck('vendedor_id')->toArray();
 
 
             $collect->push([
@@ -210,7 +210,7 @@ class ChartRankingVendedoresAtingimento extends LivewireChartComponent
         }
         $percentual =
             ($venda / $meta) * 100;
-       
+
         return number_format($percentual, 2, '.', '');
     }
 }

@@ -43,6 +43,8 @@ class Show extends Component
         $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
         $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
 
+        $this->filiais_multi_ids = array($this->filial_id);
+
 
         $this->group = Grupo::find($this->id);
 
@@ -84,7 +86,7 @@ class Show extends Component
             'dt_fim' => $this->data_fim,
             'filiais_multi_ids' => $this->filiais_multi_ids,
         ]);
-        
+
     }
 
     public function hover()

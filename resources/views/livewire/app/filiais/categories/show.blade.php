@@ -68,12 +68,14 @@
             <span class="font-semibold">Ranking Vendedores Valor Total - {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                 :dt_fim="$data_fim"
+                                                                :filiais_multi_ids="$filial_multi_ids"
             />
         </div>
         <div class="p-4 rounded-lg shadow-md bg-white w-full">
             <span class="font-semibold">Ranking Vendedores Quantidade Total - {{ $group->name }}</span>
             <livewire:app.charts.chart-ranking-vendedores-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                      :dt_fim="$data_fim"
+                                                                     :filiais_multi_ids="$filial_multi_ids"
             />
         </div>
     </div>
