@@ -43,7 +43,11 @@ class Show extends Component
         $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
         $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
 
-        $this->filiais_multi_ids = array($this->filial_id);
+        if ($this->filial_id) {
+            $this->filiais_multi_ids = array($this->filial_id);
+        } else {
+            $this->filiais_multi_ids = is_null($data) ? [] : array_filter(json_decode($data, true)['filial_multi_ids']);
+        }
 
 
         $this->group = Grupo::find($this->id);

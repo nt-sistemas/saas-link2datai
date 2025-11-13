@@ -37,7 +37,7 @@
     </x-header>
 
 
-    @if ($filiais_multi_ids && count($filiais_multi_ids) > 0)
+    @if ($filiais_multi_ids)
         <div class="bg-white p-4 rounded-lg shadow-md">
             <span class="font-semibold text-xl text-primary text-center w-full">Filiais Selecionadas</span>
             <x-menu-separator class="my-2"/>
