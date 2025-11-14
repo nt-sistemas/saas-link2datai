@@ -104,16 +104,20 @@ class ChartRankingVendedoresAtingimentoUnidade extends LivewireChartComponent
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
 
+            $atingimento_valor = $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total);
+            $atingimento_quantidade = $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade);
 
-            $collect->push([
-                'vendedor' => $venda->vendedor->name,
-                'total' => $venda->total,
-                'quantidade' => $venda->quantidade,
-                'meta_valor' => $metas->first()->meta_valor ?? 0,
-                'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
-                'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
-                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
-            ]);
+            if ($atingimento_quantidade != 0) {
+                $collect->push([
+                    'vendedor' => $venda->vendedor->name,
+                    'total' => $venda->total,
+                    'quantidade' => $venda->quantidade,
+                    'meta_valor' => $metas->first()->meta_valor ?? 0,
+                    'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
+                    'atingimento_valor' => $atingimento_valor,
+                    'atingimento_quantidade' => $atingimento_quantidade,
+                ]);
+            }
         }
 
         foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {

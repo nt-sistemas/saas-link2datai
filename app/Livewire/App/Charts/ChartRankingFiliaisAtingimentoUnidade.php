@@ -102,15 +102,19 @@ class ChartRankingFiliaisAtingimentoUnidade extends LivewireChartComponent
                 ->get();
 
 
-            $collect->push([
-                'filial' => $venda->filial->name,
-                'total' => $venda->total,
-                'quantidade' => $venda->quantidade,
-                'meta_valor' => $metas->first()->meta_valor ?? 0,
-                'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
-                'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
-                'atingimento_quantidade' => $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade),
-            ]);
+            $atingimento_valor = $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total);
+            $atingimento_quantidade = $this->atingimento_meta($metas->first()->meta_quantidade ?? 0, $venda->quantidade);
+            if ($atingimento_quantidade != 0) {
+                $collect->push([
+                    'filial' => $venda->filial->name,
+                    'total' => $venda->total,
+                    'quantidade' => $venda->quantidade,
+                    'meta_valor' => $metas->first()->meta_valor ?? 0,
+                    'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
+                    'atingimento_valor' => $atingimento_valor,
+                    'atingimento_quantidade' => $atingimento_quantidade,
+                ]);
+            }
         }
 
         foreach ($collect->sortByDesc('atingimento_quantidade')->slice(0, 10) as $item) {
