@@ -78,14 +78,24 @@
             <div class="bg-gray-400 rounded shadow-lg w-1/4 p-4">
                 <div class="flex flex-col gap-4 justify-center items-center w-full">
                     @php
-                        $percentualTotal = (($total_1 - $total_2) / ($total_2 == 0 ? 1 : $total_2)) * 100;
+                        if($total_2 == 0){
+                            $percentualTotal = 100;
+                        }else{
+                             $percentualTotal = (($total_1 - $total_2) / ($total_2 == 0 ? 1 : $total_2)) * 100;
+                        }
+
 
                     @endphp
                     <div class="bg-primary w-full rounded p-2 text-white font-bold text-2xl ">
                         <p>Valor: {{number_format($percentualTotal,2,',', '.').'%'}}</p>
                     </div>
                     @php
-                        $percentualQuantidade = (($quantidade_1 - $quantidade_2) / ($quantidade_2 == 0 ? 1 : $quantidade_2)) * 100;
+                        if($quantidade_2 == 0){
+                            $percentualQuantidade = 100;
+                        }else{
+                            $percentualQuantidade = (($quantidade_1 - $quantidade_2) / ($quantidade_2 == 0 ? 1 : $quantidade_2)) * 100;
+                        }
+                        
 
                     @endphp
                     <div class="bg-secondary w-full rounded p-2 text-white font-bold text-2xl ">
