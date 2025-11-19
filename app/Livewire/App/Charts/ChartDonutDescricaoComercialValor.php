@@ -10,7 +10,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableDonutChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartDonutModalidadeValor extends LivewireChartComponent
+class ChartDonutDescricaoComercialValor extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -55,7 +55,7 @@ class ChartDonutModalidadeValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, fabricante')
+            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, descricao_comercial')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -76,8 +76,9 @@ class ChartDonutModalidadeValor extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('fabricante', 'asc')
-            ->groupBy('fabricante')
+            ->orderBy('descricao_comercial', 'desc')
+            ->groupBy('descricao_comercial')
+            ->limit(10)
             ->get();
 
 
@@ -85,7 +86,7 @@ class ChartDonutModalidadeValor extends LivewireChartComponent
 
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->fabricante;
+            $chart['labels'][] = $venda->descricao_comercial;
             $chart['data'][] = floatval($venda->total) ?? 0;
         }
 
@@ -107,7 +108,7 @@ class ChartDonutModalidadeValor extends LivewireChartComponent
                             'show' => true,
                             'name' => [
                                 'show' => true,
-                                'fontSize' => '22px',
+                                'fontSize' => '12px',
                                 'color' => '#263544',
                                 'offsetY' => -10,
                             ],

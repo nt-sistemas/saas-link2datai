@@ -10,7 +10,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableDonutChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
+class ChartDonutModalidadeVendaValor extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -55,7 +55,7 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, grupo_estoque_id')
+            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, modalidade_venda_id')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -76,10 +76,10 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('grupo_estoque_id', 'desc')
-            ->groupBy('grupo_estoque_id')
+            ->orderBy('modalidade_venda_id', 'desc')
+            ->groupBy('modalidade_venda_id')
             ->limit(10)
-            ->with('grupoEstoque')
+            ->with('modalidadeVenda')
             ->get();
 
 
@@ -87,7 +87,7 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
 
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->grupoEstoque->name;
+            $chart['labels'][] = $venda->modalidadeVenda->name;
             $chart['data'][] = floatval($venda->total) ?? 0;
         }
 

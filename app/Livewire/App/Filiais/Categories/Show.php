@@ -25,10 +25,18 @@ class Show extends Component
     public $filial_multi_ids = [];
     public $vendedor_id = null;
 
+    public $grupo_estoque_ids = [];
+    public $modalidade_venda_ids = [];
+    public $plano_habilitado_ids = [];
+
 
     public function mount()
     {
         $this->group = Grupo::find($this->id);
+
+        $this->grupo_estoque_ids = $this->group->grupo_estoque->pluck('id')->toArray();
+        $this->modalidade_venda_ids = $this->group->modalidade_venda->pluck('id')->toArray();
+        $this->plano_habilitado_ids = $this->group->plano_habilitados->pluck('id')->toArray();
 
         $this->filial_multi_ids = array($this->filial_id);
 

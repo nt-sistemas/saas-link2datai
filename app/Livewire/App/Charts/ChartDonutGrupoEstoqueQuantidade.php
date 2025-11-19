@@ -10,7 +10,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableDonutChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
+class ChartDonutGrupoEstoqueQuantidade extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -55,7 +55,7 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, grupo_estoque_id')
+            ->selectRaw('count(grupo_estoque_id) as total, grupo_estoque_id')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -133,18 +133,8 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
             ])
             ->jsCallback('plotOptions.pie.donut.labels.total.formatter', "
                 function (w) {
-                                    return w.globals.seriesTotals.reduce( (a, b) => a + b , 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return w.globals.seriesTotals.reduce( (a, b) => a + b , 0);
 
-                }"
-            )
-            ->jsCallback('labels.value.formatter', "
-                function (val, opts) {
-               return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                }"
-            )
-            ->jsCallback('tooltip.y.formatter', "
-                function (val, opts) {
-                    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 }"
             )
             // /**

@@ -10,7 +10,7 @@ use LarawireGarage\LarapexLivewire\Wireable\WireableDonutChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
+class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
 {
     protected $listeners = [];
     public $grupo_id;
@@ -55,7 +55,7 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, grupo_estoque_id')
+            ->selectRaw('count(descricao_comercial) as total, descricao_comercial')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -76,10 +76,9 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('grupo_estoque_id', 'desc')
-            ->groupBy('grupo_estoque_id')
+            ->orderBy('descricao_comercial', 'desc')
+            ->groupBy('descricao_comercial')
             ->limit(10)
-            ->with('grupoEstoque')
             ->get();
 
 
@@ -87,7 +86,7 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
 
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->grupoEstoque->name;
+            $chart['labels'][] = $venda->descricao_comercial;
             $chart['data'][] = floatval($venda->total) ?? 0;
         }
 
@@ -133,18 +132,8 @@ class ChartDonutGrupoEstoqueValor extends LivewireChartComponent
             ])
             ->jsCallback('plotOptions.pie.donut.labels.total.formatter', "
                 function (w) {
-                                    return w.globals.seriesTotals.reduce( (a, b) => a + b , 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return w.globals.seriesTotals.reduce( (a, b) => a + b , 0);
 
-                }"
-            )
-            ->jsCallback('labels.value.formatter', "
-                function (val, opts) {
-               return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                }"
-            )
-            ->jsCallback('tooltip.y.formatter', "
-                function (val, opts) {
-                    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 }"
             )
             // /**

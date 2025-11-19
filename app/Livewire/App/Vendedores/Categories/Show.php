@@ -26,10 +26,17 @@ class Show extends Component
     public array $chartRankingFiliais;
     public array $chartRankingVendedores;
     public $vendedores_multi_ids = [];
+    public $grupo_estoque_ids = [];
+    public $modalidade_venda_ids = [];
+    public $plano_habilitado_ids = [];
 
     public function mount()
     {
         $this->group = Grupo::find($this->id);
+
+        $this->grupo_estoque_ids = $this->group->grupo_estoque->pluck('id')->toArray();
+        $this->modalidade_venda_ids = $this->group->modalidade_venda->pluck('id')->toArray();
+        $this->plano_habilitado_ids = $this->group->plano_habilitados->pluck('id')->toArray();
 
         array_push($this->vendedores_multi_ids, $this->vendedor_id);
 

@@ -55,7 +55,7 @@ class ChartDonutPlanoHabilitadoValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, fabricante')
+            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, plano_habilitado_id')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -76,8 +76,10 @@ class ChartDonutPlanoHabilitadoValor extends LivewireChartComponent
             ->when($modalidade_venda_ids, function ($query) use ($modalidade_venda_ids) {
                 $query->whereIn('modalidade_venda_id', $modalidade_venda_ids);
             })
-            ->orderBy('fabricante', 'asc')
-            ->groupBy('fabricante')
+            ->orderBy('plano_habilitado_id', 'desc')
+            ->groupBy('plano_habilitado_id')
+            ->limit(10)
+            ->with('planoHabilitado')
             ->get();
 
 
@@ -85,7 +87,7 @@ class ChartDonutPlanoHabilitadoValor extends LivewireChartComponent
 
 
         foreach ($vendas as $venda) {
-            $chart['labels'][] = $venda->fabricante;
+            $chart['labels'][] = $venda->planoHabilitado->name;
             $chart['data'][] = floatval($venda->total) ?? 0;
         }
 
@@ -107,7 +109,7 @@ class ChartDonutPlanoHabilitadoValor extends LivewireChartComponent
                             'show' => true,
                             'name' => [
                                 'show' => true,
-                                'fontSize' => '22px',
+                                'fontSize' => '12px',
                                 'color' => '#263544',
                                 'offsetY' => -10,
                             ],
