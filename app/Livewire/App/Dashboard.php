@@ -170,6 +170,9 @@ class Dashboard extends Component
                 ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                     $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
                 })
+                ->when($this->filiais_multi_ids, function ($query) use ($grupo_estoque_ids) {
+                    $query->whereIn('filial_id', $this->filiais_multi_ids);
+                })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->sum($grupo->campo_valor_id);
         }
@@ -204,6 +207,9 @@ class Dashboard extends Component
                 })
                 ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                     $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
+                })
+                ->when($this->filiais_multi_ids, function ($query) use ($grupo_estoque_ids) {
+                    $query->whereIn('filial_id', $this->filiais_multi_ids);
                 })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->count();

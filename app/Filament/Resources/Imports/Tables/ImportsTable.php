@@ -2,9 +2,14 @@
 
 namespace App\Filament\Resources\Imports\Tables;
 
+use App\Jobs\ProcessImportJob;
+use App\Models\Venda;
+use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -48,6 +53,10 @@ class ImportsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    Action::make()
+                        ->label('Reprocessar Importações Selecionadas')
+                        ->color('success')
+                        ->icon('heroicon-o-arrow-up-tray'),
                 ]),
             ]);
     }

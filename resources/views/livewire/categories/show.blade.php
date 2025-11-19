@@ -126,4 +126,20 @@
                                                                               :filiais_multi_ids="$filiais_multi_ids"/>
         </div>
     </div>
+    <div class="flex  gap-4 w-full lg:flex-row flex-col h-full">
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Participações Fabricantes - Grupo {{ $group->name }}</span>
+            <livewire:app.charts.chart-donut-fabricante-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                              :dt_fim="$data_fim"
+                                                              :filiais_multi_ids="$filiais_multi_ids"/>
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow-md w-full">
+            <span class="font-semibold">Participações Produto - Grupo {{ $group->name }}</span>
+            <livewire:app.charts.chart-donut-produto-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                           :dt_fim="$data_fim"
+                                                           :filiais_multi_ids="$filiais_multi_ids"/>
+        </div>
+
+    </div>
+    
 </div>

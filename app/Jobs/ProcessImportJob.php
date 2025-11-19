@@ -68,7 +68,7 @@ class ProcessImportJob implements ShouldQueue
                 'valor_total' => $this->convertToFloat($row->data['Valor Caixa'] ?? $row->data['Valor_x0020_Caixa'] ?? 0.00),
                 'data_pedido' => $carbonDate->format('Y-m-d'), //Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
                 'numero_pedido' => $row->data['Número PV'] ?? $row->data['Numero_x0020_Pedido'],
-                'descricao_comercial' => $row->data['Descricao Comercial'] ?? null,
+                'descricao_comercial' => $row->data['Descrição Comercial'] ?? null,
                 'categoria' => $row->data['Categoria'] ?? null,
                 'fabricante' => $row->data['Fabricante'] ?? null,
                 'import_id' => $row->id,
@@ -112,8 +112,6 @@ class ProcessImportJob implements ShouldQueue
 
         $batchInsert = [];
     }
-
-
 
 
     public function processarFilial(string $filial, $tenantId)
@@ -239,7 +237,7 @@ class ProcessImportJob implements ShouldQueue
         $numericString = str_replace(',', '.', $numericString);
 
         // Cast the string to a float (decimal)
-        $decimalValue = (float) $numericString;
+        $decimalValue = (float)$numericString;
 
 
         return $decimalValue;
