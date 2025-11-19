@@ -35,6 +35,22 @@
 
         </x-slot:actions>
     </x-header>
+    <div class="flex flex-col gap-4 justify-between">
+        <div class="p-4 rounded-lg shadow-md bg-white">
+            <span class="font-semibold">Total de Vendas Mensal - {{ $group->name }}</span>
+            <livewire:app.charts.chart-bar-valor-mensal :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                        :dt_fim="$data_fim"
+                                                        :filiais_multi_ids="$filial_multi_ids"/>
+        </div>
+
+        <div class="p-4 bg-white rounded-lg shadow-md">
+            <span class="font-semibold">Quantidade de Vendas Mensal - {{ $group->name }}</span>
+            <livewire:app.charts.chart-bar-quantidade-mensal :grupo_id="$group->id" :dt_inicio="$data_ini"
+                                                             :dt_fim="$data_fim"
+                                                             :filiais_multi_ids="$filial_multi_ids"
+            />
+        </div>
+    </div>
 
     <div class="flex flex-col gap-4 justify-between">
         <div class="p-4 rounded-lg shadow-md bg-white">
