@@ -53,10 +53,6 @@ class ImportsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    Action::make()
-                        ->label('Reprocessar Importações Selecionadas')
-                        ->color('success')
-                        ->icon('heroicon-o-arrow-up-tray'),
                 ]),
             ]);
     }
