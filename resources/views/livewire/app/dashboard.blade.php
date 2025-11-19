@@ -12,7 +12,7 @@
             </div>
             @if (intval($daysOfData) >= 5)
                 <div class=" text-xs lg:text-md font-bold text-red-600">
-                    O SISTEMA ESTÁ À <span>{{ intval($daysOfData) }}</span> SEM SER ATUALIZADO COM NOVOS DADOS.
+                    O SISTEMA ESTÁ HÁ <span>{{ intval($daysOfData) }}</span> SEM SER ATUALIZADO COM NOVOS DADOS.
                 </div>
             @else
                 <div class="text-xs lg:text-md font-bold text-green-600">
