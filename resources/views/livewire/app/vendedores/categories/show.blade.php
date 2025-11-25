@@ -69,14 +69,14 @@
                 <span class="font-semibold">Produtos R$ - Grupo {{ $group->name }}</span>
                 <livewire:app.charts.chart-donut-descricao-comercial-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                            :dt_fim="$data_fim"
-                                                                           :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                           :vendedores_multi_ids="$vendedores_multi_ids"/>
             </div>
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
                 <span class="font-semibold">Produtos  Quantidade - Grupo {{ $group->name }}</span>
                 <livewire:app.charts.chart-donut-descricao-comercial-quantidade :grupo_id="$group->id"
                                                                                 :dt_inicio="$data_ini"
                                                                                 :dt_fim="$data_fim"
-                                                                                :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                                :vendedores_multi_ids="$vendedores_multi_ids"/>
             </div>
 
         </div>
@@ -86,14 +86,14 @@
                     <span class="font-semibold">Grupo de Estoque R$ - Grupo {{ $group->name }}</span>
                     <livewire:app.charts.chart-donut-grupo-estoque-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                          :dt_fim="$data_fim"
-                                                                         :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                         :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
                 <div class="p-4 bg-white rounded-lg shadow-md w-full">
                     <span class="font-semibold">Grupo de Estoque  Quantidade - Grupo {{ $group->name }}</span>
                     <livewire:app.charts.chart-donut-grupo-estoque-quantidade :grupo_id="$group->id"
                                                                               :dt_inicio="$data_ini"
                                                                               :dt_fim="$data_fim"
-                                                                              :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                              :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
 
             </div>
@@ -105,14 +105,14 @@
                     <livewire:app.charts.chart-donut-modalidade-venda-valor :grupo_id="$group->id"
                                                                             :dt_inicio="$data_ini"
                                                                             :dt_fim="$data_fim"
-                                                                            :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                            :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
                 <div class="p-4 bg-white rounded-lg shadow-md w-full">
                     <span class="font-semibold">Modalidade de Venda  Quantidade - Grupo {{ $group->name }}</span>
                     <livewire:app.charts.chart-donut-modalidade-venda-quantidade :grupo_id="$group->id"
                                                                                  :dt_inicio="$data_ini"
                                                                                  :dt_fim="$data_fim"
-                                                                                 :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                                 :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
 
             </div>
@@ -124,14 +124,14 @@
                     <livewire:app.charts.chart-donut-plano-habilitado-valor :grupo_id="$group->id"
                                                                             :dt_inicio="$data_ini"
                                                                             :dt_fim="$data_fim"
-                                                                            :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                            :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
                 <div class="p-4 bg-white rounded-lg shadow-md w-full">
                     <span class="font-semibold">Planos Habilitados Quantidade - Grupo {{ $group->name }}</span>
                     <livewire:app.charts.chart-donut-plano-habilitado-quantidade :grupo_id="$group->id"
                                                                                  :dt_inicio="$data_ini"
                                                                                  :dt_fim="$data_fim"
-                                                                                 :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                                 :vendedores_multi_ids="$vendedores_multi_ids"/>
                 </div>
 
             </div>
@@ -141,13 +141,13 @@
                 <span class="font-semibold">Fabriantes Valor R$ - Grupo {{ $group->name }}</span>
                 <livewire:app.charts.chart-donut-fabricante-valor :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                   :dt_fim="$data_fim"
-                                                                  :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                  :vendedores_multi_ids="$vendedores_multi_ids"/>
             </div>
             <div class="p-4 bg-white rounded-lg shadow-md w-full">
                 <span class="font-semibold">Fabricante Quantidade - Grupo {{ $group->name }}</span>
                 <livewire:app.charts.chart-donut-fabricante-quantidade :grupo_id="$group->id" :dt_inicio="$data_ini"
                                                                        :dt_fim="$data_fim"
-                                                                       :filiais_multi_ids="$filiais_multi_ids"/>
+                                                                       :vendedores_multi_ids="$vendedores_multi_ids"/>
             </div>
 
         </div>
