@@ -85,6 +85,13 @@ class ChartDonutDescricaoComercialValor extends LivewireChartComponent
         $chart = [];
 
 
+        if ($vendas->toArray() === []) {
+            $chart['labels'][] = 'Sem dados';
+            $chart['data'][] = 0;
+            return $chart;
+        }
+
+
         foreach ($vendas as $venda) {
             $chart['labels'][] = $venda->descricao_comercial;
             $chart['data'][] = floatval($venda->total) ?? 0;
@@ -96,6 +103,7 @@ class ChartDonutDescricaoComercialValor extends LivewireChartComponent
 
     public function build()
     {
+
         $this->chart = (new WireableDonutChart($this->chart_id)) // ->id($this->chart_id)
         ->addPieces($this->getDataChart()['data'])
             ->setLabels($this->getDataChart()['labels'])

@@ -84,6 +84,12 @@ class ChartDonutProdutoValor extends LivewireChartComponent
 
         $chart = [];
 
+        if ($vendas->toArray() === []) {
+            $chart['labels'][] = 'Sem dados';
+            $chart['data'][] = 0;
+            return $chart;
+        }
+
 
         foreach ($vendas as $venda) {
             $chart['labels'][] = $venda->fabricante;
