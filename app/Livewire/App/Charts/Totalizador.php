@@ -8,16 +8,17 @@ use App\Models\Venda;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 #[Lazy]
 class Totalizador extends Component
 {
-
     public $grupo_id;
+
     public $dt_inicio;
+
     public $dt_fim;
 
     public $totalValor = 0;
@@ -25,11 +26,16 @@ class Totalizador extends Component
     public $lastUpdated = null;
 
     public $cardValor = [];
+
     public $cardQuant = [];
+
     public $filial_id = null;
+
     public $vendedor_id = null;
+
     public $filiais_multi_ids = [];
 
+    public $filiais_zones = null;
 
     public function mount()
     {
@@ -39,12 +45,11 @@ class Totalizador extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
 
-
         $date = $this->lastUpdated->data_pedido ?? Carbon::now();
 
         $this->dt_inicio = Carbon::parse($date)->startOfMonth()->format('Y-m-d');
         $this->dt_fim = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
-        $data = Redis::get(auth()->user()->id . '_show_details');
+        $data = Redis::get(auth()->user()->id.'_show_details');
 
         $this->dt_inicio = is_null($data) ? $this->dt_inicio : json_decode($data, true)['dt_inicio'];
         $this->dt_fim = is_null($data) ? $this->dt_fim : json_decode($data, true)['dt_fim'];
@@ -68,7 +73,6 @@ class Totalizador extends Component
             HTML;
     }
 
-
     #[Computed]
     public function getDataValor(): array
     {
@@ -87,6 +91,9 @@ class Totalizador extends Component
             })
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
+            })
+            ->when(! $this->filiais_multi_ids && $this->filiais_zones, function ($query) {
+                $query->whereIn('filial_id', $this->filiais_zones);
             })
             ->when($this->vendedor_id, function ($query) {
                 $query->where('vendedor_id', $this->vendedor_id);
@@ -115,6 +122,9 @@ class Totalizador extends Component
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
             })
+            ->when(! $this->filiais_multi_ids && $this->filiais_zones, function ($query) {
+                $query->whereIn('filial_id', $this->filiais_zones);
+            })
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
                 $query->where('vendedor_id', $vendedor_id);
             })
@@ -122,11 +132,10 @@ class Totalizador extends Component
             ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
             ->sum('valor_meta');
 
-
         return [
-            "total" => $vendas,
-            "meta" => $metas,
-            "chart" => [
+            'total' => $vendas,
+            'meta' => $metas,
+            'chart' => [
                 'type' => 'bar',
                 'options' => [
                     'width' => '100%',
@@ -140,11 +149,11 @@ class Totalizador extends Component
                             'data' => [$vendas, $metas],
                             'backgroundColor' => ['#002855', '#F9C408'],
 
-                            'borderWidth' => 1
-                        ]
-                    ]
-                ]
-            ]
+                            'borderWidth' => 1,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -197,11 +206,10 @@ class Totalizador extends Component
             ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
             ->sum('quantidade');
 
-
         return [
-            "total" => $vendas,
-            "meta" => $metas,
-            "chart" => [
+            'total' => $vendas,
+            'meta' => $metas,
+            'chart' => [
                 'type' => 'bar',
                 'options' => [
                     'width' => '100%',
@@ -215,11 +223,11 @@ class Totalizador extends Component
                             'data' => [$vendas, $metas],
                             'backgroundColor' => ['#002855', '#F9C408'],
 
-                            'borderWidth' => 1
-                        ]
-                    ]
-                ]
-            ]
+                            'borderWidth' => 1,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 

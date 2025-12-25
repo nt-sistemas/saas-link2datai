@@ -4,22 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
-use Filament\Panel;
-use Filament\Models\Contracts\FilamentUser;
-
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, HasUuids, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -71,14 +70,15 @@ class User extends Authenticatable implements FilamentUser
         Cache::forget("user::{$this->id}::permissions");
         Cache::rememberForever(
             "user::{$this->id}::permissions",
-            fn() => $this->permissions()->get()
+            fn () => $this->permissions()->get()
         );
     }
 
     public function hasPermissionTo(string $key): bool
     {
-        /**@var Collection $permissions */
+        /** @var Collection $permissions */
         $permissions = Cache::get("user::{$this->id}::permissions", $this->permissions());
+
         return $permissions->where('key', $key)->isNotEmpty();
     }
 
@@ -90,5 +90,10 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function zones()
+    {
+        return $this->hasMany(Zone::class);
     }
 }

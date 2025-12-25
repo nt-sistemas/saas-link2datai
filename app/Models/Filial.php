@@ -10,6 +10,7 @@ class Filial extends Model
 {
     /** @use HasFactory<\Database\Factories\FilialFactory> */
     use HasFactory;
+
     use HasUuids;
 
     protected $fillable = [
@@ -41,5 +42,10 @@ class Filial extends Model
     public function vendedores()
     {
         return $this->hasMany(Vendedor::class);
+    }
+
+    public function zones()
+    {
+        return $this->belongsToMany(Zone::class, 'filial_zone', 'filial_id', 'zone_id');
     }
 }

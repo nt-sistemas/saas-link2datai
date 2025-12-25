@@ -2,10 +2,10 @@
 
 namespace App\Livewire\App;
 
-
 use App\Models\Categoria;
 use App\Models\Grupo;
 use App\Models\Venda;
+use App\Models\Zone;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
@@ -16,32 +16,54 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     public $lastUpdated = null;
+
     public $daysOfData = null;
+
     public $date_ini;
+
     public $date_fim;
+
     public $item1;
+
+    public $zones;
+
+    public $filiais_zones;
 
     public $selectedTab = 'chart-tab';
 
     public $filiais_multi_ids = [];
 
-
     public function mount()
     {
-        Redis::del(auth()->user()->id . '_show_details');
+        Redis::del(auth()->user()->id.'_show_details');
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
             ->first();
 
-
         $this->daysOfData = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now()) : 0;
 
         $this->date_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->date_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
-        $this->item1 = filter_var(Redis::get(auth()->user()->id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
-    }
+        $this->item1 = filter_var(Redis::get(auth()->user()->id.'_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
 
+        $this->zones = Zone::query()
+            ->where('user_id', auth()->user()->id)
+            ->get();
+
+        $filialsZone = [];
+
+        foreach ($this->zones as $zone) {
+            foreach ($zone->filials as $filial) {
+                $filialsZone[] = $filial->id;
+            }
+        }
+
+        $this->filiais_zones = $filialsZone;
+
+        ds($filialsZone);
+
+    }
 
     public function render(): \Illuminate\View\View
     {
@@ -123,8 +145,8 @@ class Dashboard extends Component
     public function changeView()
     {
 
-        Redis::set(auth()->user()->id . '_dashboard_view', $this->item1 === true ? 'true' : 'false');
-        $this->item1 = filter_var(Redis::get(auth()->user()->id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+        Redis::set(auth()->user()->id.'_dashboard_view', $this->item1 === true ? 'true' : 'false');
+        $this->item1 = filter_var(Redis::get(auth()->user()->id.'_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
         $this->mount();
     }
 
@@ -133,9 +155,11 @@ class Dashboard extends Component
     {
         $data = \App\Models\Filial::query()
             ->where('tenant_id', auth()->user()->tenant_id)
+            ->when($this->filiais_zones, function ($query) {
+                $query->whereIn('id', $this->filiais_zones);
+            })
             ->orderBy('code', 'asc')
             ->get();
-
 
         return $data;
     }
@@ -146,14 +170,12 @@ class Dashboard extends Component
 
         $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
 
-
         $total = 0;
         foreach ($grupos as $grupo) {
             $tipo_grupo_ids = $grupo->tipoGrupo->pluck('id')->toArray();
             $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
             $modalidade_venda_ids = $grupo->modalidade_venda->pluck('id')->toArray();
             $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
-
 
             $total += Venda::query()
                 ->where('tenant_id', auth()->user()->tenant_id)
@@ -170,8 +192,11 @@ class Dashboard extends Component
                 ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                     $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
                 })
-                ->when($this->filiais_multi_ids, function ($query) use ($grupo_estoque_ids) {
+                ->when($this->filiais_multi_ids, function ($query) {
                     $query->whereIn('filial_id', $this->filiais_multi_ids);
+                })
+                ->when(! $this->filiais_multi_ids && $this->filiais_zones, function ($query) {
+                    $query->whereIn('filial_id', $this->filiais_zones);
                 })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->sum($grupo->campo_valor_id);
@@ -185,7 +210,6 @@ class Dashboard extends Component
     {
 
         $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
-
 
         $quantidade = 0;
         foreach ($grupos as $grupo) {
@@ -208,8 +232,11 @@ class Dashboard extends Component
                 ->when($grupo_estoque_ids, function ($query) use ($grupo_estoque_ids) {
                     $query->whereIn('grupo_estoque_id', $grupo_estoque_ids);
                 })
-                ->when($this->filiais_multi_ids, function ($query) use ($grupo_estoque_ids) {
+                ->when($this->filiais_multi_ids, function ($query) {
                     $query->whereIn('filial_id', $this->filiais_multi_ids);
+                })
+                ->when(! $this->filiais_multi_ids && $this->filiais_zones, function ($query) {
+                    $query->whereIn('filial_id', $this->filiais_zones);
                 })
                 ->whereBetween('data_pedido', [$this->date_ini, $this->date_fim])
                 ->count();
@@ -226,14 +253,13 @@ class Dashboard extends Component
             'dt_fim' => $this->date_fim,
         ];
 
-
         $this->dispatch('update-command', [
             'filial_id' => $this->filiais_multi_ids,
             'dt_inicio' => $this->date_ini,
             'dt_fim' => $this->date_fim,
         ]);
 
-        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
+        Redis::set(auth()->user()->id.'_show_details', json_encode($data));
     }
 
     public function clickDetalhes($grupo_id)
@@ -244,7 +270,7 @@ class Dashboard extends Component
             'dt_fim' => $this->date_fim,
         ];
 
-        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
+        Redis::set(auth()->user()->id.'_show_details', json_encode($data));
 
         $this->dispatch('show-details');
 
