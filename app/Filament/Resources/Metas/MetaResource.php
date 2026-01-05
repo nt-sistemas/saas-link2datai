@@ -21,9 +21,13 @@ class MetaResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 
     protected static ?string $recordTitleAttribute = 'Metas';
+
     protected static ?string $modelLabel = 'Meta';
+
     protected static ?string $pluralModelLabel = 'Metas';
+
     protected static ?string $navigationLabel = 'Metas';
+
     protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
@@ -50,5 +54,10 @@ class MetaResource extends Resource
             'create' => CreateMeta::route('/create'),
             'edit' => EditMeta::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

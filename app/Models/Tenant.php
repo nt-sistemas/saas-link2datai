@@ -28,6 +28,10 @@ class Tenant extends Model
         return $this->hasMany(User::class);
     }
 
+    public function vendas(){
+        return $this->hasMany(Venda::class);
+    }
+
     public function imports()
     {
         return $this->hasMany(Import::class);
@@ -66,6 +70,11 @@ class Tenant extends Model
     public function filials()
     {
         return $this->hasMany(Filial::class);
+    }
+
+    public function vendedores()
+    {
+        return $this->hasMany(Vendedor::class);
     }
 
     public function uploads()

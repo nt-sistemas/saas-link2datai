@@ -13,22 +13,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Builder;
 
 class CategoriaResource extends Resource
 {
-
-
     protected static ?string $model = Categoria::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
     protected static ?string $recordTitleAttribute = 'Categorias';
+
     protected static ?string $modelLabel = 'Categoria';
+
     protected static ?string $pluralModelLabel = 'Categorias';
+
     protected static ?string $navigationLabel = 'Categorias';
+
     protected static ?int $navigationSort = 2;
-
-
 
     public static function form(Schema $schema): Schema
     {
@@ -54,5 +55,10 @@ class CategoriaResource extends Resource
             'create' => CreateCategoria::route('/create'),
             'edit' => EditCategoria::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

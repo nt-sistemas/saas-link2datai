@@ -54,4 +54,9 @@ class ZoneResource extends Resource
             'edit' => EditZone::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
+    }
 }

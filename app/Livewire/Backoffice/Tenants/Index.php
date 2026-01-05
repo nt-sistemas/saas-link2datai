@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Tenants;
+namespace App\Livewire\Backoffice\Tenants;
 
 use App\Models\Tenant;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -28,7 +28,7 @@ class Index extends Component
     #[Layout('components.layouts.admin')]
     public function render(): View
     {
-        return view('livewire.admin.tenants.index');
+        return view('livewire.backoffice.tenants.index');
     }
 
     #[Computed()]

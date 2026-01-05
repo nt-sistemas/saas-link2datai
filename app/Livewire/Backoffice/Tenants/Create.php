@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Tenants;
+namespace App\Livewire\Backoffice\Tenants;
 
 use App\Models\Tenant;
 use Illuminate\View\View;
@@ -8,11 +8,14 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Illuminate\Support\Str;
+use Livewire\WithPagination;
+use Mary\Traits\Toast;
 
 #[Lazy]
-class Edit extends Component
+class Create extends Component
 {
-    public $id;
+    use Toast, WithPagination;
 
     #[Rule('required|string|max:255')]
     public $name;
@@ -22,35 +25,41 @@ class Edit extends Component
     #[Rule('required|string|max:20')]
     public $phone;
 
-    public $active;
+    public bool $active = true;
+
 
     #[Layout('components.layouts.admin')]
     public function render(): View
     {
-        $tenant = Tenant::findOrFail($this->id);
-        $this->name = $tenant->name;
-        $this->email = $tenant->email;
-        $this->phone = $tenant->phone;
-        $this->active = $tenant->active;
-
-        return view('livewire.admin.tenants.edit');
+        return view('livewire.backoffice.tenants.create');
     }
 
     public function save()
     {
         $this->validate();
 
-        $tenant = Tenant::findOrFail($this->id);
-        $tenant->update([
+        // Simulating a long-running process
+
+        Tenant::create([
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'slug' => Str::slug($this->name),
             'active' => $this->active,
         ]);
 
-        session()->flash('message', 'Tenant updated successfully.');
+        $this->toast(
+            type: 'success',
+            title: 'Empresa criada com sucesso', // title
+            description: null,                  // optional (text)
+            position: 'toast-top toast-end',    // optional (daisyUI classes)
+            icon: 'o-information-circle',       // Optional (any icon)
+            css: 'alert-info',                  // Optional (daisyUI classes)
+            timeout: 10000,                      // optional (ms)
+            redirectTo: null                    // optional (uri)
+        );
 
-        return redirect()->route('admin.tenants.index');
+        return redirect()->route('backoffice.tenants.index');
     }
 
     public function placeholder()

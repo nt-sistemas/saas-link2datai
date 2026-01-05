@@ -19,6 +19,7 @@ class GrupoResource extends Resource
     protected static ?string $model = Grupo::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
+
     protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
@@ -45,5 +46,10 @@ class GrupoResource extends Resource
             'create' => CreateGrupo::route('/create'),
             'edit' => EditGrupo::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

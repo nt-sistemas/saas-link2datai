@@ -14,7 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class VendedorResource extends Resource
 {
@@ -23,9 +22,13 @@ class VendedorResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'Vendedores';
+
     protected static ?string $modelLabel = 'Vendedor';
+
     protected static ?string $pluralModelLabel = 'Vendedores';
+
     protected static ?string $navigationLabel = 'Vendedores';
+
     protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
@@ -52,5 +55,10 @@ class VendedorResource extends Resource
             'create' => CreateVendedor::route('/create'),
             'edit' => EditVendedor::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

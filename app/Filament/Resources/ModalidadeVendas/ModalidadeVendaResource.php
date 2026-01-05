@@ -21,9 +21,13 @@ class ModalidadeVendaResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
     protected static ?string $recordTitleAttribute = 'Modalidades de Vendas';
+
     protected static ?string $modelLabel = 'Modalidade de Venda';
+
     protected static ?string $pluralModelLabel = 'Modalidades de Vendas';
+
     protected static ?string $navigationLabel = 'Modalidades de Vendas';
+
     protected static ?int $navigationSort = 8;
 
     public static function form(Schema $schema): Schema
@@ -50,5 +54,10 @@ class ModalidadeVendaResource extends Resource
             'create' => CreateModalidadeVenda::route('/create'),
             'edit' => EditModalidadeVenda::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

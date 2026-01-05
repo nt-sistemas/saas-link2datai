@@ -21,9 +21,13 @@ class PlanoHabilitadoResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDevicePhoneMobile;
 
     protected static ?string $recordTitleAttribute = 'Planos Habilitados';
+
     protected static ?string $modelLabel = 'Plano Habilitado';
+
     protected static ?string $pluralModelLabel = 'Planos Habilitados';
+
     protected static ?string $navigationLabel = 'Planos Habilitados';
+
     protected static ?int $navigationSort = 9;
 
     public static function form(Schema $schema): Schema
@@ -50,5 +54,10 @@ class PlanoHabilitadoResource extends Resource
             'create' => CreatePlanoHabilitado::route('/create'),
             'edit' => EditPlanoHabilitado::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

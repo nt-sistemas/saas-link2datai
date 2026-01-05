@@ -35,6 +35,12 @@ class Login extends Component
             return;
         }
 
+
+        if (auth()->user()->is_admin) {
+            redirect()->route('backoffice.dashboard');
+            return;
+        }
+
         redirect()->route('app.dashboard');
     }
 }

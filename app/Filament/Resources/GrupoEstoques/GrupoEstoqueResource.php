@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GrupoEstoqueResource extends Resource
 {
@@ -21,9 +22,13 @@ class GrupoEstoqueResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBox;
 
     protected static ?string $recordTitleAttribute = 'Grupos de Estoques';
+
     protected static ?string $modelLabel = 'Grupo de Estoque';
+
     protected static ?string $pluralModelLabel = 'Grupos de Estoques';
+
     protected static ?string $navigationLabel = 'Grupos de Estoques';
+
     protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
@@ -50,5 +55,10 @@ class GrupoEstoqueResource extends Resource
             'create' => CreateGrupoEstoque::route('/create'),
             'edit' => EditGrupoEstoque::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

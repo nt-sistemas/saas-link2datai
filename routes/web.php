@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\App\Filiais\Categories\Show as FilialCategoriesShow;
 use App\Livewire\App\Vendedores\Categories\Show as VendedorCategoriesShow;
+use App\Livewire\Backoffice\Dashboard as BackofficeDashboard;
 use App\Livewire\Categories\Show;
 use Illuminate\Support\Facades\Route;
 
@@ -29,13 +30,17 @@ Route::middleware('auth')->group(function () {
         Route::get('categories/{id}/vendedor/{vendedor_id}', VendedorCategoriesShow::class)->name('categories.vendedor.show');
     });
 
-    Route::prefix('backoffice')->name('admin.')->group(function () {
-        Route::get('/', Dashboard::class)->name('dashboard');
+    Route::prefix('backoffice')->name('backoffice.')->group(function () {
+        Route::get('/', BackofficeDashboard::class)->name('dashboard');
+
+        Route::prefix('vendas')->name('')->group(function () {
+            Route::get('/', \App\Livewire\Backoffice\Vendas\Index::class)->name('vendas.index');
+        });
 
         Route::prefix('tenants')->group(function () {
-            Route::get('/', \App\Livewire\Admin\Tenants\Index::class)->name('tenants.index');
-            Route::get('/create', \App\Livewire\Admin\Tenants\Create::class)->name('tenants.create');
-            Route::get('/{id}/edit', \App\Livewire\Admin\Tenants\Edit::class)->name('tenants.edit');
+            Route::get('/', \App\Livewire\Backoffice\Tenants\Index::class)->name('tenants.index');
+            Route::get('/create', \App\Livewire\Backoffice\Tenants\Create::class)->name('tenants.create');
+            Route::get('/{id}/edit', \App\Livewire\Backoffice\Tenants\Edit::class)->name('tenants.edit');
         });
         Route::prefix('categories')->group(function () {
             Route::get('/', \App\Livewire\Admin\Categories\Index::class)->name('categories.index');

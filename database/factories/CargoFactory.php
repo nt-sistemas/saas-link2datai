@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Vendedor>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cargo>
  */
-class VendedorFactory extends Factory
+class CargoFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class VendedorFactory extends Factory
     public function definition(): array
     {
         return [
-            'document' => (string) $this->faker->unique()->randomNumber(11, true),
+            //
         ];
     }
 }

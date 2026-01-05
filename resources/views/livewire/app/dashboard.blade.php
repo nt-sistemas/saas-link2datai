@@ -2,6 +2,10 @@
 
   <x-header title="Dashboard" subtitle="Gerencie seus dados e visualizações" separator>
     <x-slot:actions>
+      @if(auth()->user()->is_admin)
+      <x-button label="Backoffice" class="bg-orange-500 text-primary" link="/backoffice" />
+      @endif
+
       <x-button label="Painel" class="btn-secondary text-primary" link="/admin" />
     </x-slot:actions>
   </x-header>

@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FilialResource extends Resource
 {
@@ -22,9 +23,13 @@ class FilialResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
     protected static ?string $recordTitleAttribute = 'Filiais';
+
     protected static ?string $modelLabel = 'Filial';
+
     protected static ?string $pluralModelLabel = 'Filiais';
+
     protected static ?string $navigationLabel = 'Filiais';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
@@ -51,5 +56,10 @@ class FilialResource extends Resource
             'create' => CreateFilial::route('/create'),
             'edit' => EditFilial::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

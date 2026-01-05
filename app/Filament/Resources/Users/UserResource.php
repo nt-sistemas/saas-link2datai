@@ -21,13 +21,16 @@ class UserResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static ?string $recordTitleAttribute = 'Usuarios';
+
     protected static ?string $modelLabel = 'usuario';
+
     protected static ?string $pluralModelLabel = 'usuarios';
+
     protected static ?string $navigationLabel = 'Usuários';
+
     protected static ?int $navigationSort = 30;
 
-
-    protected static string $pageTitle = "Usuários";
+    protected static string $pageTitle = 'Usuários';
 
     public static function form(Schema $schema): Schema
     {
@@ -53,5 +56,10 @@ class UserResource extends Resource
             'create' => CreateUser::route('/create'),
             'edit' => EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }

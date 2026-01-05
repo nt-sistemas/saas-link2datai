@@ -96,4 +96,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Zone::class);
     }
+
+    public function cargo(): BelongsTo
+    {
+        return $this->belongsTo(Cargo::class, 'cargo_id', 'id');
+    }
 }

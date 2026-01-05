@@ -21,12 +21,14 @@ class TipoGrupoResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
     protected static ?string $recordTitleAttribute = 'Tipo de Pedidos';
+
     protected static ?string $modelLabel = 'tipo de pedido';
+
     protected static ?string $pluralModelLabel = 'tipos de pedido';
+
     protected static ?string $navigationLabel = 'Tipos de Pedido';
+
     protected static ?int $navigationSort = 1;
-
-
 
     public static function form(Schema $schema): Schema
     {
@@ -52,5 +54,10 @@ class TipoGrupoResource extends Resource
             'create' => CreateTipoGrupo::route('/create'),
             'edit' => EditTipoGrupo::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
     }
 }
