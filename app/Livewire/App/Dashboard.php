@@ -61,7 +61,6 @@ class Dashboard extends Component
 
         $this->filiais_zones = $filialsZone;
 
-        ds($filialsZone);
 
     }
 
