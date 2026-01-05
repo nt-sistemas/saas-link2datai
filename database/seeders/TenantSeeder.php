@@ -20,7 +20,7 @@ class TenantSeeder extends Seeder
     public function run(): void
     {
 
-        $empresaNumber = rand(8, 10);
+        $empresaNumber = rand(1, 10);
 
         $tenant = Tenant::factory()->create([
             'name' => 'Empresa Demo '.$empresaNumber,
