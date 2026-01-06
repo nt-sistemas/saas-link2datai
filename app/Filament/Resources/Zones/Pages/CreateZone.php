@@ -13,6 +13,7 @@ class CreateZone extends CreateRecord
     {
 
         $data['tenant_id'] = auth()->user()->tenant_id;
+        // dd($data); --- IGNORE ---
 
         return $data;
     }
