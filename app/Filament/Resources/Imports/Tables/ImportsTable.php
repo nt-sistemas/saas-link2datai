@@ -27,12 +27,15 @@ class ImportsTable
                     ->searchable(),
                 TextColumn::make('data_pedido')
                     ->label('Data do Pedido')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('filename')
                     ->label('Nome do Arquivo')
+                    ->sortable()
                     ->searchable(),
                 IconColumn::make('is_processed')
                     ->label('Processado')
+                    ->sortable()
                     ->boolean(),
                 TextColumn::make('message')
                     ->label('Mensagem')
@@ -42,6 +45,7 @@ class ImportsTable
                     ->searchable(),
 
             ])
+            ->defaultSort('data_pedido', direction: 'desc')
             ->filters([
                 Filter::make('message_error')
                     ->label('Erros')
