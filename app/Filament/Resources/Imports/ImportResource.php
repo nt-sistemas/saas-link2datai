@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Filament\Widgets\Widget;
 
 class ImportResource extends Resource
 {
@@ -41,6 +42,14 @@ class ImportResource extends Resource
         ];
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            Widgets\ImportsStats::class,
+            Widgets\ImportsDiarioStats::class
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
@@ -52,6 +61,6 @@ class ImportResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id);
+        return parent::getEloquentQuery()->where('tenant_id', auth()->user()->tenant_id)->orderBy('created_at', 'desc');
     }
 }

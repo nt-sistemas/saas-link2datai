@@ -14,6 +14,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class ImportsTable
 {
@@ -26,7 +27,6 @@ class ImportsTable
                     ->searchable(),
                 TextColumn::make('data_pedido')
                     ->label('Data do Pedido')
-                    ->date('d/m/Y')
                     ->searchable(),
                 TextColumn::make('filename')
                     ->label('Nome do Arquivo')
@@ -45,7 +45,7 @@ class ImportsTable
             ->filters([
                 Filter::make('message_error')
                     ->label('Erros')
-                    ->query(fn($query) => $query->where('message_error', '!=', null)),
+                    ->query(fn ($query) => $query->where('message_error', '!=', null)),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -53,6 +53,28 @@ class ImportsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    Action::make('reprocessar_importacoes')
+                        ->icon('heroicon-o-arrow-path')
+                        ->label('Reprocessar Importações')
+                        ->accessSelectedRecords()
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            foreach ($records as $record) {
+                                $venda = Venda::where('import_id', $record->id)->first();
+                                if ($venda) {
+                                    $record->message = 'Reprocessado manualmente pelo usuário '.auth()->user()->name.' em '.Carbon::now()->format('d/m/Y H:i:s');
+                                }
+                                $record->save();
+                                // Dispatch the job to process the import
+                                ProcessImportJob::dispatch($record->tenant_id, [$record]);
+                            }
+
+                            Notification::make()
+                                ->title('Importações selecionadas estão sendo reprocessadas.')
+                                ->success()
+                                ->send();
+                        })
+                        ->color('warning'),
                 ]),
             ]);
     }
