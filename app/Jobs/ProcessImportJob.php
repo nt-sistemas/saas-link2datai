@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ProcessImportJob implements ShouldQueue
 {
@@ -44,11 +43,11 @@ class ProcessImportJob implements ShouldQueue
         foreach ($this->data as $row) {
 
             // The input string
-            $dateString = $row->data['Data Pedido'];
+            // $dateString = $row->data['Data Pedido'] ?? $row->data['Data_x0020_pedido'];
 
             // The format of the input string
-            $format = 'd/m/Y H:i';
-            $carbonDate = Carbon::createFromFormat($format, $dateString);
+            // $format = 'd/m/Y H:i';
+            // $carbonDate = Carbon::createFromFormat($format, $dateString);
 
             $dataInsert = [
                 'tenant_id' => $row->tenant_id,
@@ -61,7 +60,7 @@ class ProcessImportJob implements ShouldQueue
                 'base_faturamento_compra' => $this->convertToFloat($row->data['Base Faturamento Compra'] ?? $row->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00),
                 'valor_franquia' => $this->convertToFloat($row->data['Valor Franquia'] ?? $row->data['ValorFranquia'] ?? 0.00),
                 'valor_total' => $this->convertToFloat($row->data['Valor Caixa'] ?? $row->data['Valor_x0020_Caixa'] ?? 0.00),
-                'data_pedido' => $carbonDate->format('Y-m-d'), // Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
+                'data_pedido' => Carbon::parse($row->data['Data_x0020_pedido'])->format('Y-m-d'),
                 'numero_pedido' => $row->data['Número PV'] ?? $row->data['Numero_x0020_Pedido'],
                 'descricao_comercial' => $row->data['Descrição Comercial'] ?? $row->data['Descrição_x0020_Comercial'] ?? null,
                 'categoria' => $row->data['Categoria'] ?? null,
