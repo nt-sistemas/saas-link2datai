@@ -9,22 +9,19 @@ use App\Models\Vendedor;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use phpDocumentor\Reflection\PseudoTypes\LowercaseString;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ProcessImportJob implements ShouldQueue
 {
     use Queueable;
 
-
     public $data = [];
+
     public $tenantId;
 
-
     public $ties = 3;
+
     public $timeout = 600;
 
     /**
@@ -44,7 +41,6 @@ class ProcessImportJob implements ShouldQueue
     {
         $batchInsert = [];
 
-
         foreach ($this->data as $row) {
 
             // The input string
@@ -54,30 +50,27 @@ class ProcessImportJob implements ShouldQueue
             $format = 'd/m/Y H:i';
             $carbonDate = Carbon::createFromFormat($format, $dateString);
 
-
             $dataInsert = [
                 'tenant_id' => $row->tenant_id,
                 'filial_id' => $this->processarFilial($row->data['filial'] ?? $row->data['Filial'], $row->tenant_id),
-                'vendedor_id' => $this->processarVendedor($row->data['Nome Vendedor'], $row->data['CPF Vendedor'], $row->tenant_id),
-                'tipo_grupo_id' => $this->processarTipoPedido($row->data['Tipo Pedido'], $row->tenant_id),
-                'grupo_estoque_id' => $this->processarGrupoEstoque($row->data['Grupo Estoque'], $row->tenant_id),
-                'plano_habilitado_id' => $this->processarPlanoHabilitado($row->data['Plano Habilitação'] ?? null, $row->tenant_id),
-                'modalidade_venda_id' => $this->processarModalidadeVenda($row->data['Modalidade Venda'] ?? null, $row->tenant_id),
+                'vendedor_id' => $this->processarVendedor($row->data['Nome Vendedor'] ?? $row->data['Nome_x0020_Vendedor'], $row->data['CPF Vendedor'] ?? $row->data['CPF_x0020_Vendedor'], $row->tenant_id),
+                'tipo_grupo_id' => $this->processarTipoPedido($row->data['Tipo Pedido'] ?? $row->data['Tipo_x0020_Pedido'], $row->tenant_id),
+                'grupo_estoque_id' => $this->processarGrupoEstoque($row->data['Grupo Estoque'] ?? $row->data['Grupo_x0020_Estoque'], $row->tenant_id),
+                'plano_habilitado_id' => $this->processarPlanoHabilitado($row->data['Plano Habilitação'] ?? $row->data['Plano_x0020_Habilitação'] ?? null, $row->tenant_id),
+                'modalidade_venda_id' => $this->processarModalidadeVenda($row->data['Modalidade Venda'] ?? $row->data['Modalidade_x0020_Venda'] ?? null, $row->tenant_id),
                 'base_faturamento_compra' => $this->convertToFloat($row->data['Base Faturamento Compra'] ?? $row->data['BASE_x0020_FATURAMENTO_x0020_COMPRA'] ?? 0.00),
                 'valor_franquia' => $this->convertToFloat($row->data['Valor Franquia'] ?? $row->data['ValorFranquia'] ?? 0.00),
                 'valor_total' => $this->convertToFloat($row->data['Valor Caixa'] ?? $row->data['Valor_x0020_Caixa'] ?? 0.00),
-                'data_pedido' => $carbonDate->format('Y-m-d'), //Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
+                'data_pedido' => $carbonDate->format('Y-m-d'), // Carbon::parse(Date::excelToDateTimeObject($row->data['Data Pedido']) ?? $row->data['Data_0x0020_pedido'])->format('Y-m-d'),
                 'numero_pedido' => $row->data['Número PV'] ?? $row->data['Numero_x0020_Pedido'],
-                'descricao_comercial' => $row->data['Descrição Comercial'] ?? null,
+                'descricao_comercial' => $row->data['Descrição Comercial'] ?? $row->data['Descrição_x0020_Comercial'] ?? null,
                 'categoria' => $row->data['Categoria'] ?? null,
                 'fabricante' => $row->data['Fabricante'] ?? null,
                 'import_id' => $row->id,
             ];
 
-
             $batchInsert[] = $dataInsert;
         }
-
 
         Venda::upsert(
             $batchInsert,
@@ -113,7 +106,6 @@ class ProcessImportJob implements ShouldQueue
         $batchInsert = [];
     }
 
-
     public function processarFilial(string $filial, $tenantId)
     {
         $data = explode('-', $filial);
@@ -121,7 +113,6 @@ class ProcessImportJob implements ShouldQueue
         $filialExists = Filial::where('code', trim($data[0]))
             ->where('tenant_id', $tenantId)
             ->first();
-
 
         if ($filialExists) {
 
@@ -135,7 +126,6 @@ class ProcessImportJob implements ShouldQueue
                 'name' => Str::upper(trim($data[1])),
             ],
         );
-
 
         return $filial->id;
     }
@@ -154,7 +144,6 @@ class ProcessImportJob implements ShouldQueue
             return $vendedorExists->id;
         }
 
-
         $vendedor = \App\Models\Vendedor::updateOrCreate(
             ['document' => $vendedorData['document']],
             [
@@ -172,11 +161,10 @@ class ProcessImportJob implements ShouldQueue
         $tipoPedido = \App\Models\TipoGrupo::updateOrCreate(
             [
                 'name' => Str::upper($tipoPedido),
-                'tenant_id' => $tenantId
+                'tenant_id' => $tenantId,
             ],
 
         );
-
 
         return $tipoPedido->id;
     }
@@ -186,7 +174,7 @@ class ProcessImportJob implements ShouldQueue
         $grupoEstoque = \App\Models\GrupoEstoque::updateOrCreate(
             [
                 'name' => Str::upper($grupoEstoque),
-                'tenant_id' => $tenantId
+                'tenant_id' => $tenantId,
             ],
         );
 
@@ -201,10 +189,9 @@ class ProcessImportJob implements ShouldQueue
         $planoHabilitado = \App\Models\PlanoHabilitado::updateOrCreate(
             [
                 'name' => Str::upper($planoHabilitado),
-                'tenant_id' => $tenantId
+                'tenant_id' => $tenantId,
             ],
         );
-
 
         return $planoHabilitado->id;
     }
@@ -214,7 +201,7 @@ class ProcessImportJob implements ShouldQueue
         $modalidadeVenda = \App\Models\ModalidadeVenda::updateOrCreate(
             [
                 'name' => Str::upper($modalidadeVenda),
-                'tenant_id' => $tenantId
+                'tenant_id' => $tenantId,
             ],
         );
 
@@ -237,8 +224,7 @@ class ProcessImportJob implements ShouldQueue
         $numericString = str_replace(',', '.', $numericString);
 
         // Cast the string to a float (decimal)
-        $decimalValue = (float)$numericString;
-
+        $decimalValue = (float) $numericString;
 
         return $decimalValue;
     }
