@@ -12,7 +12,7 @@ class ImportsChart extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = null;
+    // protected ?string $pollingInterval = null;
 
     protected ?string $maxHeight = '300px';
 
