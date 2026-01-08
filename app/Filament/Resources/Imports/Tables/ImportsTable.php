@@ -9,11 +9,13 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class ImportsTable
@@ -50,6 +52,42 @@ class ImportsTable
                 Filter::make('message_error')
                     ->label('Erros')
                     ->query(fn ($query) => $query->where('message_error', '!=', null)),
+                Filter::make('data')
+                    ->schema([
+                        DatePicker::make('created_from')
+                            ->label('Data de')
+                            ->placeholder('Data de'),
+                        DatePicker::make('created_until')
+                            ->label('Data até')
+                            ->placeholder('Data até'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+
+                        $result = $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->where('data_pedido', '>=', Carbon::parse($date)->format('Y-m-d 0:00:00')),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->where('data_pedido', '<=', Carbon::parse($date)->format('Y-m-d 23:59:59')),
+                            );
+
+                        return $result;
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['created_from']) {
+                            $indicators[] = 'De: '.Carbon::parse($data['created_from'])->format('d/m/Y');
+                        }
+
+                        if ($data['created_until']) {
+                            $indicators[] = 'Até: '.Carbon::parse($data['created_until'])->format('d/m/Y');
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),
