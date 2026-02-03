@@ -6,7 +6,7 @@
 </div>
 @script
 <script>
-    console.log('Chart Anual', @json($data));
+    //console.log('Chart Anual', @json($data));
     var data = @json($data);
     var seriesData = @json($data['series']);
     var categories = @json($data['categories']);

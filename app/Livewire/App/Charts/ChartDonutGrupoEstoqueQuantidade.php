@@ -37,7 +37,8 @@ class ChartDonutGrupoEstoqueQuantidade extends LivewireChartComponent
 
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
-        $this->filiais_multi_ids = $params['filiais_multi_ids'];
+        $this->filiais_multi_ids = $params['filiais_multi_ids'] ?? [];
+        $this->vendedores_multi_ids = $params['vendedores_multi_ids'] ?? [];
 
         $this->build();
     }

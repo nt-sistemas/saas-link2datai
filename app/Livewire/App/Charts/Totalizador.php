@@ -8,11 +8,9 @@ use App\Models\Venda;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-#[Lazy]
 class Totalizador extends Component
 {
     public $grupo_id;
@@ -234,6 +232,7 @@ class Totalizador extends Component
     #[On('update-command')]
     public function updateChart($data)
     {
+
         $this->filiais_multi_ids = $data['filial_id'] ?? null;
         $this->dt_inicio = $data['dt_inicio'] ?? $this->dt_inicio;
         $this->dt_fim = $data['dt_fim'] ?? $this->dt_fim;

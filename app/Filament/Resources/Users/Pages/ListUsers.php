@@ -19,4 +19,6 @@ class ListUsers extends ListRecords
             ->label('Novo Usuário'),
         ];
     }
+
+    
 }

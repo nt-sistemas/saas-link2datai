@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backoffice;
 
+use App\Models\Filial;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Venda;
@@ -13,7 +14,9 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     public $tenantsCount;
+
     public $salesCount;
+
     public $usersCount;
 
     public function mount()
@@ -22,7 +25,6 @@ class Dashboard extends Component
         $this->salesCount = Venda::count();
         $this->usersCount = User::count();
     }
-
 
     #[Layout('components.layouts.admin')]
     public function render()
@@ -43,5 +45,21 @@ class Dashboard extends Component
                 </div>
             HTML;
 
+    }
+
+    public function lastFiliais()
+    {
+        return Filial::query()
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+    }
+
+    public function lastUsers()
+    {
+        return User::query()
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
     }
 }

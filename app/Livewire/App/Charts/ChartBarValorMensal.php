@@ -3,11 +3,9 @@
 namespace App\Livewire\App\Charts;
 
 use App\Models\Grupo;
-use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
 use LarawireGarage\LarapexLivewire\LivewireChartComponent;
-use LarawireGarage\LarapexLivewire\Wireable\WireableAreaChart;
 use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -15,10 +13,15 @@ use Livewire\Attributes\On;
 class ChartBarValorMensal extends LivewireChartComponent
 {
     protected $listeners = [];
+
     public $grupo_id;
+
     public $dt_inicio;
+
     public $dt_fim;
+
     public $filiais_multi_ids = [];
+
     public $vendedores_multi_ids = [];
 
     public function mount()
@@ -27,13 +30,11 @@ class ChartBarValorMensal extends LivewireChartComponent
         $this->getDataChart();
     }
 
-
     private function dataSource()
     {
 
-
         // Dataset logic
-        return array_map(fn($value) => [$value, rand(1000, 10000)], range(1, 20));
+        return array_map(fn ($value) => [$value, rand(1000, 10000)], range(1, 20));
     }
 
     #[On('show-filter-chart-bar')]
@@ -42,7 +43,8 @@ class ChartBarValorMensal extends LivewireChartComponent
 
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
-        $this->filiais_multi_ids = $params['filiais_multi_ids'];
+        $this->filiais_multi_ids = $params['filiais_multi_ids'] ?? [];
+        $this->vendedores_multi_ids = $params['vendedores_multi_ids'] ?? [];
 
         $this->build();
     }
@@ -52,7 +54,6 @@ class ChartBarValorMensal extends LivewireChartComponent
     {
         $grupo = Grupo::find($this->grupo_id);
 
-
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
@@ -60,7 +61,7 @@ class ChartBarValorMensal extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ") as total, DATE_TRUNC('month',data_pedido) as month,Count(id) as quantidade")
+            ->selectRaw('SUM('.$grupo->campo_valor_id.") as total, DATE_TRUNC('month',data_pedido) as month,Count(id) as quantidade")
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -86,13 +87,11 @@ class ChartBarValorMensal extends LivewireChartComponent
 
         $chart = [];
 
-
         foreach ($vendas as $venda) {
             $chart['labels'][] = Carbon::parse($venda->month)->format('m/Y');
             $chart['data'][] = $venda->total ?? 0;
             $chart['quantidade'][] = $venda->quantidade ?? 0;
         }
-
 
         return $chart;
     }
@@ -101,18 +100,18 @@ class ChartBarValorMensal extends LivewireChartComponent
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-        //->addBar('Valor', $this->dataSource())
-        ->setDataset([
-            [
-                'name' => "Valores Diários",
-                'labels' => $this->getDataChart()['labels'] ?? [],
-                'data' => $this->getDataChart()['data'] ?? []
-            ],
+        // ->addBar('Valor', $this->dataSource())
+            ->setDataset([
+                [
+                    'name' => 'Valores Diários',
+                    'labels' => $this->getDataChart()['labels'] ?? [],
+                    'data' => $this->getDataChart()['data'] ?? [],
+                ],
 
-        ])
+            ])
             ->showDataLabels(true)
             ->setFill([
-                'opacity' => 1.0
+                'opacity' => 1.0,
             ])
             ->colors(['#002855', '#feb019'])
             ->setPlotOptions([
@@ -122,15 +121,15 @@ class ChartBarValorMensal extends LivewireChartComponent
                     'columnWidth' => '70%',
                     'dataLabels' => [
                         'enabled' => true,
-                        'position' => 'top'
-                        //'orientation' => 'vertical',
+                        'position' => 'top',
+                        // 'orientation' => 'vertical',
 
                     ],
 
                 ],
 
             ])
-            //->randomColors()
+            // ->randomColors()
             // /**
             //  * using heredoc
             //  */
@@ -146,11 +145,11 @@ class ChartBarValorMensal extends LivewireChartComponent
 
                 return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             }")
-            ->jsCallback('xaxis.labels.formatter', "function (val, index) {
-                console.log(val);
-                console.log(index);
+            ->jsCallback('xaxis.labels.formatter', 'function (val, index) {
+                //console.log(val);
+                //console.log(index);
                 return val;
-            }")
+            }')
             ->setYAxis([
                 'title' => [
                     'text' => 'Valor em R$',

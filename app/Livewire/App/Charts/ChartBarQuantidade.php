@@ -7,17 +7,21 @@ use App\Models\Venda;
 use Carbon\Carbon;
 use LarawireGarage\LarapexLivewire\LivewireChartComponent;
 use LarawireGarage\LarapexLivewire\Wireable\WireableAreaChart;
-use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class ChartBarQuantidade extends LivewireChartComponent
 {
     protected $listeners = [];
+
     public $grupo_id;
+
     public $dt_inicio;
+
     public $dt_fim;
+
     public $filiais_multi_ids = [];
+
     public $vendedores_multi_ids = [];
 
     public function mount()
@@ -26,14 +30,11 @@ class ChartBarQuantidade extends LivewireChartComponent
         $this->getDataChart();
     }
 
-
-
     private function dataSource()
     {
 
-
         // Dataset logic
-        return array_map(fn($value) => [$value, rand(1000, 10000)], range(1, 20));
+        return array_map(fn ($value) => [$value, rand(1000, 10000)], range(1, 20));
     }
 
     #[On('show-filter-chart-bar')]
@@ -42,7 +43,8 @@ class ChartBarQuantidade extends LivewireChartComponent
 
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
-        $this->filiais_multi_ids = $params['filiais_multi_ids'];
+        $this->filiais_multi_ids = $params['filiais_multi_ids'] ?? [];
+        $this->vendedores_multi_ids = $params['vendedores_multi_ids'] ?? [];
 
         $this->build();
     }
@@ -52,8 +54,6 @@ class ChartBarQuantidade extends LivewireChartComponent
     {
         $grupo = Grupo::find($this->grupo_id);
 
-
-
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
         $grupo_estoque_ids = $grupo->grupo_estoque->pluck('id')->toArray();
@@ -61,7 +61,7 @@ class ChartBarQuantidade extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, DATE(data_pedido) as data,Count(id) as quantidade')
+            ->selectRaw('SUM('.$grupo->campo_valor_id.') as total, DATE(data_pedido) as data,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->filiais_multi_ids, function ($query) {
                 $query->whereIn('filial_id', $this->filiais_multi_ids);
@@ -88,7 +88,6 @@ class ChartBarQuantidade extends LivewireChartComponent
 
         $chart = [];
 
-
         foreach ($vendas as $venda) {
             $chart['labels'][] = Carbon::parse($venda->data)->format('d/m/Y');
             $chart['data'][] = $venda->total ?? 0;
@@ -97,24 +96,23 @@ class ChartBarQuantidade extends LivewireChartComponent
 
         return $chart;
     }
+
     public function build()
     {
 
-
-
         $this->chart = (new WireableAreaChart($this->chart_id)) // ->id($this->chart_id)
-            //->addBar('Valor', $this->dataSource())
+            // ->addBar('Valor', $this->dataSource())
             ->setDataset([
                 [
-                    'name' => "Valores Diários",
+                    'name' => 'Valores Diários',
                     'labels' => $this->getDataChart()['labels'] ?? [],
-                    'data' => $this->getDataChart()['quantidade'] ?? []
+                    'data' => $this->getDataChart()['quantidade'] ?? [],
                 ],
 
             ])
             ->showDataLabels(true)
             ->setFill([
-                'opacity' => 1.0
+                'opacity' => 1.0,
             ])
             ->colors(['#feb019'])
             ->setPlotOptions([
@@ -130,7 +128,7 @@ class ChartBarQuantidade extends LivewireChartComponent
                 ],
 
             ])
-            //->randomColors()
+            // ->randomColors()
             // /**
             //  * using heredoc
             //  */
@@ -142,9 +140,9 @@ class ChartBarQuantidade extends LivewireChartComponent
             // /**
             //  * using String
             //  */
-            ->jsCallback('dataLabels.formatter', "function (val, opts) {                
+            ->jsCallback('dataLabels.formatter', 'function (val, opts) {                
                 return val;
-            }")
+            }')
             ->setYAxis([
                 'title' => [
                     'text' => 'Quantidade',
@@ -152,7 +150,7 @@ class ChartBarQuantidade extends LivewireChartComponent
             ])
             ->setXAxis([
                 'title' => [
-                    'text' => 'Período: ' . Carbon::parse($this->dt_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($this->dt_fim)->format('d/m/Y'),
+                    'text' => 'Período: '.Carbon::parse($this->dt_inicio)->format('d/m/Y').' - '.Carbon::parse($this->dt_fim)->format('d/m/Y'),
                 ],
                 'categories' => $this->getDataChart()['labels'] ?? [],
             ]);

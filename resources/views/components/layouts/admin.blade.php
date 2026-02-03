@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
+     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -72,6 +74,7 @@
                 <x-menu-item title="Empresas" icon="o-building-office-2" link="{{ route('backoffice.tenants.index') }}"
                     exact />
                 <x-menu-item title="Vendas" icon="o-banknotes" link="{{ route('backoffice.vendas.index') }}" exact />
+                <x-menu-item title="Usuários" icon="o-user-group" link="{{ route('backoffice.usuarios.index') }}" exact />
 
             </x-menu>
         </x-slot:sidebar>
@@ -84,6 +87,11 @@
 
     {{-- TOAST area --}}
     <x-toast />
+    @larapexScripts
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    @livewireScripts
 </body>
 
 </html>

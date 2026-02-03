@@ -7,7 +7,6 @@ use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
 use LarawireGarage\LarapexLivewire\LivewireChartComponent;
-use LarawireGarage\LarapexLivewire\Wireable\WireableAreaChart;
 use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -15,10 +14,15 @@ use Livewire\Attributes\On;
 class ChartRankingFiliaisValor extends LivewireChartComponent
 {
     protected $listeners = [];
+
     public $grupo_id;
+
     public $dt_inicio;
+
     public $dt_fim;
+
     public $filiais_multi_ids = [];
+
     public $vendedores_multi_ids = [];
 
     public function mount()
@@ -27,13 +31,11 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
         $this->getDataChart();
     }
 
-
     private function dataSource()
     {
 
-
         // Dataset logic
-        return array_map(fn($value) => [$value, rand(1000, 10000)], range(1, 20));
+        return array_map(fn ($value) => [$value, rand(1000, 10000)], range(1, 20));
     }
 
     #[On('show-filter-chart-bar')]
@@ -59,7 +61,7 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, filial_id,Count(id) as quantidade')
+            ->selectRaw('SUM('.$grupo->campo_valor_id.') as total, filial_id,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereBetween('data_pedido', [$this->dt_inicio, $this->dt_fim])
             ->when($this->filiais_multi_ids, function ($query) {
@@ -96,14 +98,13 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
                 ->whereBetween('ano', [Carbon::parse($this->dt_inicio)->year, Carbon::parse($this->dt_fim)->year])
                 ->get();
 
-
             $collect->push([
                 'filial' => $venda->filial->name,
                 'total' => $venda->total,
                 'quantidade' => $venda->quantidade,
                 'meta_valor' => $metas->first()->meta_valor ?? 0,
                 'meta_quantidade' => $metas->first()->meta_quantidade ?? 0,
-                //'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
+                // 'atingimento_valor' => $this->atingimento_meta($metas->first()->meta_valor ?? 0, $venda->total),
             ]);
         }
 
@@ -113,9 +114,8 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             $chart['quantidade'][] = $item['quantidade'];
             $chart['metas_valor'][] = $item['meta_valor'];
             $chart['metas_quantidade'][] = $item['meta_quantidade'];
-            //$chart['atingimento_valor'][] = $item['atingimento_valor'];
+            // $chart['atingimento_valor'][] = $item['atingimento_valor'];
         }
-
 
         return $chart;
     }
@@ -124,23 +124,23 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
     {
 
         $this->chart = (new WireableBarChart($this->chart_id)) // ->id($this->chart_id)
-        //->addBar('Valor', $this->dataSource())
-        ->setDataset([
-            [
-                'name' => "Valores",
-                //'labels' => $this->getDataChart()['labels'] ?? [],
-                'data' => $this->getDataChart()['data'] ?? []
-            ],
-            [
-                'name' => "Metas",
-                //'labels' => $this->getDataChart()['labels'] ?? [],
-                'data' => $this->getDataChart()['metas_valor'] ?? []
-            ],
+        // ->addBar('Valor', $this->dataSource())
+            ->setDataset([
+                [
+                    'name' => 'Valores',
+                    // 'labels' => $this->getDataChart()['labels'] ?? [],
+                    'data' => $this->getDataChart()['data'] ?? [],
+                ],
+                [
+                    'name' => 'Metas',
+                    // 'labels' => $this->getDataChart()['labels'] ?? [],
+                    'data' => $this->getDataChart()['metas_valor'] ?? [],
+                ],
 
-        ])
+            ])
             ->showDataLabels(true)
             ->setFill([
-                'opacity' => 1.0
+                'opacity' => 1.0,
             ])
             ->colors(['#002855', '#feb019'])
             ->setPlotOptions([
@@ -152,18 +152,36 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
                     'barHeight' => '90%',
                     'horizontal' => true,
                     'dataLabels' => [
-                        //'position' => 'top',
+                        // 'position' => 'top',
                         'enabled' => true,
-                        //'orientation' => 'vertical',
+                        // 'orientation' => 'vertical',
                         'hideOverflowingLabels' => true,
-
 
                     ],
 
                 ],
 
             ])
-            //->randomColors()
+            ->setPlotOptions([
+                'bar' => [
+                    'height' => '450px',
+                    'borderRadius' => 4,
+                    'padding' => 10,
+                    'columnWidth' => '90%',
+                    'barHeight' => '90%',
+                    'horizontal' => true,
+                    'dataLabels' => [
+                        // 'position' => 'top',
+                        'enabled' => true,
+                        // 'orientation' => 'vertical',
+                        'hideOverflowingLabels' => true,
+
+                    ],
+
+                ],
+
+            ])
+            // ->randomColors()
             // /**
             //  * using heredoc
             //  */
@@ -179,11 +197,11 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
 
                 return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             }")
-            ->jsCallback('xaxis.labels.formatter', "function (val, index) {
-                console.log(val);
-                console.log(index);
+            ->jsCallback('xaxis.labels.formatter', 'function (val, index) {
+                //console.log(val);
+                //console.log(index);
                 return val;
-            }")
+            }')
             ->setYAxis([
                 'title' => [
                     'text' => 'Valor em R$',
@@ -191,7 +209,7 @@ class ChartRankingFiliaisValor extends LivewireChartComponent
             ])
             ->setXAxis([
                 'title' => [
-                    'text' => 'Período: ' . Carbon::parse($this->dt_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($this->dt_fim)->format('d/m/Y'),
+                    'text' => 'Período: '.Carbon::parse($this->dt_inicio)->format('d/m/Y').' - '.Carbon::parse($this->dt_fim)->format('d/m/Y'),
                 ],
                 'categories' => $this->getDataChart()['labels'] ?? [],
             ]);

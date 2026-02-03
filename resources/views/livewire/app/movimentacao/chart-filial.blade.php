@@ -6,8 +6,8 @@
     <script>
         (function() {
             var chartData = @json($data);
-            //console.log(chartData.series);
-            console.log(chartData);
+            ////console.log(chartData.series);
+            //console.log(chartData);
             var options = {
                 series: [{
                     name: 'Total',

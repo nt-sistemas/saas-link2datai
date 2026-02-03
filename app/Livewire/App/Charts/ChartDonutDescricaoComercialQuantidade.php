@@ -4,7 +4,6 @@ namespace App\Livewire\App\Charts;
 
 use App\Models\Grupo;
 use App\Models\Venda;
-use Carbon\Carbon;
 use LarawireGarage\LarapexLivewire\LivewireChartComponent;
 use LarawireGarage\LarapexLivewire\Wireable\WireableDonutChart;
 use Livewire\Attributes\Computed;
@@ -13,10 +12,15 @@ use Livewire\Attributes\On;
 class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
 {
     protected $listeners = [];
+
     public $grupo_id;
+
     public $dt_inicio;
+
     public $dt_fim;
+
     public $filiais_multi_ids = [];
+
     public $vendedores_multi_ids = [];
 
     public function mount()
@@ -28,7 +32,7 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
     private function dataSource()
     {
         // Dataset logic
-        return array_map(fn($value) => rand(1, 100), range(1, 5));
+        return array_map(fn ($value) => rand(1, 100), range(1, 5));
     }
 
     #[On('show-filter-chart-bar')]
@@ -37,7 +41,8 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
 
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
-        $this->filiais_multi_ids = $params['filiais_multi_ids'];
+        $this->filiais_multi_ids = $params['filiais_multi_ids'] ?? [];
+        $this->vendedores_multi_ids = $params['vendedores_multi_ids'] ?? [];
 
         $this->build();
     }
@@ -46,7 +51,6 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
     public function getDataChart()
     {
         $grupo = Grupo::find($this->grupo_id);
-
 
         $tipo_grupo_id = $grupo->tipoGrupo->pluck('id')->toArray();
 
@@ -81,30 +85,29 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
             ->limit(10)
             ->get();
 
-
         $chart = [];
 
         if ($vendas->toArray() === []) {
             $chart['labels'][] = 'Sem dados';
             $chart['data'][] = 0;
+
             return $chart;
         }
-
 
         foreach ($vendas as $venda) {
             $chart['labels'][] = $venda->descricao_comercial;
             $chart['data'][] = floatval($venda->total) ?? 0;
         }
 
-
         return $chart;
     }
 
     public function build()
     {
+        $labels = $this->getDataChart()['labels'];
         $this->chart = (new WireableDonutChart($this->chart_id)) // ->id($this->chart_id)
-        ->addPieces($this->getDataChart()['data'])
-            ->setLabels($this->getDataChart()['labels'])
+            ->addPieces($this->getDataChart()['data'])
+            ->setLabels($labels)
             ->colors(['#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8'])
             ->setPlotOptions([
                 'pie' => [
@@ -123,9 +126,10 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
                                 'fontSize' => '16px',
                                 'color' => '#263544',
                                 'offsetY' => 16,
-                                'formatter' => "function(val){
+                                'formatter' => 'function(val){
+                                console.log("LABEL", val);
                                     return val;
-                                }", // Will be set via jsCallback
+                                }', // Will be set via jsCallback
                             ],
                             'total' => [
                                 'show' => true,
@@ -134,20 +138,19 @@ class ChartDonutDescricaoComercialQuantidade extends LivewireChartComponent
 
                         ],
                     ],
-                ]
+                ],
             ])
-            ->jsCallback('plotOptions.pie.donut.labels.total.formatter', "
+            ->jsCallback('plotOptions.pie.donut.labels.total.formatter', '
                 function (w) {
                                     return w.globals.seriesTotals.reduce( (a, b) => a + b , 0);
 
-                }"
-            )
-            // /**
-            //  * using String
-            //  */
-            // ->jsCallback('dataLabels.formatter', "function (val, opts) {
-            //     return val + '$'
-            // }")
-        ;
+                }'
+            );
+        // /**
+        //  * using String
+        //  */
+        // ->jsCallback('dataLabels.formatter', "function (val, opts) {
+        //     return val + '$'
+        // }")
     }
 }

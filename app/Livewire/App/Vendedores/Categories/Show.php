@@ -7,27 +7,36 @@ use App\Models\Venda;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 use Livewire\Attributes\Lazy;
-
+use Livewire\Component;
 
 #[Lazy]
 class Show extends Component
 {
     public $id;
+
     public $group;
+
     public $lastUpdated;
+
     public $data_ini;
+
     public $data_fim;
 
     public $vendedor_id = null;
 
     public array $chartPeriodo;
+
     public array $chartRankingFiliais;
+
     public array $chartRankingVendedores;
+
     public $vendedores_multi_ids = [];
+
     public $grupo_estoque_ids = [];
+
     public $modalidade_venda_ids = [];
+
     public $plano_habilitado_ids = [];
 
     public function mount()
@@ -40,7 +49,6 @@ class Show extends Component
 
         array_push($this->vendedores_multi_ids, $this->vendedor_id);
 
-
         $this->lastUpdated = Venda::query()
             ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('data_pedido', 'desc')
@@ -49,14 +57,14 @@ class Show extends Component
         $this->data_ini = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d') : Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->data_fim = $this->lastUpdated ? Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d') : Carbon::now()->endOfMonth()->format('Y-m-d');
 
-        $data = Redis::get(auth()->user()->id . '_show_details');
+        $data = Redis::get(auth()->user()->id.'_show_details');
 
         $this->data_ini = is_null($data) ? $this->data_ini : json_decode($data, true)['dt_inicio'];
         $this->data_fim = is_null($data) ? $this->data_fim : json_decode($data, true)['dt_fim'];
 
         $this->chartPeriodo = $this->getDataChart();
-        //$this->chartRankingFiliais = $this->getRankingFiliais();
-        //$this->chartRankingVendedores = $this->getRankingVendedores();
+        // $this->chartRankingFiliais = $this->getRankingFiliais();
+        // $this->chartRankingVendedores = $this->getRankingVendedores();
     }
 
     public function render()
@@ -90,7 +98,7 @@ class Show extends Component
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $this->group->campo_valor_id . ') as total, DATE(data_pedido) as data,Count(id) as quantidade')
+            ->selectRaw('SUM('.$this->group->campo_valor_id.') as total, DATE(data_pedido) as data,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
                 $query->where('vendedor_id', $vendedor_id);
@@ -127,13 +135,13 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Total - R$',
+                                'label' => $grupo->name.' | Total - R$',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 'quantidade_total' => [
                     'type' => 'bar',
@@ -147,26 +155,24 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Quantidade - Unidades',
+                                'label' => $grupo->name.' | Quantidade - Unidades',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
         }
 
         $chart = [];
-
 
         foreach ($vendas as $venda) {
             $chart['labels'][] = Carbon::parse($venda->data)->format('d/m') ?? '';
             $chart['data'][] = $venda->total ?? 0;
             $chart['quantidade'][] = $venda->quantidade ?? 0;
         }
-
 
         return [
             'valor_total' => [
@@ -182,13 +188,13 @@ class Show extends Component
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Total - R$',
+                            'label' => $grupo->name.' | Total - R$',
                             'data' => $chart['data'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
+                    ],
+                ],
             ],
             'quantidade_total' => [
                 'type' => 'bar',
@@ -202,14 +208,14 @@ class Show extends Component
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Quantidade - Unidades',
+                            'label' => $grupo->name.' | Quantidade - Unidades',
                             'data' => $chart['quantidade'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -225,7 +231,7 @@ class Show extends Component
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $this->group->campo_valor_id . ') as total, filial_id,Count(id) as quantidade')
+            ->selectRaw('SUM('.$this->group->campo_valor_id.') as total, filial_id,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereBetween('data_pedido', [$this->data_ini, $this->data_fim])
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
@@ -263,13 +269,13 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Total - R$',
+                                'label' => $grupo->name.' | Total - R$',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 'quantidade_total' => [
                     'type' => 'bar',
@@ -283,14 +289,14 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Quantidade - Unidades',
+                                'label' => $grupo->name.' | Quantidade - Unidades',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
         }
 
@@ -301,7 +307,6 @@ class Show extends Component
             $chart['data'][] = $venda->total;
             $chart['quantidade'][] = $venda->quantidade;
         }
-
 
         return [
             'valor_total' => [
@@ -318,13 +323,13 @@ class Show extends Component
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Total - R$',
+                            'label' => $grupo->name.' | Total - R$',
                             'data' => $chart['data'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
+                    ],
+                ],
             ],
             'quantidade_total' => [
                 'type' => 'bar',
@@ -339,14 +344,14 @@ class Show extends Component
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Quantidade - Unidades',
+                            'label' => $grupo->name.' | Quantidade - Unidades',
                             'data' => $chart['quantidade'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -362,7 +367,7 @@ class Show extends Component
         $plano_habilitado_ids = $grupo->plano_habilitados->pluck('id')->toArray();
 
         $vendas = Venda::query()
-            ->selectRaw('SUM(' . $this->group->campo_valor_id . ') as total, vendedor_id,Count(id) as quantidade')
+            ->selectRaw('SUM('.$this->group->campo_valor_id.') as total, vendedor_id,Count(id) as quantidade')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereBetween('data_pedido', [$this->data_ini, $this->data_fim])
             ->when($this->vendedor_id, function ($query, $vendedor_id) {
@@ -400,13 +405,13 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Total - R$',
+                                'label' => $grupo->name.' | Total - R$',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 'quantidade_total' => [
                     'type' => 'bar',
@@ -420,14 +425,14 @@ class Show extends Component
                         'labels' => [],
                         'datasets' => [
                             [
-                                'label' => $grupo->name . ' | Quantidade - Unidades',
+                                'label' => $grupo->name.' | Quantidade - Unidades',
                                 'data' => [],
                                 'backgroundColor' => ['#002855'],
                             ],
 
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
         }
 
@@ -438,7 +443,6 @@ class Show extends Component
             $chart['data'][] = $venda->total;
             $chart['quantidade'][] = $venda->quantidade;
         }
-
 
         return [
             'valor_total' => [
@@ -451,22 +455,21 @@ class Show extends Component
                     'responsive' => true,
                     'animation' => [
                         'delay' => 500,
-                        'duration' => 500
+                        'duration' => 500,
                     ],
-
 
                 ],
                 'data' => [
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Total - R$',
+                            'label' => $grupo->name.' | Total - R$',
                             'data' => $chart['data'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
+                    ],
+                ],
             ],
             'quantidade_total' => [
                 'type' => 'bar',
@@ -481,14 +484,14 @@ class Show extends Component
                     'labels' => $chart['labels'],
                     'datasets' => [
                         [
-                            'label' => $grupo->name . ' | Quantidade - Unidades',
+                            'label' => $grupo->name.' | Quantidade - Unidades',
                             'data' => $chart['quantidade'],
                             'backgroundColor' => ['#002855'],
                         ],
 
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -497,5 +500,11 @@ class Show extends Component
         $this->chartPeriodo = $this->getDataChart();
         $this->chartRankingFiliais = $this->getRankingFiliais();
         $this->chartRankingVendedores = $this->getRankingVendedores();
+
+        $this->dispatch('show-filter-chart-bar', [
+            'dt_inicio' => $this->data_ini,
+            'dt_fim' => $this->data_fim,
+            'vendedores_multi_ids' => $this->vendedores_multi_ids,
+        ]);
     }
 }

@@ -175,8 +175,7 @@ class ChartBarQuantidadeComparar extends LivewireChartComponent
 
             ])
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {
-                console.log(val);
-                console.log(index);
+                
                 return val;
             }")
             ->setYAxis([

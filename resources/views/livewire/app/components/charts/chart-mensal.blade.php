@@ -5,7 +5,7 @@
 </div>
 @script
     <script>
-        console.log('Chart Mensal', @json($data));
+        //console.log('Chart Mensal', @json($data));
         var seriesData = @json($data['series']);
         var categories = @json($data['categories']);
         var options = {

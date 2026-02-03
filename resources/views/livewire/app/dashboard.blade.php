@@ -6,7 +6,9 @@
       <x-button label="Backoffice" class="bg-orange-500 text-primary" link="/backoffice" />
       @endif
 
+      @if(auth()->user()->cargo_id === 1 || auth()->user()->is_admin)
       <x-button label="Painel" class="btn-secondary text-primary" link="/admin" />
+      @endif
     </x-slot:actions>
   </x-header>
   <div class="bg-gray-200 mb-4 p-4 rounded-lg flex flex-col gap-2 lg:flex-row justify-between">

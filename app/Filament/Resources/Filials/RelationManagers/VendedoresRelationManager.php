@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Filials\RelationManagers;
 
-use Dom\Text;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -59,19 +58,21 @@ class VendedoresRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()->mutateDataUsing(
+                    fn (array $data): array => array_merge($data, ['tenant_id' => auth()->user()->tenant_id])
+                ),
                 AssociateAction::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                //EditAction::make(),
+                // ViewAction::make(),
+                // EditAction::make(),
                 DissociateAction::make(),
-                //DeleteAction::make(),
+                // DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DissociateBulkAction::make(),
-                    //DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

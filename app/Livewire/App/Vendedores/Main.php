@@ -3,7 +3,6 @@
 namespace App\Livewire\App\Vendedores;
 
 use App\Models\Categoria;
-use App\Models\Filial;
 use App\Models\Grupo;
 use App\Models\Venda;
 use App\Models\Vendedor;
@@ -14,22 +13,24 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-
 #[Lazy]
 class Main extends Component
 {
     public $lastUpdated = null;
+
     public $daysOfData = null;
+
     public $date_ini;
+
     public $date_fim;
+
     public $item1;
 
-
     public $vendedor_id;
+
     public $filial_id = null;
 
     public $vendedor;
-
 
     public function mount($id)
     {
@@ -40,19 +41,17 @@ class Main extends Component
             ->orderBy('data_pedido', 'desc')
             ->first();
 
-
         $this->daysOfData = Carbon::parse($this->lastUpdated->data_pedido)->diffInDays(Carbon::now());
 
         $this->date_ini = Carbon::parse($this->lastUpdated->data_pedido)->startOfMonth()->format('Y-m-d');
         $this->date_fim = Carbon::parse($this->lastUpdated->data_pedido)->endOfMonth()->format('Y-m-d');
-        $this->item1 = filter_var(Redis::get(auth()->user()->id . $this->vendedor_id . '_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
+        $this->item1 = filter_var(Redis::get(auth()->user()->id.$this->vendedor_id.'_dashboard_view'), FILTER_VALIDATE_BOOLEAN);
 
-        $data = Redis::get(auth()->user()->id . '_show_details');
+        $data = Redis::get(auth()->user()->id.'_show_details');
 
         $this->date_ini = is_null($data) ? $this->date_ini : json_decode($data, true)['dt_inicio'];
         $this->date_fim = is_null($data) ? $this->date_fim : json_decode($data, true)['dt_fim'];
     }
-
 
     public function render(): View
     {
@@ -96,7 +95,7 @@ class Main extends Component
     {
 
         $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
-
+        ds($this->date_ini);
 
         $total = 0;
         foreach ($grupos as $grupo) {
@@ -124,7 +123,6 @@ class Main extends Component
                 ->sum($grupo->campo_valor_id);
         }
 
-
         return $total;
     }
 
@@ -133,7 +131,6 @@ class Main extends Component
     {
 
         $grupos = Grupo::query()->where('categoria_id', $categoryId)->get();
-
 
         $quantidade = 0;
         foreach ($grupos as $grupo) {
@@ -216,16 +213,17 @@ class Main extends Component
     {
         $data = [
             'filial_multi_ids' => $this->filiais_multi_ids ?? null,
+            'vendedores_multi_ids' => $this->vendedores_multi_ids ?? null,
             'dt_inicio' => $this->date_ini,
             'dt_fim' => $this->date_fim,
         ];
 
-        Redis::set(auth()->user()->id . '_show_details', json_encode($data));
-
+        Redis::set(auth()->user()->id.'_show_details', json_encode($data));
 
         $this->dispatch('update-command', [
             'dt_inicio' => $this->date_ini,
             'dt_fim' => $this->date_fim,
+            'vendedor_id' => $this->vendedor_id,
         ]);
     }
 }

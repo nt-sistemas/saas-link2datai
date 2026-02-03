@@ -42,7 +42,8 @@ class ChartRankingVendedoresAtingimentoUnidade extends LivewireChartComponent
 
         $this->dt_inicio = $params['dt_inicio'];
         $this->dt_fim = $params['dt_fim'];
-        $this->filiais_multi_ids = $params['filiais_multi_ids'];
+        $this->filiais_multi_ids = $params['filiais_multi_ids'] ?? [];
+        $this->vendedores_multi_ids = $params['vendedores_multi_ids'] ?? [];
 
         $this->build();
     }
@@ -194,8 +195,8 @@ class ChartRankingVendedoresAtingimentoUnidade extends LivewireChartComponent
                 return Math.abs(Math.round(val)) + '%';
             }")
             ->jsCallback('xaxis.labels.formatter', "function (val, index) {
-                console.log(val);
-                console.log(index);
+                //console.log(val);
+                //console.log(index);
                 return val;
             }")
             ->setYAxis([])

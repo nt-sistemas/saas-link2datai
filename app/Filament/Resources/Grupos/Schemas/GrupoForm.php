@@ -2,18 +2,14 @@
 
 namespace App\Filament\Resources\Grupos\Schemas;
 
-use App\Models\Categoria;
-use App\Models\Grupo;
-use App\Models\TipoGrupo;
 use App\Models\GrupoEstoque;
-use Filament\Schemas\Schema;
 use App\Models\ModalidadeVenda;
 use App\Models\PlanoHabilitado;
+use App\Models\TipoGrupo;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Query\Builder;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
 
 class GrupoForm
 {
@@ -28,7 +24,7 @@ class GrupoForm
                     ->label('Tipo de Pedidos')
                     ->multiple()
                     ->preload()
-                    ->relationship('tipoGrupo', 'name')
+                    ->options(TipoGrupo::query()->where('tenant_id', auth()->user()->tenant_id)->pluck('name', 'id'))
                     ->required(),
                 TextInput::make('description')
                     ->label('Descrição'),
@@ -39,7 +35,9 @@ class GrupoForm
                     ->default(0),
                 Select::make('grupo_estoque_id')
                     ->label('Grupo de Estoque')
-                    ->relationship('grupo_estoque', 'name')
+                    ->options(GrupoEstoque::query()
+                        ->where('tenant_id', auth()->user()->tenant_id)
+                        ->pluck('name', 'id'))
                     ->multiple()
                     ->preload()
                     ->columnSpanFull(),
@@ -47,20 +45,24 @@ class GrupoForm
                     ->label('Plano Habilitado')
                     ->multiple()
                     ->preload()
-                    ->relationship('plano_habilitados', 'name')
+                    ->options(PlanoHabilitado::query()
+                        ->where('tenant_id', auth()->user()->tenant_id)
+                        ->pluck('name', 'id'))
                     ->columnSpanFull(),
                 Select::make('modalidade_venda_id')
                     ->label('Modalidade de Venda')
                     ->multiple()
                     ->preload()
-                    ->relationship('modalidade_venda', 'name')
+                    ->options(ModalidadeVenda::query()
+                        ->where('tenant_id', auth()->user()->tenant_id)
+                        ->pluck('name', 'id'))
                     ->columnSpanFull(),
                 Select::make('campo_valor_id')
                     ->label('Campo de Valor')
                     ->options([
                         'base_faturamento_compra' => 'Base de Faturamento - Compra',
                         'valor_total' => 'Valor Total',
-                        'valor_franquia' => 'Valor da Franquia'
+                        'valor_franquia' => 'Valor da Franquia',
                     ]) // Adicione as opções apropriadas aqui
                     ->required(),
                 Select::make('categoria_id')

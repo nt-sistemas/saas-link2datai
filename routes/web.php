@@ -7,15 +7,15 @@ use App\Livewire\Backoffice\Dashboard as BackofficeDashboard;
 use App\Livewire\Categories\Show;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
 Route::get('/logout', function () {
     auth()->logout();
+
     return redirect()->route('login');
 })->name('logout');
 
 Route::middleware('auth')->group(function () {
-    //Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
+    // Route::get('/', \App\Livewire\App\Dashboard::class)->name('dashboard');
     Route::prefix('/')->name('app.')->group(function () {
         Route::get('', \App\Livewire\App\Dashboard::class)->name('dashboard');
         Route::get('comparar', \App\Livewire\App\Comparador::class)->name('comparar');
@@ -35,6 +35,12 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('vendas')->name('')->group(function () {
             Route::get('/', \App\Livewire\Backoffice\Vendas\Index::class)->name('vendas.index');
+        });
+
+        Route::prefix('usuarios')->group(function () {
+            Route::get('/', \App\Livewire\Backoffice\Usuarios\Index::class)->name('usuarios.index');
+            Route::get('/create', \App\Livewire\Backoffice\Usuarios\Create::class)->name('usuarios.create');
+            Route::get('/{id}/edit', \App\Livewire\Backoffice\Usuarios\Edit::class)->name('usuarios.edit');
         });
 
         Route::prefix('tenants')->group(function () {

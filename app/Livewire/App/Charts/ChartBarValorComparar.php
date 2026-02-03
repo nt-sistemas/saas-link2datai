@@ -3,24 +3,29 @@
 namespace App\Livewire\App\Charts;
 
 use App\Models\Grupo;
-use App\Models\Meta;
 use App\Models\Venda;
 use Carbon\Carbon;
 use LarawireGarage\LarapexLivewire\LivewireChartComponent;
 use LarawireGarage\LarapexLivewire\Wireable\WireableAreaChart;
-use LarawireGarage\LarapexLivewire\Wireable\WireableBarChart;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class ChartBarValorComparar extends LivewireChartComponent
 {
     protected $listeners = [];
+
     public $grupo_id;
+
     public $mes_inicio;
+
     public $mes_final;
+
     public $ano_inicio;
+
     public $ano_final;
+
     public $filiais_multi_ids = [];
+
     public $vendedores_multi_ids = [];
 
     public function mount()
@@ -31,17 +36,16 @@ class ChartBarValorComparar extends LivewireChartComponent
     private function dataSource()
     {
 
-
         // Dataset logic
-        return array_map(fn($value) => [$value, rand(1000, 10000)], range(1, 20));
+        return array_map(fn ($value) => [$value, rand(1000, 10000)], range(1, 20));
     }
 
     #[On('show-filter-chart-bar-comparar')]
     public function refreshChart($params)
     {
-        //$this->dt_inicio = $params['dt_inicio'];
-        //$this->dt_fim = $params['dt_fim'];
-        //$this->filiais_multi_ids = $params['filiais_multi_ids'];
+        // $this->dt_inicio = $params['dt_inicio'];
+        // $this->dt_fim = $params['dt_fim'];
+        // $this->filiais_multi_ids = $params['filiais_multi_ids'];
         $this->mes_inicio = $params['mes_inicial'];
         $this->ano_inicio = $params['ano_inicial'];
         $this->mes_final = $params['mes_final'];
@@ -59,11 +63,10 @@ class ChartBarValorComparar extends LivewireChartComponent
     #[Computed]
     public function getDataChart()
     {
-        if (!$this->grupo_id) {
+        if (! $this->grupo_id) {
             return [];
         }
         $grupo = Grupo::find($this->grupo_id);
-
 
         $tipo_grupo_id = $grupo ? $grupo->tipoGrupo->pluck('id')->toArray() : [];
 
@@ -71,9 +74,8 @@ class ChartBarValorComparar extends LivewireChartComponent
         $modalidade_venda_ids = $grupo ? $grupo->modalidade_venda->pluck('id')->toArray() : [];
         $plano_habilitado_ids = $grupo ? $grupo->plano_habilitados->pluck('id')->toArray() : [];
 
-
         $vendas_mes_1 = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, data_pedido as data')
+            ->selectRaw('SUM('.$grupo->campo_valor_id.') as total, data_pedido as data')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereMonth('data_pedido', $this->mes_inicio)
             ->whereYear('data_pedido', $this->ano_inicio)
@@ -100,7 +102,7 @@ class ChartBarValorComparar extends LivewireChartComponent
             ->get();
 
         $vendas_mes_2 = Venda::query()
-            ->selectRaw('SUM(' . $grupo->campo_valor_id . ') as total, data_pedido as data')
+            ->selectRaw('SUM('.$grupo->campo_valor_id.') as total, data_pedido as data')
             ->where('tenant_id', auth()->user()->tenant_id)
             ->whereMonth('data_pedido', $this->mes_final)
             ->whereYear('data_pedido', $this->ano_final)
@@ -126,7 +128,6 @@ class ChartBarValorComparar extends LivewireChartComponent
             ->groupBy('data')
             ->get();
 
-
         $chart = [];
         foreach ($vendas_mes_1 as $venda) {
             $chart['labels'][] = Carbon::parse($venda->data)->format('d/m/Y');
@@ -145,21 +146,21 @@ class ChartBarValorComparar extends LivewireChartComponent
     {
 
         $this->chart = (new WireableAreaChart($this->chart_id)) // ->id($this->chart_id)
-        //->addBar('Valor', $this->dataSource())
-        ->setDataset([
-            [
-                'name' => $this->getLabelName($this->mes_inicio, $this->ano_inicio),
-                'data' => $this->getDataChart()['mes_1'] ?? []
-            ],
-            [
-                'name' => $this->getLabelName($this->mes_final, $this->ano_final),
-                'data' => $this->getDataChart()['mes_2'] ?? []
-            ],
+        // ->addBar('Valor', $this->dataSource())
+            ->setDataset([
+                [
+                    'name' => $this->getLabelName($this->mes_inicio, $this->ano_inicio),
+                    'data' => $this->getDataChart()['mes_1'] ?? [],
+                ],
+                [
+                    'name' => $this->getLabelName($this->mes_final, $this->ano_final),
+                    'data' => $this->getDataChart()['mes_2'] ?? [],
+                ],
 
-        ])
+            ])
             ->showDataLabels(true)
             ->setFill([
-                'opacity' => 1.0
+                'opacity' => 1.0,
             ])
             ->colors(['#002855', '#feb019'])
             ->setPlotOptions([
@@ -180,11 +181,10 @@ class ChartBarValorComparar extends LivewireChartComponent
 
                 return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             }")
-            ->jsCallback('xaxis.labels.formatter', "function (val, index) {
-                console.log(val);
-                console.log(index);
+            ->jsCallback('xaxis.labels.formatter', 'function (val, index) {
+                
                 return val;
-            }")
+            }')
             ->setYAxis([
                 'title' => [
                     'text' => 'Valor em R$',
@@ -212,7 +212,7 @@ class ChartBarValorComparar extends LivewireChartComponent
             11 => 'Dezembro',
         ];
 
-        return $meses[((int)$mes - 1)] ?? '' . '/' . $ano;
+        return $meses[((int) $mes - 1)] ?? ''.'/'.$ano;
 
     }
 }
